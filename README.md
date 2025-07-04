@@ -3,6 +3,10 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 # Changelog
 
+## 1.1.0.2-alpha
+
+* README.md file relocated.
+
 ## 1.1.0.1-alpha
 
 * Folder hierarchy reorganized.
