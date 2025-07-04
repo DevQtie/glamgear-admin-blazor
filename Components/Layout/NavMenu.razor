@@ -1,30 +1,152 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using System.Reflection
+@rendermode InteractiveServer
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">GlamGearAdmin</a>
+        <a class="navbar-brand" href="">GlamGearAdmin @GetVersion()</a>
     </div>
 </div>
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div class="nav-scrollable" onclick="HandleNavScrollClick">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            <NavLink class=" nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-bounding-box-circles-nav-menu" aria-hidden="true"></span>Dashboard
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.FirstSubM)">
+                <span class="bi bi-boxes-nav-menu" aria-hidden="true"></span>Products
+            </NavLink>
+
+            @if (navSubmenu == NavSubmenu.FirstSubM)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/add-products">
+                        <span class="oi oi-plus" aria-hidden="true"></span>Add Products
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/manage-products">
+                        <span class="oi oi-plus" aria-hidden="true"></span>Manage Products
+                    </NavLink>
+                </div>
+            }
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.SecondSubM)">
+                <span class="bi bi-ui-checks-nav-menu" aria-hidden="true"></span>Orders
+            </NavLink>
+
+            @if (navSubmenu == NavSubmenu.SecondSubM)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/order-list">
+                        <span class="oi oi-plus" aria-hidden="true"></span>Order List
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/return-cancel-orders">
+                        <span class="oi oi-plus" aria-hidden="true"></span>Return & Cancellation Orders
+                    </NavLink>
+                </div>
+            }
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.ThirdSubM)">
+                <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span>Users
+            </NavLink>
+
+            @if (navSubmenu == NavSubmenu.ThirdSubM)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/unverified-users">
+                        <span class="oi oi-plus" aria-hidden="true"></span>Unverified Users
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/verified-users">
+                        <span class="oi oi-plus" aria-hidden="true"></span>Verified Users
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/other-users">
+                        <span class="oi oi-plus" aria-hidden="true"></span>Other Users
+                    </NavLink>
+                </div>
+            }
+        </div>
+
+        <div class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Counter
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>Weather
             </NavLink>
         </div>
     </nav>
 </div>
 
+@code {
+    private enum NavSubmenu // source code original reference: https://stackoverflow.com/a/66690427/14041392
+    {
+        None,
+        FirstSubM,
+        SecondSubM,
+        ThirdSubM,
+    }
+
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private NavSubmenu navSubmenu = NavSubmenu.None;
+    private bool submenuClicked = false;
+
+    private string? GetVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var appVersion = assembly.GetName().Version;
+        if (appVersion != null)
+        {
+
+            var version = appVersion.ToString();
+            return version;
+        }
+        return null;
+    }
+
+
+    private void ToggleNavMenu(NavSubmenu? submenu = null)
+    {
+        collapseNavMenu = !collapseNavMenu;
+        navSubmenu = submenu ?? navSubmenu;
+    }
+
+    private void TogleSubmenu(NavSubmenu submenu)
+    {
+        submenuClicked = true;
+        if (navSubmenu == submenu)
+            navSubmenu = NavSubmenu.None;
+        else
+            navSubmenu = submenu;
+    }
+
+    private void HandleNavScrollClick() // source code original reference: https://copilot.microsoft.com/shares/E2ZnBXGS5524gPuz1QC8J
+    {
+        if (!submenuClicked)
+        {
+            ToggleNavMenu();
+        }
+
+        submenuClicked = false; // Reset the flag after handling
+    }
+
+}

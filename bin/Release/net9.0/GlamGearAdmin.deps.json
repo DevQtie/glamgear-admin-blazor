@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "GlamGearAdmin/1.0.0-alpha": {
+        "runtime": {
+          "GlamGearAdmin.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GlamGearAdmin/1.0.0-alpha": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,7 @@
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\publish\GlamGearAdmin.exe
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\publish\appsettings.Development.json
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\publish\appsettings.json
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\publish\GlamGearAdmin.dll
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\publish\GlamGearAdmin.deps.json
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\publish\GlamGearAdmin.runtimeconfig.json
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\publish\GlamGearAdmin.pdb
