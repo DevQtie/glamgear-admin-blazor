@@ -5,7 +5,7 @@
   },
   "projects": {
     "C:\\Users\\alagu\\Desktop\\AlberthsFiles\\ECommerceMain\\GlamGearAdmin\\GlamGearAdmin\\GlamGearAdmin.csproj": {
-      "version": "1.1.0.2-alpha",
+      "version": "1.1.1-alpha",
       "restore": {
         "projectUniqueName": "C:\\Users\\alagu\\Desktop\\AlberthsFiles\\ECommerceMain\\GlamGearAdmin\\GlamGearAdmin\\GlamGearAdmin.csproj",
         "projectName": "GlamGearAdmin",
@@ -43,6 +43,24 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
