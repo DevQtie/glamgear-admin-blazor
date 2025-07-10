@@ -123,6 +123,7 @@ main[b-y8gzvrohei] {
 }
 
 .navbar-brand[b-9ofngwxw24] {
+    white-space: normal;
     font-size: 1.1rem;
 }
 
@@ -206,19 +207,13 @@ main[b-y8gzvrohei] {
     background: none;
     border: none;
     border-radius: 4px;
-    /* height: 3rem; */
-    /*hidden*/
     display: flex;
     align-items: center;
     line-height: 1.25rem;
-    /*original= line-height: 3rem;*/
     width: 100%;
-    /* white-space: nowrap; */
-    /*newly added-hidden*/
+    white-space: normal;
     overflow: hidden;
-    /*newly added*/
     text-overflow: ellipsis;
-    /*newly added*/
 }
 
 .nav-item[b-9ofngwxw24]  a.active {

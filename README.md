@@ -3,6 +3,10 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 # Changelog
 
+## 1.2.0.2-alpha
+
+* CGGSchema1.0.2 with data model validation.
+
 ## 1.2.0.1-alpha
 
 * Side nav menu layout fixes.

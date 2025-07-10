@@ -356,6 +356,6 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\b
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\GlamGearAdmin.csproj.AssemblyReference.cache
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\compressed\unlu0xluo6-eu7w3d5g1a.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\compressed\3gin1ph7ub-25o87uqmvr.gz
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\compressed\11h106u7cp-jjy2g8gcwv.gz
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\compressed\0vcpqh6vku-gaa895lf39.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\GlamGear.9AA42714.Up2Date
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\compressed\11h106u7cp-36nvgs0x5u.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\compressed\0vcpqh6vku-nl32xk6apn.gz
