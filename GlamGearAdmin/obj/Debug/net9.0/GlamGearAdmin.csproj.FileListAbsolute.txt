@@ -347,8 +347,6 @@ c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\o
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\rlt3ybm0md-63fj8s7r0e.gz
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\qjw3s91sx2-0j3bgjxly4.gz
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\3gin1ph7ub-25o87uqmvr.gz
-c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\11h106u7cp-jjy2g8gcwv.gz
-c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\0vcpqh6vku-gaa895lf39.gz
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\staticwebassets.build.json
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\staticwebassets.build.json.cache
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\staticwebassets.development.json
@@ -359,3 +357,5 @@ c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\o
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\GlamGearAdmin.pdb
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\GlamGearAdmin.genruntimeconfig.cache
 c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\ref\GlamGearAdmin.dll
+c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\11h106u7cp-fwas4uzuh5.gz
+c:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\0vcpqh6vku-j5xcocly1r.gz

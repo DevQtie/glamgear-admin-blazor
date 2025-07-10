@@ -3,6 +3,11 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 # Changelog
 
+## 1.2.0.1-alpha
+
+* Side nav menu layout fixes.
+* Dashboard.razor bug fixes.
+
 ## 1.2.0.0-alpha
 
 * SQLite database integrated with currently `Data/Migrations/CGGSchema1.0.0` file naming convention through `dotnet ef migrations add CGGSchema1.0.0 --output-dir Data/Migrations`.

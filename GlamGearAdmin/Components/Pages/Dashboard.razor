@@ -10,7 +10,7 @@
 
 @if (admin is null)
 {
-  <p><em>Loading...</em></p>
+  <h1>Welcome back, Anonymous!</h1>
 }
 else
 {
@@ -18,9 +18,13 @@ else
   {
     <h1>Welcome back, @fullName!</h1>
   }
-  else
+  else if (username != null)
   {
     <h1>Welcome back, @username!</h1>
+  }
+  else
+  {
+    <h1>Welcome back, Anonymous!</h1>
   }
 }
 
@@ -39,11 +43,7 @@ This is the Dashboard.
     using var context = DbFactory.CreateDbContext();
     admin = await context.Admin.FirstOrDefaultAsync(m => m.RoleType == "Developer");
 
-    if (admin is null)
-    {
-      NavigationManager.NavigateTo("notfound");
-    }
-    else
+    if (admin is not null)
     {
       fullName = String.Concat(admin.GivenName, " ", admin.MiddleName == null ? "" : admin.MiddleName, admin.MiddleName ==
       null ? "" : " ", admin.FamilyName);
