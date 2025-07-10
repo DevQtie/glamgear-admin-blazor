@@ -1,0 +1,86 @@
+@page "/admins/create"
+@using Microsoft.EntityFrameworkCore
+@using GlamGearAdmin.Models
+@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Admin</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Admin" OnValidSubmit="AddAdmin" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <InputText id="username" @bind-Value="Admin.Username" class="form-control" />
+                <ValidationMessage For="() => Admin.Username" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="givenName" class="form-label">Given Name:</label>
+                <InputText id="givenName" @bind-Value="Admin.GivenName" class="form-control" />
+                <ValidationMessage For="() => Admin.GivenName" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="middleName" class="form-label">Middle Name:</label>
+                <InputText id="middleName" @bind-Value="Admin.MiddleName" class="form-control" />
+                <ValidationMessage For="() => Admin.MiddleName" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="familyName" class="form-label">Family Name:</label>
+                <InputText id="familyName" @bind-Value="Admin.FamilyName" class="form-control" />
+                <ValidationMessage For="() => Admin.FamilyName" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="emailadd" class="form-label">Email Add:</label>
+                <InputText id="emailadd" @bind-Value="Admin.EmailAdd" class="form-control" />
+                <ValidationMessage For="() => Admin.EmailAdd" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="roletype" class="form-label">RoleType:</label>
+                <InputText id="roletype" @bind-Value="Admin.RoleType" class="form-control" />
+                <ValidationMessage For="() => Admin.RoleType" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/admins">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Admin Admin { get; set; } = new();
+
+    @* To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks. *@
+    private async Task AddAdmin()
+    {
+        using var context = DbFactory.CreateDbContext();
+        string userID = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
+        int getLength = userID.Count();
+        string reprocessedStringID = "";
+        string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+        for (int i = 0; i <= getLength; i++)
+        {
+            if (i < 13)
+            {
+                reprocessedStringID = userID.Substring(0, i);
+                if (i == 12)
+                {
+                    break;
+                }
+            }
+        }
+        string concatString = String.Concat("USER-", dateNow, "-", reprocessedStringID);
+        Admin.UserID = concatString;
+        context.Admin.Add(Admin);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/admins");
+    }
+}

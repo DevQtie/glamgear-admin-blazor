@@ -40,6 +40,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/CRUD/AdminPages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDUlVEXEFkbWluUGFnZXNcQ3JlYXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/CRUD/AdminPages/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDUlVEXEFkbWluUGFnZXNcRGVsZXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/CRUD/AdminPages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDUlVEXEFkbWluUGFnZXNcRGV0YWlscy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/CRUD/AdminPages/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDUlVEXEFkbWluUGFnZXNcRWRpdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/CRUD/AdminPages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDUlVEXEFkbWluUGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Dashboard.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEYXNoYm9hcmQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 

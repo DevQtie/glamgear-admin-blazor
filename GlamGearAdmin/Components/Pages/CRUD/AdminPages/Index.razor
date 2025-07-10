@@ -1,0 +1,41 @@
+@page "/admins"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using GlamGearAdmin.Models
+@using GlamGearAdmin.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="admins/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Admin">
+    <PropertyColumn Property="admin => admin.Username" />
+    <PropertyColumn Property="admin => admin.GivenName" />
+    <PropertyColumn Property="admin => admin.MiddleName" />
+    <PropertyColumn Property="admin => admin.FamilyName" />
+    <PropertyColumn Property="admin => admin.EmailAdd" />
+    <PropertyColumn Property="admin => admin.RoleType" />
+
+    <TemplateColumn Context="admin">
+        <a href="@($"admins/edit?userid={admin.UserID}")">Edit</a> |
+        <a href="@($"admins/details?userid={admin.UserID}")">Details</a> |
+        <a href="@($"admins/delete?userid={admin.UserID}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorWebAppAdminContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

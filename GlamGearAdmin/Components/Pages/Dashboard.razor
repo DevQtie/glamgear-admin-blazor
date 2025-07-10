@@ -1,7 +1,76 @@
 ﻿@page "/"
+@using GlamGearAdmin.Data
+@using Microsoft.EntityFrameworkCore
+@using GlamGearAdmin.Models
+@rendermode InteractiveServer
+@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+@inject NavigationManager NavigationManager
 
 <PageTitle>Dashboard</PageTitle>
 
-<h1>Hello, world!</h1>
+@if (admin is null)
+{
+  <p><em>Loading...</em></p>
+}
+else
+{
+  @if (username == null)
+  {
+    <h1>Welcome back, @fullName!</h1>
+  }
+  else
+  {
+    <h1>Welcome back, @username!</h1>
+  }
+}
 
 This is the Dashboard.
+
+<button class="btn btn-primary" @onclick="ButtonClicked">Manage Admins</button>
+
+@code {
+  private Admin? admin;
+  private string? fullName;
+  private string? username;
+  private void ButtonClicked() => NavigationManager.NavigateTo("admins");
+
+  protected override async Task OnInitializedAsync()
+  {
+    using var context = DbFactory.CreateDbContext();
+    admin = await context.Admin.FirstOrDefaultAsync(m => m.RoleType == "Developer");
+
+    if (admin is null)
+    {
+      NavigationManager.NavigateTo("notfound");
+    }
+    else
+    {
+      fullName = String.Concat(admin.GivenName, " ", admin.MiddleName == null ? "" : admin.MiddleName, admin.MiddleName ==
+      null ? "" : " ", admin.FamilyName);
+      username = admin.Username?.ToString();
+    }
+  }
+  @* private void ButtonClicked() @*for testing purposes
+  {
+    string userID = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
+    int getLength = userID.Count();
+    string reprocessedStringID = "";
+    string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+    for (int i = 0; i <= getLength; i++)
+    {
+      if (i < 13)
+      {
+        reprocessedStringID = userID.Substring(0, i);
+        if (i == 12)
+        {
+          break;
+        }
+      }
+    }
+    string concatString = String.Concat("USER-", dateNow, "-", reprocessedStringID);
+    Console.WriteLine(userID);
+    Console.WriteLine(reprocessedStringID);
+    Console.WriteLine(getLength);
+    Console.WriteLine(concatString);
+  } *@
+}

@@ -17,16 +17,16 @@
             </NavLink>
         </div>
 
-        @* inline "cus-active-main" class (reserved css class in the meantime) bool statement source code original reference (/w DevQt's modification): https://copilot.microsoft.com/shares/ZV8kXciTxVV73FVcPicdf *@
+        @* inline "custom-active-main" class (reserved css class in the meantime) bool statement source code original reference (/w DevQt's modification): https://copilot.microsoft.com/shares/ZV8kXciTxVV73FVcPicdf *@
         <div class="nav-item px-3">
-            <NavLink class="@(navSubmenu == NavSubmenu.FirstSubM ? "nav-link cus-active-main" : "nav-link")"
+            <NavLink class="@(navSubmenu == NavSubmenu.FirstSubM ? "nav-link custom-active-main" : "nav-link")"
                 @onclick="() => TogleSubmenu(NavSubmenu.FirstSubM)">
                 <span class="bi bi-boxes-nav-menu" aria-hidden="true"></span>
                 <div class="d-flex justify-content-between align-items-center">
                     <div><span>Products</span></div>
                     <div class="px-2 d-flex align-items-center justify-content-center">
                         <span
-                            class="@(navSubmenu == NavSubmenu.FirstSubM ? "bi bi-chevron-up-sub-menu" : "bi bi-chevron-down-sub-menu")"
+                            class="@(navSubmenu == NavSubmenu.FirstSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
                             aria-hidden="true"></span>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                     <div><span>Orders</span></div>
                     <div class="px-2 d-flex align-items-center justify-content-center">
                         <span
-                            class="@(navSubmenu == NavSubmenu.SecondSubM ? "bi bi-chevron-up-sub-menu" : "bi bi-chevron-down-sub-menu")"
+                            class="@(navSubmenu == NavSubmenu.SecondSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
                             aria-hidden="true"></span>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                     <div><span>Users</span></div>
                     <div class="px-2 d-flex align-items-center justify-content-center">
                         <span
-                            class="@(navSubmenu == NavSubmenu.ThirdSubM ? "bi bi-chevron-up-sub-menu" : "bi bi-chevron-down-sub-menu")"
+                            class="@(navSubmenu == NavSubmenu.ThirdSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
                             aria-hidden="true"></span>
                     </div>
                 </div>

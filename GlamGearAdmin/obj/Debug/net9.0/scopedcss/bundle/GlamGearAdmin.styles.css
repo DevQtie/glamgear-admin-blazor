@@ -1,3 +1,5 @@
+@import '_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.25o87uqmvr.bundle.scp.css';
+
 /* _content/GlamGearAdmin/Components/Layout/MainLayout.razor.rz.scp.css */
 .page[b-y8gzvrohei] {
     position: relative;
@@ -129,6 +131,16 @@ main[b-y8gzvrohei] {
     position: relative;
     width: 1.25rem;
     height: 1.25rem;
+    margin-right: 0.75rem;
+    top: -1px;
+    background-size: cover;
+}
+
+.custom-bi[b-9ofngwxw24] {
+    display: inline-block;
+    position: relative;
+    width: 0.75rem;
+    height: 0.75rem;
     margin-right: 0.75rem;
     top: -1px;
     background-size: cover;
