@@ -247,3 +247,11 @@ main[b-y8gzvrohei] {
         overflow-y: auto;
     }
 }
+/* _content/GlamGearAdmin/Components/Pages/CRUD/AdminPages/Index.razor.rz.scp.css */
+[b-dora2d1ph6] tr {
+  height: 3em;
+}
+
+[b-dora2d1ph6] tr>td {
+  vertical-align: middle;
+}

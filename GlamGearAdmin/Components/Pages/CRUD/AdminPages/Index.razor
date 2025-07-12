@@ -1,4 +1,5 @@
 @page "/admins"
+@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using GlamGearAdmin.Models
@@ -14,33 +15,31 @@
     <a href="admins/create">Create New</a>
 </p>
 
+<input type="search" @bind="givenNameFilter" @bind:event="oninput" />
+
 <div>
-    <form action="/admins" data-enhance>
-        <input type="search" name="emailAddFilter" />
-        <input type="submit" value="Search" />
-    </form>
+
+    <QuickGrid Class="table" Items="FilteredAdmin" Pagination="pagination">
+        <PropertyColumn Property="admin => admin.Username" Sortable="true" />
+        <PropertyColumn Property="admin => admin.GivenName" Sortable="true" />
+        <PropertyColumn Property="admin => admin.MiddleName" Sortable="true" />
+        <PropertyColumn Property="admin => admin.FamilyName" Sortable="true" />
+        <PropertyColumn Property="admin => admin.EmailAdd" Sortable="true" />
+        <PropertyColumn Property="admin => admin.RoleType" Sortable="true" />
+
+        <TemplateColumn Context="admin">
+            <a href="@($"admins/edit?userid={admin.UserID}")">Edit</a> |
+            <a href="@($"admins/details?userid={admin.UserID}")">Details</a> |
+            <a href="@($"admins/delete?userid={admin.UserID}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
 </div>
-
-<QuickGrid Class="table" Items="FilteredAdmin">
-    <PropertyColumn Property="admin => admin.Username" />
-    <PropertyColumn Property="admin => admin.GivenName" />
-    <PropertyColumn Property="admin => admin.MiddleName" />
-    <PropertyColumn Property="admin => admin.FamilyName" />
-    <PropertyColumn Property="admin => admin.EmailAdd" />
-    <PropertyColumn Property="admin => admin.RoleType" />
-
-    <TemplateColumn Context="admin">
-        <a href="@($"admins/edit?userid={admin.UserID}")">Edit</a> |
-        <a href="@($"admins/details?userid={admin.UserID}")">Details</a> |
-        <a href="@($"admins/delete?userid={admin.UserID}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+<Paginator State="pagination" />
 
 @code {
     private BlazorWebAppAdminContext context = default!;
-
-    [SupplyParameterFromQuery]
-    private string? emailAddFilter { get; set; }
+    private PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
+    private string givenNameFilter = string.Empty;
 
     protected override void OnInitialized()
     {
@@ -50,5 +49,5 @@
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 
     private IQueryable<Admin> FilteredAdmin =>
-    context.Admin.Where(m => m.EmailAdd!.Contains(emailAddFilter ?? string.Empty));
+    context.Admin.Where(m => m.GivenName!.ToLower().Contains(givenNameFilter.ToLower()));
 }
