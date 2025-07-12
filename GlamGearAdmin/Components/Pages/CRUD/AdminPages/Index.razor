@@ -14,7 +14,14 @@
     <a href="admins/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Admin">
+<div>
+    <form action="/admins" data-enhance>
+        <input type="search" name="emailAddFilter" />
+        <input type="submit" value="Search" />
+    </form>
+</div>
+
+<QuickGrid Class="table" Items="FilteredAdmin">
     <PropertyColumn Property="admin => admin.Username" />
     <PropertyColumn Property="admin => admin.GivenName" />
     <PropertyColumn Property="admin => admin.MiddleName" />
@@ -32,10 +39,16 @@
 @code {
     private BlazorWebAppAdminContext context = default!;
 
+    [SupplyParameterFromQuery]
+    private string? emailAddFilter { get; set; }
+
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+    private IQueryable<Admin> FilteredAdmin =>
+    context.Admin.Where(m => m.EmailAdd!.Contains(emailAddFilter ?? string.Empty));
 }
