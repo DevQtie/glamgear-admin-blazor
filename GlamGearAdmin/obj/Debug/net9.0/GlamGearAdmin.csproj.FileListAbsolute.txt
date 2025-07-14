@@ -1,8 +1,13 @@
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\appsettings.json
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\Data\SQLite\BlazorWebAppAdminContext-15eb91e4-6f39-4d33-9c10-440397a9d135.db
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.staticwebassets.runtime.json
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.staticwebassets.endpoints.json
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.exe
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.deps.json
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.runtimeconfig.json
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.dll
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.pdb
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\Azure.Identity.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\Humanizer.dll
@@ -294,6 +299,8 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\o
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\scopedcss\Components\Pages\SQLite\CRUD\AdminPages\Index.razor.rz.scp.css
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\scopedcss\Components\Pages\SQLServer\CRUD\AdminPages\Index.razor.rz.scp.css
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\scopedcss\bundle\GlamGearAdmin.styles.css
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\scopedcss\projectbundle\GlamGearAdmin.bundle.scp.css
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\unlu0xluo6-eu7w3d5g1a.gz
@@ -343,6 +350,8 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\o
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\rlt3ybm0md-63fj8s7r0e.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\qjw3s91sx2-0j3bgjxly4.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\3gin1ph7ub-25o87uqmvr.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\11h106u7cp-34r2rn6cl5.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\0vcpqh6vku-q86zjvvxtf.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\staticwebassets.development.json
@@ -351,13 +360,5 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\o
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\GlamGearAdmin.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\refint\GlamGearAdmin.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\GlamGearAdmin.pdb
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\Data\BlazorWebAppAdminContext-15eb91e4-6f39-4d33-9c10-440397a9d135.db
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.deps.json
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.runtimeconfig.json
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.dll
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Debug\net9.0\GlamGearAdmin.pdb
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\GlamGearAdmin.genruntimeconfig.cache
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\ref\GlamGearAdmin.dll
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\scopedcss\Components\Pages\CRUD\AdminPages\Index.razor.rz.scp.css
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\11h106u7cp-n0z8bvr3ge.gz
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Debug\net9.0\compressed\0vcpqh6vku-bw6vtm2gv3.gz

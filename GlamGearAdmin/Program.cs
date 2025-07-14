@@ -1,8 +1,11 @@
 using GlamGearAdmin.Components;
 using Microsoft.EntityFrameworkCore;
-using GlamGearAdmin.Data;
+using GlamGearAdmin.Data.SQLite;
+using GlamGearAdmin.Data.SQLServer;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BlazorSQLServerContext") ?? throw new InvalidOperationException("Connection string 'BlazorSQLServerContext' not found.")));
 builder.Services.AddDbContextFactory<BlazorWebAppAdminContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BlazorWebAppAdminContext") ?? throw new InvalidOperationException("Connection string 'BlazorWebAppAdminContext' not found.")));
 

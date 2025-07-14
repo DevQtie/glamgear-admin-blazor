@@ -3,6 +3,21 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 # Changelog
 
+## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
+
+## 1.4.0.0-alpha
+
+* TODO: (Subject for fix) A 'paper cut' bug occurs when the page number is out of bounds, especially if the total page count changes dynamically (if play around with per page against next page); kindly visit at /sql_server/crud/admin_pages.
+* Show all page by collaboration of ChatGPT and DevQt: https://chatgpt.com/s/t_6874cd7fc520819180ad4c3d7be53e5a
+* Sorting function; assisted by ChatGPT with minor bug fixes by DevQt: https://chatgpt.com/s/t_6874ba90d3808191839d07d65f0e4830 
+* Space between layout by utilizing the Bootstrap v5.3.3, assisted by ChatGPT: https://chatgpt.com/s/t_6874abf840188191a3b10382aad4ed5f
+* Beautified search input; assisted by Copilot: https://copilot.microsoft.com/shares/vprbpLKbBM74VchNRz1Fj
+* Per page with 15, 30, and 50 options with 15 as default.
+* Pagination with client-side markup structure
+* Basic implementation of SQLServerHelper.
+* Optimized and improved Index.razor to display data fetched from SQL Server database.
+* Successful connection to SQL Server 2017.
+
 ## 1.3.0.0-alpha
 
 * Refactoring search feature from client-side rendering (CSR) into server-side rendering (SSR) using SignalR.

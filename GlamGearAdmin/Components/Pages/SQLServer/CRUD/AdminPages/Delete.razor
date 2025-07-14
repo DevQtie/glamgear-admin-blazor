@@ -1,0 +1,64 @@
+@page "/sql_server/crud/admin_pages/delete"
+@using Microsoft.EntityFrameworkCore
+@using GlamGearAdmin.Models.SQLServer
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Admin</h2>
+    <hr />
+    @if (admin is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">ID</dt>
+            <dd class="col-sm-10">@admin.Id</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Random Text</dt>
+            <dd class="col-sm-10">@admin.RandomText</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">MiddleName</dt>
+            <dd class="col-sm-10">@admin.DtStamp</dd>
+        </dl>
+        <EditForm method="post" Model="admin" OnValidSubmit="DeleteAdmin" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(admin is null)">Delete</button> |
+            <a href="/sql_server/crud/admin_pages">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private RandText? admin;
+
+    [SupplyParameterFromQuery]
+    private int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        admin = await context.RandText.FirstOrDefaultAsync(m => m.Id == id);
+
+        if (admin is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteAdmin()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.RandText.Remove(admin!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/sql_server/crud/admin_pages");
+    }
+}

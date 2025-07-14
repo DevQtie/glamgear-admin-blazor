@@ -1,18 +1,20 @@
-@page "/admins"
+@page "/sqlite/crud/admin_pages"
 @rendermode InteractiveServer
+@using GlamGearAdmin.Data.SQLite
+@using GlamGearAdmin.Models.SQLite
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using GlamGearAdmin.Models
 @using GlamGearAdmin.Data
 @implements IAsyncDisposable
-@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
 
 <PageTitle>Index</PageTitle>
 
 <h1>Index</h1>
 
 <p>
-    <a href="admins/create">Create New</a>
+    <a href="sqlite/crud/admin_pages/create">Create New</a>
 </p>
 
 <input type="search" @bind="givenNameFilter" @bind:event="oninput" />
@@ -28,9 +30,9 @@
         <PropertyColumn Property="admin => admin.RoleType" Sortable="true" />
 
         <TemplateColumn Context="admin">
-            <a href="@($"admins/edit?userid={admin.UserID}")">Edit</a> |
-            <a href="@($"admins/details?userid={admin.UserID}")">Details</a> |
-            <a href="@($"admins/delete?userid={admin.UserID}")">Delete</a>
+            <a href="@($"sqlite/crud/admin_pages/edit?userid={admin.UserID}")">Edit</a> |
+            <a href="@($"sqlite/crud/admin_pages/details?userid={admin.UserID}")">Details</a> |
+            <a href="@($"sqlite/crud/admin_pages/delete?userid={admin.UserID}")">Delete</a>
         </TemplateColumn>
     </QuickGrid>
 </div>

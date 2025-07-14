@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <Version>1.3.0.0-alpha</Version>
+    <Version>1.4.0.0-alpha</Version>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -10,7 +10,7 @@
   <ItemGroup>
     <!-- source code original reference: https://copilot.microsoft.com/shares/tmMjBqstC6xfUYfx4XmYu -->
     <!-- relevant references: https://stackoverflow.com/a/44378406/14041392; https://stackoverflow.com/a/63336372/14041392 -->
-    <Content Include="Data\BlazorWebAppAdminContext-15eb91e4-6f39-4d33-9c10-440397a9d135.db">
+    <Content Include="Data\SQLite\BlazorWebAppAdminContext-15eb91e4-6f39-4d33-9c10-440397a9d135.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.6" />

@@ -1,0 +1,50 @@
+@page "/sql_server/crud/admin_pages/details"
+@using Microsoft.EntityFrameworkCore
+@using GlamGearAdmin.Models.SQLServer
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Admin</h2>
+    <hr />
+    @if (admin is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Username</dt>
+            <dd class="col-sm-10">@admin.Id</dd>
+            <dt class="col-sm-2">GivenName</dt>
+            <dd class="col-sm-10">@admin.RandomText</dd>
+            <dt class="col-sm-2">MiddleName</dt>
+            <dd class="col-sm-10">@admin.DtStamp</dd>
+        </dl>
+        <div>
+            <a href="@($"/sql_server/crud/admin_pages/edit?userid={admin.Id}")">Edit</a> |
+            <a href="@($"/sql_server/crud/admin_pages")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private RandText? admin;
+
+    [SupplyParameterFromQuery]
+    private int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        admin = await context.RandText.FirstOrDefaultAsync(m => m.Id == id);
+
+        if (admin is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

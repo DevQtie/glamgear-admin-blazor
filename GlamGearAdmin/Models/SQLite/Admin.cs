@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace GlamGearAdmin.Models;
+namespace GlamGearAdmin.Models.SQLite;
 
 public class Admin
 {

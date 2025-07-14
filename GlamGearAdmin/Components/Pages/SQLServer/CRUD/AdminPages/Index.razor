@@ -1,0 +1,348 @@
+@* @page "/sql_server/crud/admin_pages"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using GlamGearAdmin.Models.SQLServer
+@using GlamGearAdmin.Data.SQLServer
+@implements IAsyncDisposable
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="sql_server/crud/admin_pages/create">Create New</a>
+</p>
+
+@if (admins is null)
+{
+    <p>Loading...</p>
+
+}
+else
+{
+
+    <input type="search" @bind="randomTextFilter" @bind:event="oninput" />
+    <div>
+
+        <QuickGrid Class="table" TGridItem="RandText" Items="admins">
+            <PropertyColumn Property="admins => admins.Id" />
+            <PropertyColumn Property="admins => admins.RandomText" />
+            <PropertyColumn Property="admins => admins.DtStamp" />
+
+            <TemplateColumn Context="admins">
+                <a href="@($"sql_server/crud/admin_pages/edit?userid={admins.Id}")">Edit</a> |
+                <a href="@($"sql_server/crud/admin_pages/details?userid={admins.Id}")">Details</a>
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
+}
+
+
+@code {
+    private BlazorSQLServerContext context = default!;
+    private IQueryable<RandText>? admins;
+    private PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
+    private string randomTextFilter = string.Empty;
+
+    @* protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+
+        @* admins = await context.Admin
+        .FromSqlRaw("EXEC rpiAPSM_spRandomText")
+        .ToListAsync(); 
+    }
+
+    private IQueryable<RandText> GetUsersAsync()
+    {
+        return context.RandText
+        .FromSqlRaw("EXEC rpiAPSM_spRandomText").AsQueryable<RandText>().Where(data =>
+        data.RandomText!.ToLower().Contains(randomTextFilter.ToLower()));
+    }
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+        admins = GetUsersAsync();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+} has bugs *@
+
+@page "/sql_server/crud/admin_pages"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using GlamGearAdmin.Models.SQLServer
+@using GlamGearAdmin.Data.SQLServer
+@* @implements IAsyncDisposable *@
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="sql_server/crud/admin_pages/create">Create New</a>
+</p>
+
+@if (admins is null)
+{
+    <p>Loading...</p>
+
+}
+else
+{
+    <div class="input-group mb-3 w-50">
+        <input type="search" class="form-control border-outline-secondary" placeholder="Filter by random text"
+            @bind="randomTextFilter" @bind:event="oninput" />
+    </div>
+    <div>
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+            <div>
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
+                            <button class="page-link" @onclick="PreviousPage">Previous</button>
+                        </li>
+                        <li class="page-item">
+                            <span class="page-link text-secondary bg-transparent">Page
+                                @pagination.CurrentPage of @TotalPages</span>
+                        </li>
+                        <li class="page-item">
+                            <span class="page-link text-secondary bg-transparent">Showing @pagedAdmins.Count() of
+                                @filteredAdmins.Count() records</span>
+                        </li>
+                        <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
+                            <button class="page-link" @onclick="NextPage">Next</button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div role="group">
+                <button class="@(initPerPage == PaginationPerPage.Five ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="FivePerPageBtn">@($"{(int)PaginationPerPage.Five}")</button>
+                <button class="@(initPerPage == PaginationPerPage.Ten ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="TenPerPageBtn">@($"{(int)PaginationPerPage.Ten}")</button>
+                <button
+                    class="@(initPerPage == PaginationPerPage.Fifteen ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="FifteenPerPageBtn">@($"{(int)PaginationPerPage.Fifteen}")</button>
+                <button class="@(initPerPage == PaginationPerPage.Thirty ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="ThirthPerPageBtn">@($"{(int)PaginationPerPage.Thirty}")</button>
+                <button class="@(initPerPage == PaginationPerPage.Fifty ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="FiftyPerPageBtn">@($"{(int)PaginationPerPage.Fifty}")</button>
+                <button
+                    class="@(initPerPage == PaginationPerPage.ShowAll ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="ShowAllPerPageBtn">Show All</button>
+                <span class="fw-normal">Per Page</span>
+            </div>
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th @onclick='() => SortBy("Id")' class="cursor-pointer">ID @SortIcon("Id")</th>
+                    <th @onclick='() => SortBy("RandomText")' class="cursor-pointer">Random Text @SortIcon("RandomText")
+                    </th>
+                    <th @onclick='() => SortBy("DtStamp")' class="cursor-pointer">Date @SortIcon("DtStamp")</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in SortedAdmins)
+                {
+                    <tr>
+                        <td>@a.Id</td>
+                        <td>@a.RandomText</td>
+                        <td>@a.DtStamp</td>
+                        <td>
+                            <a href="@($"sql_server/crud/admin_pages/edit?userid={a.Id}")">Edit</a> |
+                            <a href="@($"sql_server/crud/admin_pages/details?userid={a.Id}")">Details</a> |
+                            <a href="@($"sql_server/crud/admin_pages/delete?userid={a.Id}")">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+            <div>
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
+                            <button class="page-link" @onclick="PreviousPage">Previous</button>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">Page @pagination.CurrentPage of @TotalPages</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">Showing @pagedAdmins.Count() of @filteredAdmins.Count() records</span>
+                        </li>
+                        <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
+                            <button class="page-link" @onclick="NextPage">Next</button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div role="group">
+                <button class="@(initPerPage == PaginationPerPage.Five ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="FivePerPageBtn">@($"{(int)PaginationPerPage.Five}")</button>
+                <button class="@(initPerPage == PaginationPerPage.Ten ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="TenPerPageBtn">@($"{(int)PaginationPerPage.Ten}")</button>
+                <button
+                    class="@(initPerPage == PaginationPerPage.Fifteen ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="FifteenPerPageBtn">@($"{(int)PaginationPerPage.Fifteen}")</button>
+                <button class="@(initPerPage == PaginationPerPage.Thirty ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="ThirthPerPageBtn">@($"{(int)PaginationPerPage.Thirty}")</button>
+                <button class="@(initPerPage == PaginationPerPage.Fifty ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="FiftyPerPageBtn">@($"{(int)PaginationPerPage.Fifty}")</button>
+                <button
+                    class="@(initPerPage == PaginationPerPage.ShowAll ? "btn btn-primary" : "btn btn-outline-secondary")"
+                    @onclick="ShowAllPerPageBtn">Show All</button>
+                <span class="fw-normal">Per Page</span>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private enum PaginationPerPage
+    {
+        Five = 5,
+        Ten = 10,
+        Fifteen = 15,
+        Thirty = 30,
+        Fifty = 50,
+        ShowAll = 0,
+
+    }
+    private static PaginationPerPage initPerPage = PaginationPerPage.Five;
+    private BlazorSQLServerContext context = default!;
+    private List<RandText> admins = new();
+    private PaginationState pagination = new PaginationState();
+    private string randomTextFilter = string.Empty;
+
+    private IEnumerable<RandText> filteredAdmins => (string.IsNullOrWhiteSpace(randomTextFilter) || initPerPage ==
+    PaginationPerPage.ShowAll)
+    ? admins
+    : admins.Where(data => data.RandomText?.ToLower().Contains(randomTextFilter.ToLower()) == true);
+
+    // Apply pagination
+    @*Customized Pagination Reference: https://chatgpt.com/s/t_68748020ee4081918a709d46d539f342*@
+    private IEnumerable<RandText> pagedAdmins => filteredAdmins
+    .Skip((pagination.CurrentPage - 1) * pagination.ItemsPerPage)
+    .Take(pagination.ItemsPerPage);
+
+    private int TotalPages => (int)Math.Ceiling((double)filteredAdmins.Count() / pagination.ItemsPerPage);
+    private string currentSortColumn = "Id";
+    private bool sortAscending = false;
+    private IEnumerable<RandText> SortedAdmins => currentSortColumn switch
+    {
+        "Id" => sortAscending ? pagedAdmins.OrderBy(a => a.Id) : pagedAdmins.OrderByDescending(a => a.Id),
+        "RandomText" => sortAscending ? pagedAdmins.OrderBy(a => a.RandomText) : pagedAdmins.OrderByDescending(a =>
+        a.RandomText),
+        "DtStamp" => sortAscending ? pagedAdmins.OrderBy(a => a.DtStamp) : pagedAdmins.OrderByDescending(a => a.DtStamp),
+        _ => pagedAdmins
+    };
+    private void SortBy(string column)
+    {
+        if (currentSortColumn == column)
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            currentSortColumn = column;
+            sortAscending = true;
+        }
+    }
+
+    private void FivePerPageBtn()
+    {
+        initPerPage = PaginationPerPage.Five;
+    }
+
+    private void TenPerPageBtn()
+    {
+        initPerPage = PaginationPerPage.Ten;
+    }
+
+    private void FifteenPerPageBtn()
+    {
+        initPerPage = PaginationPerPage.Fifteen;
+    }
+
+    private void ThirthPerPageBtn()
+    {
+        initPerPage = PaginationPerPage.Thirty;
+    }
+
+    private void FiftyPerPageBtn()
+    {
+        initPerPage = PaginationPerPage.Fifty;
+    }
+
+    private void ShowAllPerPageBtn()
+    {
+        initPerPage = PaginationPerPage.ShowAll;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbFactory.CreateDbContext();
+        var sQLServerHelper = new SQLServerHelper(context);
+        admins = await sQLServerHelper.GetRandTextsAsync("EXEC rpiAPSM_spRandomText");
+        pagination.TotalRecords = admins.Count;
+    }
+
+    private void NextPage()
+    {
+        if (pagination.CurrentPage < TotalPages)
+        {
+            pagination.CurrentPage++;
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (pagination.CurrentPage > 1)
+        {
+            pagination.CurrentPage--;
+        }
+    }
+
+
+    private RenderFragment SortIcon(string column) => builder =>
+    {
+        if (currentSortColumn == column)
+        {
+            builder.AddContent(0, sortAscending ? "▲" : "▼");
+        }
+    };
+
+    public class PaginationState
+    {
+        public int ItemsPerPage
+        {
+            get
+            {
+                return initPerPage == PaginationPerPage.ShowAll
+                ? TotalRecords
+                : (int)initPerPage;
+            }
+        }
+        @* public int ItemsPerPage
+        {
+            get => (int)initPerPage; set => initPerPage = (PaginationPerPage)value;
+        } *@
+        public int CurrentPage { get; set; } = 1;
+
+        // Injected or externally set by your page
+        public int TotalRecords { get; set; }
+    }
+
+    @* public async ValueTask DisposeAsync() => await context.DisposeAsync(); *@
+}

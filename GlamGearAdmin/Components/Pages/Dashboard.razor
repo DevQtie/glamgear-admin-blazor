@@ -1,9 +1,10 @@
-﻿@page "/"
+﻿@page "/dashboard"
 @using GlamGearAdmin.Data
+@using GlamGearAdmin.Models.SQLite
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models
 @rendermode InteractiveServer
-@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
 @inject NavigationManager NavigationManager
 
 <PageTitle>Dashboard</PageTitle>
@@ -36,7 +37,7 @@ This is the Dashboard.
   private Admin? admin;
   private string? fullName;
   private string? username;
-  private void ButtonClicked() => NavigationManager.NavigateTo("admins");
+  private void ButtonClicked() => NavigationManager.NavigateTo("sql_server/crud/admin_pages");
 
   protected override async Task OnInitializedAsync()
   {

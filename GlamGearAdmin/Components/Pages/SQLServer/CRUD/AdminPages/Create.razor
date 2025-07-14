@@ -1,0 +1,44 @@
+@page "/sql_server/crud/admin_pages/create"
+@using Microsoft.EntityFrameworkCore
+@using GlamGearAdmin.Models.SQLServer
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Admin</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Admin" OnValidSubmit="AddAdmin" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="mb-3">
+                <label for="randomText" class="form-label">Random Text:</label>
+                <InputText id="randomText" @bind-Value="Admin.RandomText" class="form-control" />
+                <ValidationMessage For="() => Admin.RandomText" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/sql_server/crud/admin_pages">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private RandText Admin { get; set; } = new();
+
+    @* To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks. *@
+    private async Task AddAdmin()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.RandText.Add(Admin);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/sql_server/crud/admin_pages");
+    }
+}

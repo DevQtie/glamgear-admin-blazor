@@ -1,7 +1,8 @@
-@page "/admins/details"
+@page "/sqlite/crud/admin_pages/details"
+@using GlamGearAdmin.Models.SQLite
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models
-@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
@@ -34,8 +35,8 @@
             <dd class="col-sm-10">@admin.RoleType</dd>
         </dl>
         <div>
-            <a href="@($"/admins/edit?userid={admin.UserID}")">Edit</a> |
-            <a href="@($"/admins")">Back to List</a>
+            <a href="@($"/sqlite/crud/admin_pages/edit?userid={admin.UserID}")">Edit</a> |
+            <a href="@($"/sqlite/crud/admin_pages")">Back to List</a>
         </div>
     }
 </div>

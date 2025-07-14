@@ -1,7 +1,8 @@
-@page "/admins/create"
+@page "/sqlite/crud/admin_pages/create"
+@using GlamGearAdmin.Models.SQLite
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models
-@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
 @inject NavigationManager NavigationManager
 
 <PageTitle>Create</PageTitle>
@@ -51,7 +52,7 @@
 </div>
 
 <div>
-    <a href="/admins">Back to List</a>
+    <a href="/sqlite/crud/admin_pages">Back to List</a>
 </div>
 
 @code {
@@ -81,6 +82,6 @@
         Admin.UserID = concatString;
         context.Admin.Add(Admin);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/admins");
+        NavigationManager.NavigateTo("/sqlite/crud/admin_pages");
     }
 }

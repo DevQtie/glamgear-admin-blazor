@@ -1,7 +1,8 @@
-@page "/admins/edit"
+@page "/sqlite/crud/admin_pages/edit"
+@using GlamGearAdmin.Models.SQLite
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models
-@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
@@ -59,7 +60,7 @@ else
 }
 
 <div>
-    <a href="/admins">Back to List</a>
+    <a href="/sqlite/crud/admin_pages">Back to List</a>
 </div>
 
 @code {
@@ -104,7 +105,7 @@ else
             }
         }
 
-        NavigationManager.NavigateTo("/admins");
+        NavigationManager.NavigateTo("/sqlite/crud/admin_pages");
     }
 
     private bool AdminExists(string? userid)

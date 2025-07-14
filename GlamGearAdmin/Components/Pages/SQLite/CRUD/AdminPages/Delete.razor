@@ -1,7 +1,8 @@
-@page "/admins/delete"
+@page "/sqlite/crud/admin_pages/delete"
+@using GlamGearAdmin.Models.SQLite
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models
-@inject IDbContextFactory<GlamGearAdmin.Data.BlazorWebAppAdminContext> DbFactory
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
 @inject NavigationManager NavigationManager
 
 <PageTitle>Delete</PageTitle>
@@ -44,7 +45,7 @@
         </dl>
         <EditForm method="post" Model="admin" OnValidSubmit="DeleteAdmin" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(admin is null)">Delete</button> |
-            <a href="/admins">Back to List</a>
+            <a href="/sqlite/crud/admin_pages">Back to List</a>
         </EditForm>
     }
 </div>
@@ -71,6 +72,6 @@
         using var context = DbFactory.CreateDbContext();
         context.Admin.Remove(admin!);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/admins");
+        NavigationManager.NavigateTo("/sqlite/crud/admin_pages");
     }
 }
