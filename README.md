@@ -5,6 +5,12 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.4.0.1-alpha
+
+* Header top and bottom.
+* Show all per page bug fixed
+* 1.4.0.0 TODO: (FIXED) A 'paper cut' bug occurs when the page number is out of bounds, especially if the total page count changes dynamically (if play around with per page against next page); kindly visit at /sql_server/crud/admin_pages.
+
 ## 1.4.0.0-alpha
 
 * TODO: (Subject for fix) A 'paper cut' bug occurs when the page number is out of bounds, especially if the total page count changes dynamically (if play around with per page against next page); kindly visit at /sql_server/crud/admin_pages.

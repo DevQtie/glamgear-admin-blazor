@@ -166,6 +166,15 @@ else
                     </tr>
                 }
             </tbody>
+            <thead>
+                <tr>
+                    <th @onclick='() => SortBy("Id")' class="cursor-pointer">ID @SortIcon("Id")</th>
+                    <th @onclick='() => SortBy("RandomText")' class="cursor-pointer">Random Text @SortIcon("RandomText")
+                    </th>
+                    <th @onclick='() => SortBy("DtStamp")' class="cursor-pointer">Date @SortIcon("DtStamp")</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
         </table>
 
         <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
@@ -226,10 +235,11 @@ else
     private PaginationState pagination = new PaginationState();
     private string randomTextFilter = string.Empty;
 
-    private IEnumerable<RandText> filteredAdmins => (string.IsNullOrWhiteSpace(randomTextFilter) || initPerPage ==
+    private IEnumerable<RandText> filteredAdmins => string.IsNullOrWhiteSpace(randomTextFilter)
+    ? admins : (initPerPage ==
     PaginationPerPage.ShowAll)
-    ? admins
-    : admins.Where(data => data.RandomText?.ToLower().Contains(randomTextFilter.ToLower()) == true);
+    ? admins.Where(data => data.RandomText?.ToLower().Contains(randomTextFilter.ToLower()) == true) : admins.Where(data =>
+    data.RandomText?.ToLower().Contains(randomTextFilter.ToLower()) == true);
 
     // Apply pagination
     @*Customized Pagination Reference: https://chatgpt.com/s/t_68748020ee4081918a709d46d539f342*@
@@ -238,8 +248,8 @@ else
     .Take(pagination.ItemsPerPage);
 
     private int TotalPages => (int)Math.Ceiling((double)filteredAdmins.Count() / pagination.ItemsPerPage);
-    private string currentSortColumn = "Id";
-    private bool sortAscending = false;
+    private string currentSortColumn = ""; // to let the SP's select ordered by script handle sorting
+    private bool sortAscending = true;
     private IEnumerable<RandText> SortedAdmins => currentSortColumn switch
     {
         "Id" => sortAscending ? pagedAdmins.OrderBy(a => a.Id) : pagedAdmins.OrderByDescending(a => a.Id),
@@ -269,26 +279,46 @@ else
     private void TenPerPageBtn()
     {
         initPerPage = PaginationPerPage.Ten;
+        if (pagination.CurrentPage > TotalPages)
+        {
+            pagination.CurrentPage = TotalPages;
+        }
     }
 
     private void FifteenPerPageBtn()
     {
         initPerPage = PaginationPerPage.Fifteen;
+        if (pagination.CurrentPage > TotalPages)
+        {
+            pagination.CurrentPage = TotalPages;
+        }
     }
 
     private void ThirthPerPageBtn()
     {
         initPerPage = PaginationPerPage.Thirty;
+        if (pagination.CurrentPage > TotalPages)
+        {
+            pagination.CurrentPage = TotalPages;
+        }
     }
 
     private void FiftyPerPageBtn()
     {
         initPerPage = PaginationPerPage.Fifty;
+        if (pagination.CurrentPage > TotalPages)
+        {
+            pagination.CurrentPage = TotalPages;
+        }
     }
 
     private void ShowAllPerPageBtn()
     {
         initPerPage = PaginationPerPage.ShowAll;
+        if (pagination.CurrentPage > TotalPages)
+        {
+            pagination.CurrentPage = TotalPages;
+        }
     }
     protected override async Task OnInitializedAsync()
     {
