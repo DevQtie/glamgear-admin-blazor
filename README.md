@@ -5,6 +5,10 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.5.0.0-alpha
+
+* Added user authentication code generated using `dotnet aspnet-codegenerator blazor-identity -dbProvider sqlserver -dc GlamGearAdmin.Data.SQLServer.BlazorSqlServerAuthContext -lf`, for instruction reference: https://stackoverflow.com/a/79701566/14041392
+
 ## 1.4.0.1-alpha
 
 * Header top and bottom.
