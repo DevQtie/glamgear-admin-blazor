@@ -5,6 +5,11 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.5.0.1-alpha
+
+* TODO: The `Auth.razor` page shouldn't be visible to user, if not authenticated, I prefer not to manage the content visibility through <Authorized> and <NotAuthorized> tags-->
+* Authentication and redirection fixes.
+
 ## 1.5.0.0-alpha
 
 * Added user authentication code generated using `dotnet aspnet-codegenerator blazor-identity -dbProvider sqlserver -dc GlamGearAdmin.Data.SQLServer.BlazorSqlServerAuthContext -lf`, for instruction reference: https://stackoverflow.com/a/79701566/14041392

@@ -1,0 +1,20 @@
+﻿@page "/auth"
+@using Microsoft.AspNetCore.Authorization
+
+@* @attribute [Authorize] *@
+
+<PageTitle>Auth</PageTitle>
+
+<CascadingAuthenticationState>
+    <!--TODO: This page shouldn't be visible to user, if not authenticated, I prefer not to manage the content visibility through <Authorized> and <NotAuthorized> tags-->
+    <AuthorizeView>
+        <Authorized>
+            <h1>You are authenticated</h1>
+            Hello @context.User.Identity?.Name!
+        </Authorized>
+        <NotAuthorized>
+            <h1>Access Denied</h1>
+            <p>You must be logged in to access this page.</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
