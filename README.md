@@ -5,6 +5,11 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.6.0.0-alpha
+
+* The recommended `FromSql` currently supports static `SqlParameter` in the meantime.
+* Implementing SQLServerHelper class and MinimalDbSettings class for code scalability and manageability.
+
 ## 1.5.0.1-alpha
 
 * TODO: The `Auth.razor` page shouldn't be visible to user, if not authenticated, I prefer not to manage the content visibility through <Authorized> and <NotAuthorized> tags-->

@@ -1,83 +1,10 @@
-@* @page "/sql_server/crud/admin_pages"
-@rendermode InteractiveServer
-@using Microsoft.EntityFrameworkCore
-@using Microsoft.AspNetCore.Components.QuickGrid
-@using GlamGearAdmin.Models.SQLServer
-@using GlamGearAdmin.Data.SQLServer
-@implements IAsyncDisposable
-@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
-
-<PageTitle>Index</PageTitle>
-
-<h1>Index</h1>
-
-<p>
-    <a href="sql_server/crud/admin_pages/create">Create New</a>
-</p>
-
-@if (admins is null)
-{
-    <p>Loading...</p>
-
-}
-else
-{
-
-    <input type="search" @bind="randomTextFilter" @bind:event="oninput" />
-    <div>
-
-        <QuickGrid Class="table" TGridItem="RandText" Items="admins">
-            <PropertyColumn Property="admins => admins.Id" />
-            <PropertyColumn Property="admins => admins.RandomText" />
-            <PropertyColumn Property="admins => admins.DtStamp" />
-
-            <TemplateColumn Context="admins">
-                <a href="@($"sql_server/crud/admin_pages/edit?userid={admins.Id}")">Edit</a> |
-                <a href="@($"sql_server/crud/admin_pages/details?userid={admins.Id}")">Details</a>
-            </TemplateColumn>
-        </QuickGrid>
-    </div>
-}
-
-
-@code {
-    private BlazorSQLServerContext context = default!;
-    private IQueryable<RandText>? admins;
-    private PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
-    private string randomTextFilter = string.Empty;
-
-    @* protected override void OnInitialized()
-    {
-        context = DbFactory.CreateDbContext();
-
-        @* admins = await context.Admin
-        .FromSqlRaw("EXEC rpiAPSM_spRandomText")
-        .ToListAsync(); 
-    }
-
-    private IQueryable<RandText> GetUsersAsync()
-    {
-        return context.RandText
-        .FromSqlRaw("EXEC rpiAPSM_spRandomText").AsQueryable<RandText>().Where(data =>
-        data.RandomText!.ToLower().Contains(randomTextFilter.ToLower()));
-    }
-
-    protected override void OnInitialized()
-    {
-        context = DbFactory.CreateDbContext();
-        admins = GetUsersAsync();
-    }
-
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
-} has bugs *@
-
 @page "/sql_server/crud/admin_pages"
 @rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using GlamGearAdmin.Models.SQLServer
 @using GlamGearAdmin.Data.SQLServer
-@* @implements IAsyncDisposable *@
+@implements IAsyncDisposable
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 
 <PageTitle>Index</PageTitle>
@@ -324,7 +251,7 @@ else
     {
         context = DbFactory.CreateDbContext();
         var sQLServerHelper = new SQLServerHelper(context);
-        admins = await sQLServerHelper.GetRandTextsAsync("EXEC rpiAPSM_spRandomText");
+        admins = await sQLServerHelper.GetRandTextsFromSqlROAsync("rpiAPSM_spRandomTextWParam", null, null, "SEE_RECORDS");
         pagination.TotalRecords = admins.Count;
     }
 
@@ -374,5 +301,8 @@ else
         public int TotalRecords { get; set; }
     }
 
-    @* public async ValueTask DisposeAsync() => await context.DisposeAsync(); *@
+    public async ValueTask DisposeAsync() // this is important
+    {
+        await context.DisposeAsync();
+    }
 }
