@@ -251,7 +251,8 @@ else
     {
         context = DbFactory.CreateDbContext();
         var sQLServerHelper = new SQLServerHelper(context);
-        admins = await sQLServerHelper.GetRandTextsFromSqlROAsync("rpiAPSM_spRandomTextWParam", null, null, "SEE_RECORDS");
+        admins = await sQLServerHelper.GetRandTextsFromSqlReadOnlyAsync("rpiAPSM_spRandomTextWParam", null, null,
+        "SEE_RECORDS");
         pagination.TotalRecords = admins.Count;
     }
 

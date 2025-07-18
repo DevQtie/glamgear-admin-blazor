@@ -5,8 +5,14 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.6.1.0-alpha
+
+* Optimized SQLServerHelper class and MinimalDbSettings class to enforce code scalability, manageability, and maintainability.
+* 1.6.0.0-alpha follow up changelog.
+
 ## 1.6.0.0-alpha
 
+* Implementing #region and #endregion for block of codes management.
 * The recommended `FromSql` currently supports static `SqlParameter` in the meantime.
 * Implementing SQLServerHelper class and MinimalDbSettings class for code scalability and manageability.
 
