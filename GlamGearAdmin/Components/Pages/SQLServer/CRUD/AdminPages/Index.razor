@@ -68,7 +68,7 @@ else
             </div>
         </div>
 
-        <table class="table table-bordered">
+        <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th @onclick='() => SortBy("Id")' class="cursor-pointer">ID @SortIcon("Id")</th>
@@ -253,6 +253,7 @@ else
         var sQLServerHelper = new SQLServerHelper(context);
         admins = await sQLServerHelper.GetRandTextsFromSqlReadOnlyAsync("rpiAPSM_spRandomTextWParam", null, null,
         "SEE_RECORDS");
+        @* admins = await sQLServerHelper.GetRandTextsWOParamAsync("rpiAPSM_spRandomText"); *@
         pagination.TotalRecords = admins.Count;
     }
 

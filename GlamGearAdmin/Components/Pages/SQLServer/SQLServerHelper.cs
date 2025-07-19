@@ -12,16 +12,30 @@ class SQLServerHelper(BlazorSQLServerContext context)
 
   #region READ-ONLY (AsNoTracking) METHODS
   #region FOR REFERENCE ONLY
-  public async Task<List<RandText>> GetRandTextFromSqlRawAsync(string storedProcedure, params object?[] parameters)
+  public async Task<List<RandText>> GetListRandTextFromSqlRawAsync(string storedProcedure, params object?[] parameters)
   {
     string[] paramNames = ["@id", "@random_text", "@function_key"];
     var sql = MinimalDbSettings.FromSqlRawSQL(storedProcedure, paramNames);
     var param = MinimalDbSettings.FromSqlRawParamsObject(paramNames, parameters);
 
     return await _context.RandText
-        .FromSqlRaw(sql, param) // The FromSql and FromSqlInterpolated methods are safe against SQL injection, and always integrate parameter data as a separate SQL parameter. To read more: [Passing parameters](https://learn.microsoft.com/en-us/ef/core/querying/sql-queries?tabs=sqlserver#passing-parameters)
+        .FromSqlRaw(sql, param)
         .AsNoTracking()
         .ToListAsync();
+  } // working method for reference; not currently in use
+
+  public async Task<RandText?> GetRandTextFromSqlRawAsync(string storedProcedure, params object?[] parameters)
+  {
+    string[] paramNames = ["@id", "@random_text", "@function_key"];
+    var sql = MinimalDbSettings.FromSqlRawSQL(storedProcedure, paramNames);
+    var param = MinimalDbSettings.FromSqlRawParamsObject(paramNames, parameters);
+
+    var result = await _context.RandText
+        .FromSqlRaw(sql, param)
+        .AsNoTracking()
+        .ToListAsync();
+
+    return result.FirstOrDefault();
   } // working method for reference; not currently in use
 
   public async Task<List<RandText>> GetRandTextsFromSqlROAsync(string storedProcedure, params object?[] parameters)
@@ -50,8 +64,8 @@ class SQLServerHelper(BlazorSQLServerContext context)
     var sqlParam = MinimalDbSettings.FromSqlSQLParamStaticWOType(storedProcedure, sqlParameter);
 
     return await _context.RandText
-        .FromSql(sqlParam) // The FromSql and FromSqlInterpolated methods are safe against SQL injection, and always integrate parameter data as a separate SQL parameter. To read more: [Passing parameters](https://learn.microsoft.com/en-us/ef/core/querying/sql-queries?tabs=sqlserver#passing-parameters)
-        .AsNoTracking() // please read for reference: [Tracking vs. No-Tracking Queries](https://learn.microsoft.com/en-us/ef/core/querying/tracking)
+        .FromSql(sqlParam)
+        .AsNoTracking()
         .ToListAsync();
   }
   #endregion
@@ -60,8 +74,8 @@ class SQLServerHelper(BlazorSQLServerContext context)
   {
     // use AsNoTracking for read-only queries to improve performance
     return await _context.RandText
-        .FromSql($"EXEC {spName}") // The FromSql and FromSqlInterpolated methods are safe against SQL injection, and always integrate parameter data as a separate SQL parameter. To read more: [Passing parameters](https://learn.microsoft.com/en-us/ef/core/querying/sql-queries?tabs=sqlserver#passing-parameters)
-        .AsNoTracking() // please read for reference: [Tracking vs. No-Tracking Queries](https://learn.microsoft.com/en-us/ef/core/querying/tracking)
+        .FromSql($"EXEC {spName}")
+        .AsNoTracking()
         .ToListAsync();
   } // working method for reference; not currently in use
 
@@ -84,26 +98,83 @@ class SQLServerHelper(BlazorSQLServerContext context)
     var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
 
     return await _context.RandText
-        .FromSql(sqlParam) // The FromSql and FromSqlInterpolated methods are safe against SQL injection, and always integrate parameter data as a separate SQL parameter. To read more: [Passing parameters](https://learn.microsoft.com/en-us/ef/core/querying/sql-queries?tabs=sqlserver#passing-parameters)
-        .AsNoTracking() // please read for reference: [Tracking vs. No-Tracking Queries](https://learn.microsoft.com/en-us/ef/core/querying/tracking)
+        .FromSql(sqlParam)
+        .AsNoTracking()
         .ToListAsync();
   }
-  #endregion
-
-  #region NON-READ-ONLY METHODS
-  public async Task<List<RandText>> GetRandTextsFromSqlAsync(string storedProcedure, params object?[] parameters)
+  public async Task<RandText?> GetRandTextsFromSqlAsync(string spName, params object?[] parameters)
   {
-    string[] paramNames = ["id", "random_text", "function_key"];
+    var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
+    {
+        ("id", SqlDbType.Int, null),
+        ("random_text", SqlDbType.VarChar, 50),
+        ("function_key", SqlDbType.VarChar, 100)
+    };
 
-    if (parameters.Length != paramNames.Length)
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuples(paramDefs, parameters);
+
+    if (parameters.Length != sqlParameter.Length)
     {
       throw new ArgumentException("Parameters count mismatch.");
     }
 
-    var sqlParam = MinimalDbSettings.FromSqlSQLParamStatic(storedProcedure, paramNames, parameters);
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    var result = await _context.RandText
+        .FromSql(sqlParam)
+        .AsNoTracking()
+        .ToListAsync();
+
+    return result.FirstOrDefault();
+  }
+  #endregion
+
+  #region NON-READ-ONLY METHODS
+  public async Task<List<RandText>> GetListRandTextsFromSqlAsync(string spName, params object?[] parameters)
+  {
+    var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
+    {
+        ("id", SqlDbType.Int, null),
+        ("random_text", SqlDbType.VarChar, 50),
+        ("function_key", SqlDbType.VarChar, 100)
+    };
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuples(paramDefs, parameters);
+
+    if (parameters.Length != sqlParameter.Length)
+    {
+      throw new ArgumentException("Parameters count mismatch.");
+    }
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
     return await _context.RandText
         .FromSql(sqlParam) // The FromSql and FromSqlInterpolated methods are safe against SQL injection, and always integrate parameter data as a separate SQL parameter. To read more: [Passing parameters](https://learn.microsoft.com/en-us/ef/core/querying/sql-queries?tabs=sqlserver#passing-parameters)
         .ToListAsync();
+  }
+  public async Task<SqlOutput?> DelUpdateRandTextsFromSqlAsync(string spName, params object?[] parameters)
+  {
+    var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
+    {
+        ("id", SqlDbType.Int, null),
+        ("random_text", SqlDbType.VarChar, 50),
+        ("function_key", SqlDbType.VarChar, 100)
+    };
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuples(paramDefs, parameters);
+
+    if (parameters.Length != sqlParameter.Length)
+    {
+      throw new ArgumentException("Parameters count mismatch.");
+    }
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    var result = await _context.SqlOutput
+        .FromSql(sqlParam)
+        .ToListAsync();
+
+    return result.FirstOrDefault();
   }
   #endregion
 }

@@ -5,6 +5,13 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.7.0.0-alpha
+
+* Successful integration of Bootstrap Toasts.
+* Successful implementation of Bootstrap Javascript.
+* Deletion of records module added.
+* Showing of details module added.
+
 ## 1.6.1.0-alpha
 
 * Optimized SQLServerHelper class and MinimalDbSettings class to enforce code scalability, manageability, and maintainability.

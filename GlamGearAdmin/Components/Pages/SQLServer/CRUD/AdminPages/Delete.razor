@@ -1,8 +1,13 @@
 @page "/sql_server/crud/admin_pages/delete"
+@rendermode InteractiveServer
+@using GlamGearAdmin.Data.SQLServer
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models.SQLServer
+@implements IAsyncDisposable
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
 
 <PageTitle>Delete</PageTitle>
 
@@ -37,16 +42,69 @@
     }
 </div>
 
-@code {
-    private RandText? admin;
+@* To use Bootstrap Toasts, visit this website: https://getbootstrap.com/docs/5.3/components/toasts/ *@
 
-    [SupplyParameterFromQuery]
+<button class="btn btn-primary mt-3" @onclick="ShowToast">Show Toast</button>
+
+@* <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Info</strong>
+            <small>Just now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"
+                @onclick="DisposeToastThenNavigate"></button>
+        </div>
+        <div class="toast-body">
+            Deleted successfully!
+        </div>
+    </div>
+</div> for reference only *@
+
+<div id="liveToast" class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 mb-3 me-3"
+    role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">
+    <div class="d-flex">
+        <div class="toast-body">
+            Deleted successfully!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"
+            @onclick="DisposeToastThenNavigate"></button>
+    </div>
+</div>
+
+<script>
+    window.showLiveToast = () => {
+        const toastEl = document.getElementById('liveToast');
+        if (toastEl) {
+            const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+            toast.show();
+
+            toastEl.addEventListener('hidden.bs.toast', () => {
+                @* DotNet.invokeMethodAsync('GlamGearAdmin', 'OnToastHidden'); *@
+                    window.location.replace('/sql_server/crud/admin_pages'); // temporary fix
+            });
+        }
+    };
+</script>
+
+@code {
+    private async Task ShowToast()
+    {
+        await JS.InvokeVoidAsync("showLiveToast");
+    } //for testing purposes
+
+    private RandText? admin;
+    private SqlOutput? output;
+    private BlazorSQLServerContext context = default!;
+
+    [SupplyParameterFromQuery(Name = "userid")]
     private int id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        admin = await context.RandText.FirstOrDefaultAsync(m => m.Id == id);
+        context = DbFactory.CreateDbContext();
+        var sQLServerHelper = new SQLServerHelper(context);
+        admin = await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
+        "SEE_DETAILS");
 
         if (admin is null)
         {
@@ -56,9 +114,34 @@
 
     private async Task DeleteAdmin()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.RandText.Remove(admin!);
-        await context.SaveChangesAsync();
+        context = DbFactory.CreateDbContext();
+        var sQLServerHelper = new SQLServerHelper(context);
+        output = await sQLServerHelper.DelUpdateRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
+        "DELETE_UPDATE");
+        if (output?.SpOutput is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+            return;
+        }
+        await JS.InvokeVoidAsync("showLiveToast");
+    }
+
+    private void DisposeToastThenNavigate()
+    {
         NavigationManager.NavigateTo("/sql_server/crud/admin_pages");
+    }
+
+    [JSInvokable("OnToastHidden")]
+    public static Task HandleToastHidden()
+    {
+        @* Console.WriteLine("Toast was hidden (called from JS)"); *@
+        // You can trigger other logic here
+        @* DisposeToastThenNavigate(); *@ // not working
+        return Task.CompletedTask;
+    }
+
+    public async ValueTask DisposeAsync() // this is important
+    {
+        await context.DisposeAsync();
     }
 }

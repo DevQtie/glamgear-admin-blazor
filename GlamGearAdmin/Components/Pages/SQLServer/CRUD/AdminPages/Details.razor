@@ -1,6 +1,8 @@
 @page "/sql_server/crud/admin_pages/details"
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models.SQLServer
+@using GlamGearAdmin.Data.SQLServer
+@implements IAsyncDisposable
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 @inject NavigationManager NavigationManager
 
@@ -15,7 +17,8 @@
     {
         <p><em>Loading...</em></p>
     }
-    else {
+    else
+    {
         <dl class="row">
             <dt class="col-sm-2">Username</dt>
             <dd class="col-sm-10">@admin.Id</dd>
@@ -32,19 +35,27 @@
 </div>
 
 @code {
-    private RandText? admin;
+    private RandText? admin = new();
+    private BlazorSQLServerContext context = default!;
 
-    [SupplyParameterFromQuery]
+    [SupplyParameterFromQuery(Name = "userid")]
     private int id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        admin = await context.RandText.FirstOrDefaultAsync(m => m.Id == id);
+        context = DbFactory.CreateDbContext();
+        var sQLServerHelper = new SQLServerHelper(context);
+        admin = await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
+        "SEE_DETAILS");
 
         if (admin is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
+    }
+
+    public async ValueTask DisposeAsync() // this is important
+    {
+        await context.DisposeAsync();
     }
 }

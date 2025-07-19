@@ -1,6 +1,8 @@
 @page "/sql_server/crud/admin_pages/edit"
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models.SQLServer
+@using GlamGearAdmin.Data.SQLServer
+@implements IAsyncDisposable
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 @inject NavigationManager NavigationManager
 
@@ -10,7 +12,7 @@
 
 <h2>Admin</h2>
 <hr />
-@if (Admin is null)
+@if (admin is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,14 +20,14 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm method="post" Model="Admin" OnValidSubmit="UpdateAdmin" FormName="edit" Enhance>
+            <EditForm method="post" Model="admin" OnValidSubmit="UpdateAdmin" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
                 <ValidationSummary role="alert" />
-                <input type="hidden" name="Admin.Id" value="@Admin.Id" />
+                <input type="hidden" name="admin.Id" value="@admin.Id" />
                 <div class="mb-3">
                     <label for="randomText" class="form-label">Random Text:</label>
-                    <InputText id="randomText" @bind-Value="Admin.RandomText" class="form-control" />
-                    <ValidationMessage For="() => Admin.RandomText" class="text-danger" />
+                    <InputText id="randomText" @bind-Value="admin.RandomText" class="form-control" />
+                    <ValidationMessage For="() => admin.RandomText" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
@@ -38,18 +40,20 @@ else
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private int id { get; set; }
+    private RandText? admin = new();
+    private BlazorSQLServerContext context = default!;
 
-    [SupplyParameterFromForm]
-    private RandText? Admin { get; set; }
+    [SupplyParameterFromQuery(Name = "userid")]
+    private int id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Admin ??= await context.RandText.FirstOrDefaultAsync(m => m.Id == id);
+        context = DbFactory.CreateDbContext();
+        var sQLServerHelper = new SQLServerHelper(context);
+        admin ??= await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
+        "SEE_DETAILS");
 
-        if (Admin is null)
+        if (admin is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
@@ -60,7 +64,7 @@ else
     private async Task UpdateAdmin()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Attach(Admin!).State = EntityState.Modified;
+        context.Attach(admin!).State = EntityState.Modified;
 
         try
         {
@@ -68,7 +72,7 @@ else
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!AdminExists(Admin!.Id))
+            if (!AdminExists(admin!.Id))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -85,5 +89,10 @@ else
     {
         using var context = DbFactory.CreateDbContext();
         return context.RandText.Any(e => e.Id == id);
+    }
+
+    public async ValueTask DisposeAsync() // this is important
+    {
+        await context.DisposeAsync();
     }
 }

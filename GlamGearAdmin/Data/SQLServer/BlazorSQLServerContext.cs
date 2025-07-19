@@ -6,6 +6,7 @@ namespace GlamGearAdmin.Data.SQLServer
     {
         public DbSet<Models.SQLServer.RandText> RandText { get; set; } = default!;
         public DbSet<Models.SQLServer.Admin> Admin { get; set; } = default!;
+        public DbSet<Models.SQLServer.SqlOutput> SqlOutput { get; set; } = default!;
         // to add another data model
     }
 }
