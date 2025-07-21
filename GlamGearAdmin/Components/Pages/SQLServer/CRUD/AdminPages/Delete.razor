@@ -44,7 +44,7 @@
 
 @* To use Bootstrap Toasts, visit this website: https://getbootstrap.com/docs/5.3/components/toasts/ *@
 
-<button class="btn btn-primary mt-3" @onclick="ShowToast">Show Toast</button>
+@* <button class="btn btn-primary mt-3" @onclick="ShowToast">Show Toast</button> *@
 
 @* <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -79,8 +79,7 @@
             toast.show();
 
             toastEl.addEventListener('hidden.bs.toast', () => {
-                @* DotNet.invokeMethodAsync('GlamGearAdmin', 'OnToastHidden'); *@
-                    window.location.replace('/sql_server/crud/admin_pages'); // temporary fix
+                window.location.replace('/sql_server/crud/admin_pages');
             });
         }
     };
@@ -128,16 +127,7 @@
 
     private void DisposeToastThenNavigate()
     {
-        NavigationManager.NavigateTo("/sql_server/crud/admin_pages");
-    }
-
-    [JSInvokable("OnToastHidden")]
-    public static Task HandleToastHidden()
-    {
-        @* Console.WriteLine("Toast was hidden (called from JS)"); *@
-        // You can trigger other logic here
-        @* DisposeToastThenNavigate(); *@ // not working
-        return Task.CompletedTask;
+        NavigationManager.NavigateTo("/sql_server/crud/admin_pages", replace: true);
     }
 
     public async ValueTask DisposeAsync() // this is important

@@ -6,6 +6,7 @@ using GlamGearAdmin.Components.Account;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using GlamGearAdmin.Data.SQLiteAuth;
+using GlamGearAdmin.Components.Pages.SQLServer;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
