@@ -1,10 +1,12 @@
 @page "/sql_server/crud/admin_pages/edit"
+@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models.SQLServer
 @using GlamGearAdmin.Data.SQLServer
 @implements IAsyncDisposable
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 <PageTitle>Edit</PageTitle>
 
@@ -12,7 +14,7 @@
 
 <h2>Admin</h2>
 <hr />
-@if (admin is null)
+@if (Admin is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -20,14 +22,14 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm method="post" Model="admin" OnValidSubmit="UpdateAdmin" FormName="edit" Enhance>
+            <EditForm method="post" Model="Admin" OnValidSubmit="UpdateAdmin" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
-                <ValidationSummary role="alert" />
-                <input type="hidden" name="admin.Id" value="@admin.Id" />
+                <ValidationSummary class="text-danger" role="alert" />
+                <input type="hidden" name="Admin.Id" value="@Admin.Id" />
                 <div class="mb-3">
                     <label for="randomText" class="form-label">Random Text:</label>
-                    <InputText id="randomText" @bind-Value="admin.RandomText" class="form-control" />
-                    <ValidationMessage For="() => admin.RandomText" class="text-danger" />
+                    <InputText id="randomText" @bind-Value="Admin.RandomText" class="form-control" />
+                    <ValidationMessage For="() => Admin.RandomText" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
@@ -39,21 +41,92 @@ else
     <a href="/sql_server/crud/admin_pages">Back to List</a>
 </div>
 
+@* To use Bootstrap Toasts, visit this website: https://getbootstrap.com/docs/5.3/components/toasts/ *@
+
+@* <button class="btn btn-primary mt-3" @onclick="ShowToast">Show Toast</button> *@
+
+@* <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Info</strong>
+            <small>Just now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"
+                @onclick="DisposeToastThenNavigate"></button>
+        </div>
+        <div class="toast-body">
+            Deleted successfully!
+        </div>
+    </div>
+</div> for reference only *@
+
+<div id="liveToast" class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 mb-3 me-3"
+    role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+    <div class="d-flex">
+        <div class="toast-body">
+            Successfully modified!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"
+            @onclick="DisposeToastThenNavigate"></button>
+    </div>
+</div>
+
+<div id="liveToastError"
+    class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 mb-3 me-3" role="alert"
+    aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+    <div class="d-flex">
+        <div class="toast-body">
+            Someting went wrong. Please try again later.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+            aria-label="Close"></button>
+    </div>
+</div>
+
+<script>
+    window.showLiveToast = () => {
+        const toastEl = document.getElementById('liveToast');
+        if (toastEl) {
+            const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+            toast.show();
+
+            toastEl.addEventListener('hidden.bs.toast', () => {
+                window.location.replace('/sql_server/crud/admin_pages');
+            });
+        }
+    };
+    window.showLiveToastError = () => {
+        const toastEl = document.getElementById('liveToastError');
+        if (toastEl) {
+            const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+            toast.show();
+        }
+    };
+</script>
+
 @code {
-    private RandText? admin = new();
+    [SupplyParameterFromForm]
+    private RandText? Admin { get; set; } = new();
     private BlazorSQLServerContext context = default!;
 
     [SupplyParameterFromQuery(Name = "userid")]
     private int id { get; set; }
+    private string? output;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
 
     protected override async Task OnInitializedAsync()
     {
         context = DbFactory.CreateDbContext();
         var sQLServerHelper = new SQLServerHelper(context);
-        admin ??= await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
-        "SEE_DETAILS");
+        @* admin ??= await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
+        "SEE_DET"); // to hide the bounded data *@
+        Admin = await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
+        "SEE_DET", null);
 
-        if (admin is null)
+        if (Admin is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
@@ -63,32 +136,31 @@ else
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateAdmin()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(admin!).State = EntityState.Modified;
-
+        var sQLServerHelper = new SQLServerHelper(context);
         try
         {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!AdminExists(admin!.Id))
+            output = await sQLServerHelper.CreDelUpdStringOutputAsync("rpiAPSM_spRandomTextWParam", id, Admin?.RandomText,
+            "MOD_REC");
+
+            if (output is null)
             {
-                NavigationManager.NavigateTo("notfound");
+                await JS.InvokeVoidAsync("showLiveToastError");
             }
             else
             {
-                throw;
+                await JS.InvokeVoidAsync("showLiveToast");
             }
         }
-
-        NavigationManager.NavigateTo("/sql_server/crud/admin_pages");
+        catch (DbUpdateConcurrencyException) // I'm not sure if this is needed
+        {
+            // Handle concurrency issues here if necessary
+            Console.WriteLine("Concurrency issue occurred.");
+        }
     }
 
-    private bool AdminExists(int id)
+    private void DisposeToastThenNavigate()
     {
-        using var context = DbFactory.CreateDbContext();
-        return context.RandText.Any(e => e.Id == id);
+        NavigationManager.NavigateTo("/sql_server/crud/admin_pages", replace: true);
     }
 
     public async ValueTask DisposeAsync() // this is important

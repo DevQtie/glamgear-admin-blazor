@@ -252,7 +252,7 @@ else
         context = DbFactory.CreateDbContext();
         var sQLServerHelper = new SQLServerHelper(context);
         admins = await sQLServerHelper.GetRandTextsFromSqlReadOnlyAsync("rpiAPSM_spRandomTextWParam", null, null,
-        "SEE_RECORDS");
+        "SEE_REC", null);
         @* admins = await sQLServerHelper.GetRandTextsWOParamAsync("rpiAPSM_spRandomText"); *@
         pagination.TotalRecords = admins.Count;
     }

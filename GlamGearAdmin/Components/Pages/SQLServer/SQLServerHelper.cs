@@ -3,6 +3,7 @@ using GlamGearAdmin.Models.SQLServer;
 using GlamGearAdmin.Data.SQLServer;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using System.Threading.Tasks;
 
 class SQLServerHelper(BlazorSQLServerContext context)
 {
@@ -12,10 +13,10 @@ class SQLServerHelper(BlazorSQLServerContext context)
 
   #region READ-ONLY (AsNoTracking) METHODS
   #region FOR REFERENCE ONLY
-  public async Task<List<RandText>> GetListRandTextFromSqlRawAsync(string storedProcedure, params object?[] parameters)
+  public async Task<List<RandText>> GetListRandTextFromSqlRawAsync(string spName, params object?[] parameters)
   {
     string[] paramNames = ["@id", "@random_text", "@function_key"];
-    var sql = MinimalDbSettings.FromSqlRawSQL(storedProcedure, paramNames);
+    var sql = MinimalDbSettings.FromSqlRawSQL(spName, paramNames);
     var param = MinimalDbSettings.FromSqlRawParamsObject(paramNames, parameters);
 
     return await _context.RandText
@@ -24,10 +25,10 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .ToListAsync();
   } // working method for reference; not currently in use
 
-  public async Task<RandText?> GetRandTextFromSqlRawAsync(string storedProcedure, params object?[] parameters)
+  public async Task<RandText?> GetRandTextFromSqlRawAsync(string spName, params object?[] parameters)
   {
     string[] paramNames = ["@id", "@random_text", "@function_key"];
-    var sql = MinimalDbSettings.FromSqlRawSQL(storedProcedure, paramNames);
+    var sql = MinimalDbSettings.FromSqlRawSQL(spName, paramNames);
     var param = MinimalDbSettings.FromSqlRawParamsObject(paramNames, parameters);
 
     var result = await _context.RandText
@@ -38,7 +39,21 @@ class SQLServerHelper(BlazorSQLServerContext context)
     return result.FirstOrDefault();
   } // working method for reference; not currently in use
 
-  public async Task<List<RandText>> GetRandTextsFromSqlROAsync(string storedProcedure, params object?[] parameters)
+  public async Task<SqlOutput?> GetSqlOutputFromSqlRawAsync(string spName, params object?[] parameters)
+  {
+    string[] paramNames = ["@id", "@random_text", "@function_key"];
+    var sql = MinimalDbSettings.FromSqlRawSQL(spName, paramNames);
+    var param = MinimalDbSettings.FromSqlRawParamsObject(paramNames, parameters);
+
+    var result = await _context.SqlOutput
+        .FromSqlRaw(sql, param)
+        .AsNoTracking()
+        .ToListAsync();
+
+    return result.FirstOrDefault();
+  } // working method for reference; not currently in use
+
+  public async Task<List<RandText>> GetRandTextsFromSqlROAsync(string spName, params object?[] parameters)
   {
     SqlParameter[] sqlParameter =
     [
@@ -61,13 +76,40 @@ class SQLServerHelper(BlazorSQLServerContext context)
       throw new ArgumentException("Parameters count mismatch.");
     }
 
-    var sqlParam = MinimalDbSettings.FromSqlSQLParamStaticWOType(storedProcedure, sqlParameter);
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamStaticWOType(spName, sqlParameter);
 
     return await _context.RandText
         .FromSql(sqlParam)
         .AsNoTracking()
         .ToListAsync();
   }
+
+  public async Task<string?> CreDelUpdRandTextOutputAsync(string spName, params object?[] parameters)
+  {
+    /* In the requestor page origin, always ensure that this `await context.DisposeAsync();` is defined.
+    Otherwise, close the connection here (but since there is already been defined, separate a method for that instance).*/
+    using var command = _context.Database.GetDbConnection().CreateCommand();
+    command.CommandText = $"{spName}";
+    command.CommandType = CommandType.StoredProcedure;
+
+    // Input parameter
+    var userParam = new SqlParameter("@filterByUser", "johndoe");
+    command.Parameters.Add(userParam);
+
+    // Output parameter
+    var outputParam = new SqlParameter("@MsgOutput", SqlDbType.NVarChar, 100)
+    {
+      Direction = ParameterDirection.Output
+    };
+    command.Parameters.Add(outputParam);
+
+    await _context.Database.OpenConnectionAsync();
+    using var reader = await command.ExecuteReaderAsync();
+    // Map the result to your entity manually (optional)
+
+    var message = outputParam.Value?.ToString();
+    return message;
+  } // reference
   #endregion
 
   public async Task<List<RandText>> GetRandTextsWOParamAsync(string spName)
@@ -85,7 +127,8 @@ class SQLServerHelper(BlazorSQLServerContext context)
     {
         ("id", SqlDbType.Int, null),
         ("random_text", SqlDbType.VarChar, 50),
-        ("function_key", SqlDbType.VarChar, 100)
+        ("function_key", SqlDbType.VarChar, 100),
+        ("sp_output", SqlDbType.NVarChar, 100)
     };
 
     SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuples(paramDefs, parameters);
@@ -106,9 +149,10 @@ class SQLServerHelper(BlazorSQLServerContext context)
   {
     var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
     {
-        ("id", SqlDbType.Int, null),
-        ("random_text", SqlDbType.VarChar, 50),
-        ("function_key", SqlDbType.VarChar, 100)
+      ("id", SqlDbType.Int, null),
+      ("random_text", SqlDbType.VarChar, 50),
+      ("function_key", SqlDbType.VarChar, 100),
+      ("sp_output", SqlDbType.NVarChar, 100)
     };
 
     SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuples(paramDefs, parameters);
@@ -152,7 +196,7 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .FromSql(sqlParam) // The FromSql and FromSqlInterpolated methods are safe against SQL injection, and always integrate parameter data as a separate SQL parameter. To read more: [Passing parameters](https://learn.microsoft.com/en-us/ef/core/querying/sql-queries?tabs=sqlserver#passing-parameters)
         .ToListAsync();
   }
-  public async Task<SqlOutput?> DelUpdateRandTextsFromSqlAsync(string spName, params object?[] parameters)
+  public async Task<SqlOutput?> CreDelUpdRandTextsFromSqlAsync(string spName, params object?[] parameters)
   {
     var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
     {
@@ -168,7 +212,7 @@ class SQLServerHelper(BlazorSQLServerContext context)
       throw new ArgumentException("Parameters count mismatch.");
     }
 
-    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+    FormattableString sqlParam = MinimalDbSettings.FromSqlSQLParamDynamic(spName, sqlParameter);
 
     var result = await _context.SqlOutput
         .FromSql(sqlParam)
@@ -176,5 +220,26 @@ class SQLServerHelper(BlazorSQLServerContext context)
 
     return result.FirstOrDefault();
   }
+
+  public async Task<string?> CreDelUpdStringOutputAsync(string spName, params object?[] parameters)
+  {
+    var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
+    {
+      ("id", SqlDbType.Int, null),
+      ("random_text", SqlDbType.VarChar, 50),
+      ("function_key", SqlDbType.VarChar, 100)
+    };
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuples(paramDefs, parameters);
+
+    if (parameters.Length != sqlParameter.Length)
+    {
+      throw new ArgumentException("Parameters count mismatch.");
+    }
+
+    // var result = await MinimalDbSettings.UsingCommand(_context, spName, sqlParameter);
+    // return result;
+    return await MinimalDbSettings.UsingCommand(_context, spName, sqlParameter);
+  } // reference
   #endregion
 }

@@ -61,13 +61,25 @@
 </div> for reference only *@
 
 <div id="liveToast" class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 mb-3 me-3"
-    role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">
+    role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
     <div class="d-flex">
         <div class="toast-body">
             Deleted successfully!
         </div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"
             @onclick="DisposeToastThenNavigate"></button>
+    </div>
+</div>
+
+<div id="liveToastError"
+    class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 mb-3 me-3" role="alert"
+    aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+    <div class="d-flex">
+        <div class="toast-body">
+            Someting went wrong. Please try again later.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+            aria-label="Close"></button>
     </div>
 </div>
 
@@ -83,16 +95,23 @@
             });
         }
     };
+    window.showLiveToastError = () => {
+        const toastEl = document.getElementById('liveToastError');
+        if (toastEl) {
+            const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+            toast.show();
+        }
+    };
 </script>
 
 @code {
-    private async Task ShowToast()
+    @* private async Task ShowToast()
     {
         await JS.InvokeVoidAsync("showLiveToast");
-    } //for testing purposes
+    } //for testing purposes *@
 
     private RandText? admin;
-    private SqlOutput? output;
+    private string? output;
     private BlazorSQLServerContext context = default!;
 
     [SupplyParameterFromQuery(Name = "userid")]
@@ -103,7 +122,7 @@
         context = DbFactory.CreateDbContext();
         var sQLServerHelper = new SQLServerHelper(context);
         admin = await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
-        "SEE_DETAILS");
+        "SEE_DET", null);
 
         if (admin is null)
         {
@@ -115,14 +134,15 @@
     {
         context = DbFactory.CreateDbContext();
         var sQLServerHelper = new SQLServerHelper(context);
-        output = await sQLServerHelper.DelUpdateRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
-        "DELETE_UPDATE");
-        if (output?.SpOutput is null)
+        output = await sQLServerHelper.CreDelUpdStringOutputAsync("rpiAPSM_spRandomTextWParam", id, null,
+        "DEL_UPD");
+        if (output is null)
         {
-            NavigationManager.NavigateTo("notfound");
-            return;
+            await JS.InvokeVoidAsync("showLiveToastError");
+        } else
+        {
+            await JS.InvokeVoidAsync("showLiveToast");
         }
-        await JS.InvokeVoidAsync("showLiveToast");
     }
 
     private void DisposeToastThenNavigate()

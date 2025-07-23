@@ -8,6 +8,8 @@ public class RandText
 {
   [Key]
   public int Id { get; set; }
+  [Required]
+  [StringLength(50)]
   [Column("random_text")]
   public string? RandomText { get; set; }
   [Column("dt_stamp")]

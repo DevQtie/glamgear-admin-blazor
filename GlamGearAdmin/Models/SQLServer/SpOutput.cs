@@ -1,11 +1,11 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace GlamGearAdmin.Models.SQLServer;
 
+[Keyless]
 public class SqlOutput
 {
-  [Key]
   [Column("SP_OUTPUT")]
-  public string SpOutput { get; set; } = string.Empty;
+  public string? SpOutput { get; set; }
 }

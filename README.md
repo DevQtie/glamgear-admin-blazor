@@ -5,6 +5,11 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.7.2.0-alpha
+
+* The approach for getting the records of tables isn't the same as getting the response if the implicit transaction is executed because of handling the OUTPUT parameter response.
+* Implementing OUTPUT parameter to resolve bug in getting the exact response from the stored procedure.
+
 ## 1.7.1.0-alpha
 
 * Prevent navigating back upon successful deletion of records.
