@@ -16,13 +16,12 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <EditForm method="post" EditContext="editContext" OnValidSubmit="AddAdmin" FormName="create" Enhance>
+        <EditForm method="post" Model="Admin" OnValidSubmit="AddAdmin" FormName="create" Enhance>
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert" />
             <div class="mb-3">
                 <label for="randomText" class="form-label">Random Text:</label>
-                <InputText id="randomText" @bind-Value="Admin.RandomText" class="form-control"
-                    @oninput="OnInputChanged" />
+                <InputText id="randomText" @bind-Value="Admin.RandomText" class="form-control" />
                 <ValidationMessage For="() => Admin.RandomText" class="text-danger" />
             </div>
             <button type="submit" class="btn btn-primary">Create</button>
@@ -101,19 +100,15 @@
     private RandText Admin { get; set; } = new();
     private string? output;
     private BlazorSQLServerContext context = default!;
-    private EditContext? editContext;
 
     protected override void OnInitialized()
     {
-        editContext = new EditContext(Admin);
         context = DbFactory.CreateDbContext();
-        editContext.OnFieldChanged += HandleFieldChanged;
     }
 
     @* To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks. *@
     private async Task AddAdmin()
     {
-        context = DbFactory.CreateDbContext();
         var sQLServerHelper = new SQLServerHelper(context);
         output = await sQLServerHelper.CreDelUpdStringOutputAsync("rpiAPSM_spRandomTextWParam", null, Admin?.RandomText,
         "ADD_NEW_REC");
@@ -125,18 +120,6 @@
         {
             await JS.InvokeVoidAsync("showLiveToast");
         }
-    }
-
-    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        // Automatically validate the field as it changes
-        editContext?.Validate();
-    }
-
-    private void OnInputChanged(ChangeEventArgs e)
-    {
-        Admin.RandomText = e.Value?.ToString();
-        editContext?.NotifyFieldChanged(FieldIdentifier.Create(() => Admin.RandomText));
     }
 
     private void DisposeToastThenNavigate()

@@ -6,13 +6,12 @@ using GlamGearAdmin.Components.Account;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using GlamGearAdmin.Data.SQLiteAuth;
-using GlamGearAdmin.Components.Pages.SQLServer;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BlazorSQLServerContext") ?? throw new InvalidOperationException("Connection string 'BlazorSQLServerContext' not found.")));
 builder.Services.AddDbContextFactory<BlazorAuthContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("BlazorSqliteAuthContext") ?? throw new InvalidOperationException("Connection string 'BlazorSQLServerContext' not found.")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("BlazorSqliteAuthContext") ?? throw new InvalidOperationException("Connection string 'BlazorSqliteAuthContext' not found.")));
 builder.Services.AddDbContextFactory<BlazorWebAppAdminContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BlazorWebAppAdminContext") ?? throw new InvalidOperationException("Connection string 'BlazorWebAppAdminContext' not found.")));
 
@@ -68,6 +67,16 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode();
 
-app.MapAdditionalIdentityEndpoints(); ;
+app.MapAdditionalIdentityEndpoints();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/account/login");
+        return;
+    }
+    await next();
+});
 
 app.Run();

@@ -5,10 +5,14 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.7.3.0-alpha
+
+* Issues with launch URL, 404 not found in deployed web app on IIS resolved.
+
 ## 1.7.2.0-alpha
 
-* The approach for getting the records of tables isn't the same as getting the response if the implicit transaction is executed because of handling the OUTPUT parameter response.
-* Implementing OUTPUT parameter to resolve bug in getting the exact response from the stored procedure.
+* The approach for getting the records of tables isn't the same as getting the response if the implicit transaction is executed because of handling the `OUTPUT` parameter response.
+* Implementing `OUTPUT` parameter to resolve bug in getting the exact response from the stored procedure.
 
 ## 1.7.1.0-alpha
 
@@ -23,14 +27,14 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## 1.6.1.0-alpha
 
-* Optimized SQLServerHelper class and MinimalDbSettings class to enforce code scalability, manageability, and maintainability.
+* Optimized `SQLServerHelper` class and `MinimalDbSettings` class to enforce code scalability, manageability, and maintainability.
 * 1.6.0.0-alpha follow up changelog.
 
 ## 1.6.0.0-alpha
 
 * Implementing #region and #endregion for block of codes management.
 * The recommended `FromSql` currently supports static `SqlParameter` in the meantime.
-* Implementing SQLServerHelper class and MinimalDbSettings class for code scalability and manageability.
+* Implementing `SQLServerHelper` class and `MinimalDbSettings` class for code scalability and manageability.
 
 ## 1.5.0.1-alpha
 
@@ -45,7 +49,7 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 * Header top and bottom.
 * Show all per page bug fixed
-* 1.4.0.0 TODO: (FIXED) A 'paper cut' bug occurs when the page number is out of bounds, especially if the total page count changes dynamically (if play around with per page against next page); kindly visit at /sql_server/crud/admin_pages.
+* 1.4.0.0 TODO: (FIXED) A 'paper cut' bug occurs when the page number is out of bounds, especially if the total page count changes dynamically (if play around with per page against next page); kindly visit at `/sql_server/crud/admin_pages`.
 
 ## 1.4.0.0-alpha
 
@@ -81,7 +85,7 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 ## 1.2.0.0-alpha
 
 * SQLite database integrated with currently `Data/Migrations/CGGSchema1.0.0` file naming convention through `dotnet ef migrations add CGGSchema1.0.0 --output-dir Data/Migrations`.
-* With initial CRUD\AdminPages features for Admin data model.
+* With initial `CRUD\AdminPages` features for Admin data model.
 
 ## 1.1.1.0-alpha
 

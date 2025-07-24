@@ -45,7 +45,7 @@
     {
         context = DbFactory.CreateDbContext();
         var sQLServerHelper = new SQLServerHelper(context);
-        admin = await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", id, null,
+        admin = await sQLServerHelper.GetRandTextsFromSqlAsync("rpiAPSM_spRandomTextWParam", -1, null,
         "SEE_DET", null);
 
         if (admin is null)
