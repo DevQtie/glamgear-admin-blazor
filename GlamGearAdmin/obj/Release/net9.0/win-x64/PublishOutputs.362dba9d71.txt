@@ -2,6 +2,7 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\b
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\appsettings.Development.json
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\appsettings.json
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Data\SQLite\BlazorWebAppAdminContext-15eb91e4-6f39-4d33-9c10-440397a9d135.db
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Data\SQLiteAuth\AppAuth.db
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\BlazorDebugProxy\BrowserDebugHost.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\BlazorDebugProxy\BrowserDebugHost.runtimeconfig.json
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\BlazorDebugProxy\BrowserDebugProxy.dll

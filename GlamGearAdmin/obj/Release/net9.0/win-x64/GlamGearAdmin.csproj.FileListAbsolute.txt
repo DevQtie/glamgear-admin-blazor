@@ -348,3 +348,4 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\o
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\scopedcss\Components\Pages\SQLServer\CRUD\AdminPages\Index.razor.rz.scp.css
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\11h106u7cp-pcy7y1zsq2.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\0vcpqh6vku-6x1bybzl3a.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\Data\SQLiteAuth\AppAuth.db

@@ -14,7 +14,7 @@
 <div class="nav-scrollable" onclick="HandleNavScrollClick">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/dashboards" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="/dashboard" Match="NavLinkMatch.All">
                 <span class="bi bi-bounding-box-circles-nav-menu" aria-hidden="true"></span>Dashboard
             </NavLink>
         </div>
@@ -116,7 +116,7 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
+        @* <div class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Counter
             </NavLink>
@@ -126,7 +126,7 @@
             <NavLink class="nav-link" href="weather">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>Weather
             </NavLink>
-        </div>
+        </div> *@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="auth">
@@ -151,7 +151,7 @@
                     </form>
                 </div>
             </Authorized>
-            <NotAuthorized>
+            @* <NotAuthorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Register">
                         <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
@@ -162,7 +162,7 @@
                         <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
                     </NavLink>
                 </div>
-            </NotAuthorized>
+            </NotAuthorized> *@
         </AuthorizeView>
     </nav>
 </div>
