@@ -13,8 +13,8 @@
 
 <PageTitle>Log in</PageTitle>
 
-<h1>Log in</h1>
-<div class="row">
+<h1 class="pt-3 px-3">Log in</h1>
+<div class="row p-3">
     <div class="col-md-4">
         <section>
             <StatusMessage Message="@errorMessage" />
@@ -42,7 +42,7 @@
                     </label>
                 </div>
                 <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary mb-3">Log in</button>
                 </div>
                 <div>
                     <p>
@@ -99,7 +99,7 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            ReturnUrl = "/auth";
+            ReturnUrl = "/Account/Manage";
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.RequiresTwoFactor)

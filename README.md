@@ -5,6 +5,10 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.7.4.0-alpha
+
+* [COMPLETED] Separate the layout of the login page from the main layout with sidemenu. It should retain the authentication as functional, with bug fixes.
+
 ## 1.7.3.1-alpha
 
 * TODO: Separate the layout of the login page from the main layout with sidemenu. It should retain the authentication as functional.

@@ -1,7 +1,4 @@
-﻿@using GlamGearAdmin.Components.Account.Shared
-@using GlamGearAdmin.Components.Account.Pages
-@* @layout GlamGearAdmin.Components.ExternalPages.Shared.ExternalPagesLayout *@
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -17,36 +14,6 @@
             @Body
         </article>
     </main>
-    @* <CascadingAuthenticationState>
-        <AuthorizeView>
-            <Authorized>
-                <div class="sidebar">
-                    <NavMenu />
-                </div>
-
-                <main>
-                    <div class="top-row px-4">
-                        <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-                    </div>
-
-                    <article class="content px-4">
-                        @Body
-                    </article>
-                </main>
-            </Authorized>
-            <NotAuthorized>
-                <main>
-                    <div class="top-row px-4">
-                        <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-                    </div>
-
-                    <article class="content px-4">
-                        <Login />
-                    </article>
-                </main>
-            </NotAuthorized>
-        </AuthorizeView>
-    </CascadingAuthenticationState> *@
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
