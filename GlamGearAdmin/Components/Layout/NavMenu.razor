@@ -1,8 +1,12 @@
 @using System.Reflection
+@using Microsoft.AspNetCore.Identity
 @rendermode InteractiveServer
 
 @implements IDisposable
 @inject NavigationManager NavigationManager
+
+@inject SignInManager<IdentityUser> SignInManager
+
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/dashboard">GlamGearAdmin @GetVersion()</a>
@@ -130,6 +134,13 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
+                    @* <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@($"{currentUrl = "Account/Manage"}")" />
+                        <button type="submit" class="nav-link">
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                        </button>
+                    </form> *@
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
