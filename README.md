@@ -5,6 +5,10 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.7.6.0-alpha
+
+* I added modal confirmation notice before logging out.
+
 ## 1.7.5.1-alpha
 
 * Sidemenu layout refinements and revision.

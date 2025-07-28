@@ -1,8 +1,6 @@
 @using System.Reflection
 @using Microsoft.AspNetCore.Identity
 @rendermode InteractiveServer
-
-@implements IDisposable
 @inject NavigationManager NavigationManager
 
 @inject SignInManager<IdentityUser> SignInManager
@@ -38,12 +36,12 @@
 
             @if (navSubmenu == NavSubmenu.FirstSubM)
             {
-                <div class="nav-item py-0">
+                <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/add-products">
                         <span aria-hidden="true"></span>Add Products
                     </NavLink>
                 </div>
-                <div class="nav-item p-0">
+                <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/manage-products">
                         <span aria-hidden="true"></span>Manage Products
                     </NavLink>
@@ -64,12 +62,12 @@
 
             @if (navSubmenu == NavSubmenu.SecondSubM)
             {
-                <div class="nav-item p-0">
+                <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/order-list">
                         <span aria-hidden="true"></span>Order List
                     </NavLink>
                 </div>
-                <div class="nav-item p-0">
+                <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/return-cancel-orders">
                         <span aria-hidden="true"></span>Return & Cancellation Orders
                     </NavLink>
@@ -90,17 +88,17 @@
 
             @if (navSubmenu == NavSubmenu.ThirdSubM)
             {
-                <div class="nav-item p-0">
+                <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/unverified-users">
                         <span aria-hidden="true"></span>Unverified Users
                     </NavLink>
                 </div>
-                <div class="nav-item p-0">
+                <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/verified-users">
                         <span aria-hidden="true"></span>Verified Users
                     </NavLink>
                 </div>
-                <div class="nav-item p-0">
+                <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/other-users">
                         <span aria-hidden="true"></span>Other Users
                     </NavLink>
@@ -128,20 +126,9 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@($"{currentUrl = "Account/Manage"}")" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form>
-                    @* <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form> *@
+                    <button type="submit" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                        <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span>Logout
+                    </button>
                 </div>
             </Authorized>
         </AuthorizeView>
@@ -162,24 +149,6 @@
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
     private NavSubmenu navSubmenu = NavSubmenu.None;
     private bool submenuClicked = false;
-
-    private string? currentUrl;
-    protected override void OnInitialized()
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
-    }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
 
     private string? GetVersion()
     {
