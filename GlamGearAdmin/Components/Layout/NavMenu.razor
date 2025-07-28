@@ -15,7 +15,7 @@
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="HandleNavScrollClick">
+<div class="nav-scrollable" onclick="() => HandleNavScrollClick()">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/dashboard" Match="NavLinkMatch.All">
@@ -27,25 +27,23 @@
         <div class="nav-item px-3">
             <NavLink class="@(navSubmenu == NavSubmenu.FirstSubM ? "nav-link custom-active-main" : "nav-link")"
                 @onclick="() => TogleSubmenu(NavSubmenu.FirstSubM)">
-                <span class="bi bi-boxes-nav-menu" aria-hidden="true"></span>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div><span>Products</span></div>
-                    <div class="px-2 d-flex align-items-center justify-content-center">
-                        <span
-                            class="@(navSubmenu == NavSubmenu.FirstSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
-                            aria-hidden="true"></span>
-                    </div>
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <span class="bi bi-boxes-nav-menu" aria-hidden="true"></span>
+                    <span class="flex-grow-1">Products</span>
+                    <span
+                        class="@(navSubmenu == NavSubmenu.FirstSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
+                        aria-hidden="true"></span>
                 </div>
             </NavLink>
 
             @if (navSubmenu == NavSubmenu.FirstSubM)
             {
-                <div class="nav-item px-3">
+                <div class="nav-item py-0">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/add-products">
                         <span aria-hidden="true"></span>Add Products
                     </NavLink>
                 </div>
-                <div class="nav-item px-3">
+                <div class="nav-item p-0">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/manage-products">
                         <span aria-hidden="true"></span>Manage Products
                     </NavLink>
@@ -55,25 +53,23 @@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.SecondSubM)">
-                <span class="bi bi-ui-checks-nav-menu" aria-hidden="true"></span>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div><span>Orders</span></div>
-                    <div class="px-2 d-flex align-items-center justify-content-center">
-                        <span
-                            class="@(navSubmenu == NavSubmenu.SecondSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
-                            aria-hidden="true"></span>
-                    </div>
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <span class="bi bi-ui-checks-nav-menu" aria-hidden="true"></span>
+                    <span class="flex-grow-1">Orders</span>
+                    <span
+                        class="@(navSubmenu == NavSubmenu.SecondSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
+                        aria-hidden="true"></span>
                 </div>
             </NavLink>
 
             @if (navSubmenu == NavSubmenu.SecondSubM)
             {
-                <div class="nav-item px-3">
+                <div class="nav-item p-0">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/order-list">
                         <span aria-hidden="true"></span>Order List
                     </NavLink>
                 </div>
-                <div class="nav-item px-3">
+                <div class="nav-item p-0">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/return-cancel-orders">
                         <span aria-hidden="true"></span>Return & Cancellation Orders
                     </NavLink>
@@ -83,30 +79,28 @@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.ThirdSubM)">
-                <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div><span>Users</span></div>
-                    <div class="px-2 d-flex align-items-center justify-content-center">
-                        <span
-                            class="@(navSubmenu == NavSubmenu.ThirdSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
-                            aria-hidden="true"></span>
-                    </div>
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span>
+                    <span class="flex-grow-1">Users</span>
+                    <span
+                        class="@(navSubmenu == NavSubmenu.ThirdSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
+                        aria-hidden="true"></span>
                 </div>
             </NavLink>
 
             @if (navSubmenu == NavSubmenu.ThirdSubM)
             {
-                <div class="nav-item px-3">
+                <div class="nav-item p-0">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/unverified-users">
                         <span aria-hidden="true"></span>Unverified Users
                     </NavLink>
                 </div>
-                <div class="nav-item px-3">
+                <div class="nav-item p-0">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/verified-users">
                         <span aria-hidden="true"></span>Verified Users
                     </NavLink>
                 </div>
-                <div class="nav-item px-3">
+                <div class="nav-item p-0">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/other-users">
                         <span aria-hidden="true"></span>Other Users
                     </NavLink>
@@ -134,20 +128,20 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    @* <form action="Account/Logout" method="post">
+                    <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@($"{currentUrl = "Account/Manage"}")" />
                         <button type="submit" class="nav-link">
                             <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
                         </button>
-                    </form> *@
-                    <form action="Account/Logout" method="post">
+                    </form>
+                    @* <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
                         <button type="submit" class="nav-link">
                             <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
                         </button>
-                    </form>
+                    </form> *@
                 </div>
             </Authorized>
         </AuthorizeView>
