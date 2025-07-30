@@ -1,18 +1,42 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
+@inject InternetCheckerService InternetChecker
 
-@if (HttpContext is null)
+@if (HttpContext is null || isOnline == null)
 {
-    <p>Loading...</p>
+    <div class="position-absolute top-50 start-50 translate-middle">
+        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (isOnline == true)
+{
+    @Body
 }
 else
 {
-    @Body
+    <div class="position-absolute top-50 start-50 translate-middle">
+        <div class="fw-bold display-6 mb-3">
+            No internet connectivity.
+        </div>
+        <div class="d-flex justify-content-start">
+            <button type="submit" class="btn btn-primary" onclick="location.reload()">
+                Reload
+            </button>
+        </div>
+    </div>
 }
 
 @code {
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
+    private bool? isOnline;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isOnline = await InternetChecker.IsOnlineAsync();
+    }
 
     protected override void OnParametersSet()
     {

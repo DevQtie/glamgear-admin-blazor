@@ -2,50 +2,81 @@
 
 @implements IDisposable
 @inject NavigationManager NavigationManager
+@inject InternetCheckerService InternetChecker
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
-
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
-
-<div class="modal fade" id="logoutModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="logoutModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-body">
-                Are your sure you want to logout?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <form action="Account/Logout" method="post">
-                    <AntiforgeryToken />
-                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                    <button type="submit" class="btn btn-danger">Confirm</button>
-                </form>
-            </div>
+@if (isOnline == null)
+{
+    <div class="position-absolute top-50 start-50 translate-middle">
+        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
-</div>
+}
+else if (isOnline == true)
+{
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+
+        <main>
+            <div class="border-bottom border-1 border-secondary-subtle top-row px-4">
+                <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            </div>
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
+
+    <div id="blazor-error-ui" data-nosnippet>
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+
+    <div class="modal fade" id="logoutModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="logoutModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Are you sure you want to logout?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <button type="submit" class="btn btn-danger">Confirm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="position-absolute top-50 start-50 translate-middle">
+        <div class="fw-bold display-6 mb-3">
+            No internet connectivity.
+        </div>
+        <div class="d-flex justify-content-start">
+            <button type="submit" class="btn btn-primary" onclick="location.reload()">
+                Reload
+            </button>
+        </div>
+    </div>
+}
 
 @code {
     private string? currentUrl;
+    private bool? isOnline;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isOnline = await InternetChecker.IsOnlineAsync();
+    }
     protected override void OnInitialized()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);

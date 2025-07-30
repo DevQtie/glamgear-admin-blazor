@@ -5,19 +5,21 @@
 
 @inject SignInManager<IdentityUser> SignInManager
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/dashboard">GlamGearAdmin @GetVersion()</a>
+<div class="border-bottom border-1 border-secondary-subtle top-row ps-1 navbar navbar-light bg-body-tertiary">
+    <div class="container-fluid p-0">
+        <a class="navbar-brand" href="/dashboard"><strong>GlamGear</strong><span class="fst-normal">Admin</span></a>
     </div>
 </div>
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="() => HandleNavScrollClick()">
+<div class="border-end border-1 border-secondary-subtle nav-scrollable bg-body-tertiary"
+    onclick="() => HandleNavScrollClick()">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/dashboard" Match="NavLinkMatch.All">
-                <span class="bi bi-bounding-box-circles-nav-menu" aria-hidden="true"></span>Dashboard
+                <span class="bi bi-bounding-box-circles-nav-menu" aria-hidden="true"></span>
+                <span class="fst-normal">Dashboard</span>
             </NavLink>
         </div>
 
@@ -27,7 +29,7 @@
                 @onclick="() => TogleSubmenu(NavSubmenu.FirstSubM)">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <span class="bi bi-boxes-nav-menu" aria-hidden="true"></span>
-                    <span class="flex-grow-1">Products</span>
+                    <span class="flex-grow-1 fst-normal">Products</span>
                     <span
                         class="@(navSubmenu == NavSubmenu.FirstSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
                         aria-hidden="true"></span>
@@ -38,12 +40,12 @@
             {
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/add-products">
-                        <span aria-hidden="true"></span>Add Products
+                        <span class="fst-normal">Add Products</span>
                     </NavLink>
                 </div>
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/manage-products">
-                        <span aria-hidden="true"></span>Manage Products
+                        <span class="fst-normal">Manage Products</span>
                     </NavLink>
                 </div>
             }
@@ -53,7 +55,7 @@
             <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.SecondSubM)">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <span class="bi bi-ui-checks-nav-menu" aria-hidden="true"></span>
-                    <span class="flex-grow-1">Orders</span>
+                    <span class="flex-grow-1 fst-normal">Orders</span>
                     <span
                         class="@(navSubmenu == NavSubmenu.SecondSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
                         aria-hidden="true"></span>
@@ -64,12 +66,12 @@
             {
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/order-list">
-                        <span aria-hidden="true"></span>Order List
+                        <span class="fst-normal">Order List</span>
                     </NavLink>
                 </div>
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/return-cancel-orders">
-                        <span aria-hidden="true"></span>Return & Cancellation Orders
+                        <span class="fst-normal">Return & Cancellation Orders</span>
                     </NavLink>
                 </div>
             }
@@ -79,7 +81,7 @@
             <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.ThirdSubM)">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span>
-                    <span class="flex-grow-1">Users</span>
+                    <span class="flex-grow-1 fst-normal">Users</span>
                     <span
                         class="@(navSubmenu == NavSubmenu.ThirdSubM ? "custom-bi bi-chevron-up-sub-menu" : "custom-bi bi-chevron-down-sub-menu")"
                         aria-hidden="true"></span>
@@ -90,17 +92,17 @@
             {
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/unverified-users">
-                        <span aria-hidden="true"></span>Unverified Users
+                        <span class="fst-normal">Unverified Users</span>
                     </NavLink>
                 </div>
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/verified-users">
-                        <span aria-hidden="true"></span>Verified Users
+                        <span class="fst-normal">Verified Users</span>
                     </NavLink>
                 </div>
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/other-users">
-                        <span aria-hidden="true"></span>Other Users
+                        <span class="fst-normal">Other Users</span>
                     </NavLink>
                 </div>
             }
@@ -108,13 +110,8 @@
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="chat">
-                <span class="bi bi-chat-dots-fill-nav-menu" aria-hidden="true"></span>Chats
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auth">
-                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
+                <span class="bi bi-chat-dots-fill-nav-menu" aria-hidden="true"></span><span
+                    class="fst-normal">Chats</span>
             </NavLink>
         </div>
 
@@ -122,12 +119,14 @@
             <Authorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span><span
+                            class="fst-normal">@context.User.Identity?.Name</span>
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
                     <button type="submit" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                        <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span>Logout
+                        <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span><span
+                            class="fst-normal">Logout</span>
                     </button>
                 </div>
             </Authorized>

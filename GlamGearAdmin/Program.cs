@@ -15,6 +15,8 @@ builder.Services.AddDbContextFactory<BlazorAuthContext>(options =>
 builder.Services.AddDbContextFactory<BlazorWebAppAdminContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BlazorWebAppAdminContext") ?? throw new InvalidOperationException("Connection string 'BlazorWebAppAdminContext' not found.")));
 
+builder.Services.AddBlazorBootstrap();
+
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -25,6 +27,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddCascadingAuthenticationState();
+
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<InternetCheckerService>();
 
 builder.Services.AddScoped<IdentityUserAccessor>();
 

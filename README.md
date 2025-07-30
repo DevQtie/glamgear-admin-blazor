@@ -5,6 +5,15 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.8.0.0-alpha
+
+* Upgraded to Bootstrap v5.3.7.
+* Additional `InternetCheckerService.cs` as a service to check internet connectivity.
+* Additional Blazor Bootstrap Charts.
+* Dashboard layout revised.
+* `MainLayout.razor` revised.
+* StackOverFlow layout inspired.
+
 ## 1.7.6.0-alpha
 
 * I added modal confirmation notice before logging out.

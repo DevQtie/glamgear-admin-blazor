@@ -98,7 +98,7 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            ReturnUrl = "/Account/Manage";
+            ReturnUrl = "/dashboard";
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.RequiresTwoFactor)

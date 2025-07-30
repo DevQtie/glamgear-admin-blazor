@@ -1,4 +1,5 @@
 ﻿@page "/dashboard"
+@using GlamGearAdmin.Components.Charts
 @using GlamGearAdmin.Data
 @using GlamGearAdmin.Models.SQLite
 @using Microsoft.EntityFrameworkCore
@@ -11,27 +12,114 @@
 
 @if (admin is null)
 {
-  <h1>Welcome back, Anonymous!</h1>
+  <h2 class="fw-bold">Welcome back, Anonymous!</h2>
 }
 else
 {
   @if (username == null)
   {
-    <h1>Welcome back, @fullName!</h1>
+    <h2 class="fw-bold">Welcome back, @fullName!</h2>
   }
   else if (username != null)
   {
-    <h1>Welcome back, @username!</h1>
+    <h2 class="fw-bold">Welcome back, @username!</h2>
   }
   else
   {
-    <h1>Welcome back, Anonymous!</h1>
+    <h2 class="fw-bold">Welcome back, Anonymous!</h2>
   }
 }
 
-This is the Dashboard.
+<div class="my-3"></div>
 
-<button class="btn btn-primary" @onclick="ButtonClicked">Manage Admins</button>
+@* This is the Dashboard.
+
+<button class="btn btn-primary" @onclick="ButtonClicked">Manage Admins</button> *@
+
+<div class="container m-0 p-0">
+  <div class="row">
+    <div class="col-12 col-sm-6 col-lg-3 mb-3">
+      <button type="button" class="btn w-100 border-0 bg-transparent p-0 text-start">
+        <div class="p-3 border rounded border-secondary-subtle text-center">
+          <div class="border rounded-4 bg-body d-inline-block py-2 px-2">
+            <span class="bi bi-boxes-icon align-middle dashboard-icon-style" aria-hidden="true"></span>
+            <span>1,234,547</span>
+          </div>
+          <div class="text-secondary-emphasis mt-1">
+            <span>Total Products</span>
+          </div>
+        </div>
+      </button>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 mb-3">
+      <button type="button" class="btn w-100 border-0 bg-transparent p-0 text-start">
+        <div class="p-3 border rounded border-secondary-subtle text-center">
+          <div class="border rounded-4 bg-body d-inline-block py-2 px-2">
+            <span class="bi bi-ui-checks-icon align-middle dashboard-icon-style" aria-hidden="true"></span>
+            <span>1,234,547</span>
+          </div>
+          <div class="text-secondary-emphasis mt-1">
+            Total Orders
+          </div>
+        </div>
+      </button>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 mb-3">
+      <button type="button" class="btn w-100 border-0 bg-transparent p-0 text-start">
+        <div class="p-3 border rounded border-secondary-subtle text-center">
+          <div class="border rounded-4 bg-body d-inline-block py-2 px-2">
+            <span class="bi bi-people-fill-icon align-middle dashboard-icon-style" aria-hidden="true"></span>
+            <span>1,234,547</span>
+          </div>
+          <div class="text-secondary-emphasis mt-1">
+            Total Users
+          </div>
+        </div>
+      </button>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 mb-3">
+      <button type="button" class="btn w-100 border-0 bg-transparent p-0 text-start">
+        <div class="p-3 border rounded border-secondary-subtle text-center">
+          <div class="border rounded-4 bg-body d-inline-block py-2 px-2">
+            <span class="bi bi-receipt-icon align-middle dashboard-icon-style" aria-hidden="true"></span>
+            <span>1,234,547</span>
+          </div>
+          <div class="text-secondary-emphasis mt-1">
+            Total Sales
+          </div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<hr>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 col-lg-6 mb-3">
+      <BarChartComp />
+    </div>
+    <div class="col-12 col-lg-6 mb-3">
+      <LineChartComp />
+    </div>
+    <div class="col-12 col-lg-6 mb-3">
+      <ScatterChartComp />
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 col-lg-6 mb-3">
+      <PieChartComp />
+    </div>
+    <div class="col-12 col-lg-6 mb-3">
+      <DoughnutChartComp />
+    </div>
+  </div>
+</div>
 
 @code {
   private Admin? admin;
@@ -51,27 +139,4 @@ This is the Dashboard.
       username = admin.Username?.ToString();
     }
   }
-  @* private void ButtonClicked() @*for testing purposes
-  {
-    string userID = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
-    int getLength = userID.Count();
-    string reprocessedStringID = "";
-    string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
-    for (int i = 0; i <= getLength; i++)
-    {
-      if (i < 13)
-      {
-        reprocessedStringID = userID.Substring(0, i);
-        if (i == 12)
-        {
-          break;
-        }
-      }
-    }
-    string concatString = String.Concat("USER-", dateNow, "-", reprocessedStringID);
-    Console.WriteLine(userID);
-    Console.WriteLine(reprocessedStringID);
-    Console.WriteLine(getLength);
-    Console.WriteLine(concatString);
-  } *@
 }

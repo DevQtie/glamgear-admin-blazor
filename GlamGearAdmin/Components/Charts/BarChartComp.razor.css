@@ -1,0 +1,71 @@
+.customized-h-05 {
+  height: (1rem * .05) !important;
+}
+
+.customized-h-10 {
+  height: (1rem * .1) !important;
+}
+
+.customized-h-15 {
+  height: (1rem * .15) !important;
+}
+
+.customized-h-20 {
+  height: (1rem * .2) !important;
+}
+
+.customized-p-05 {
+  padding: (1rem * .05) !important;
+}
+
+.customized-p-10 {
+  padding: (1rem * .1) !important;
+}
+
+.customized-p-15 {
+  padding: (1rem * .15) !important;
+}
+
+.customized-p-20 {
+  padding: (1rem * .2) !important;
+}
+
+.customized-py-05 {
+  padding-top: (1rem * .05) !important;
+  padding-bottom: (1rem * .05) !important;
+}
+
+.customized-py-10 {
+  padding-top: (1rem * .1) !important;
+  padding-bottom: (1rem * .1) !important;
+}
+
+.customized-py-15 {
+  padding-top: (1rem * .15) !important;
+  padding-bottom: (1rem * .15) !important;
+}
+
+.customized-py-20 {
+  padding-top: (1rem * .2) !important;
+  padding-bottom: (1rem * .2) !important;
+}
+
+.customized-my-05 {
+  margin-top: (1rem * .05) !important;
+  margin-bottom: (1rem * .05) !important;
+}
+
+.customized-my-10 {
+  margin-top: (1rem * .1) !important;
+  margin-bottom: (1rem * .1) !important;
+}
+
+.customized-my-15 {
+  margin-top: (1rem * .15) !important;
+  margin-bottom: (1rem * .15) !important;
+}
+
+.customized-my-20 {
+  margin-top: (1rem * .2) !important;
+  margin-bottom: (1rem * .2) !important;
+}
