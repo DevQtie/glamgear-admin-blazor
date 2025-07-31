@@ -153,6 +153,13 @@
     display: block;
 }
 
+@media (max-width: 640.98px) {
+
+    .top-row[b-9ofngwxw24]  .brand-lbl {
+        margin-left: 1.3rem !important;
+    }
+}
+
 @media (min-width: 641px) {
     .navbar-toggler[b-9ofngwxw24] {
         display: none;

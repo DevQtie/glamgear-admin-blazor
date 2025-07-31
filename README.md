@@ -5,6 +5,10 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.8.1.1-alpha
+
+* Footer and body layout appearance fixes.
+
 ## 1.8.1.0-alpha
 
 * Additional footer in the `MainLayout.razor`
