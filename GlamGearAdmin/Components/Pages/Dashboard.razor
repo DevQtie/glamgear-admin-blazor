@@ -4,6 +4,7 @@
 @using GlamGearAdmin.Models.SQLite
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models
+@using System.Globalization
 @rendermode InteractiveServer
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
 @inject NavigationManager NavigationManager
@@ -43,7 +44,7 @@ else
         <div class="p-3 border rounded border-secondary-subtle text-center">
           <div class="border rounded-4 bg-body d-inline-block py-2 px-2">
             <span class="bi bi-boxes-icon align-middle dashboard-icon-style" aria-hidden="true"></span>
-            <span>1,234,547</span>
+            <span>@Math.Round(displayValueTProducts).ToString("N0", CultureInfo.GetCultureInfo("en-US"))</span>
           </div>
           <div class="text-secondary-emphasis mt-1">
             <span>Total Products</span>
@@ -56,7 +57,7 @@ else
         <div class="p-3 border rounded border-secondary-subtle text-center">
           <div class="border rounded-4 bg-body d-inline-block py-2 px-2">
             <span class="bi bi-ui-checks-icon align-middle dashboard-icon-style" aria-hidden="true"></span>
-            <span>1,234,547</span>
+            <span>@Math.Round(displayValueTOrders).ToString("N0", CultureInfo.GetCultureInfo("en-US"))</span>
           </div>
           <div class="text-secondary-emphasis mt-1">
             Total Orders
@@ -69,7 +70,7 @@ else
         <div class="p-3 border rounded border-secondary-subtle text-center">
           <div class="border rounded-4 bg-body d-inline-block py-2 px-2">
             <span class="bi bi-people-fill-icon align-middle dashboard-icon-style" aria-hidden="true"></span>
-            <span>1,234,547</span>
+            <span>@Math.Round(displayValueTUsers).ToString("N0", CultureInfo.GetCultureInfo("en-US"))</span>
           </div>
           <div class="text-secondary-emphasis mt-1">
             Total Users
@@ -82,7 +83,7 @@ else
         <div class="p-3 border rounded border-secondary-subtle text-center">
           <div class="border rounded-4 bg-body d-inline-block py-2 px-2">
             <span class="bi bi-receipt-icon align-middle dashboard-icon-style" aria-hidden="true"></span>
-            <span>1,234,547</span>
+            <span>@Math.Round(displayValueTSales).ToString("N0", CultureInfo.GetCultureInfo("en-US"))</span>
           </div>
           <div class="text-secondary-emphasis mt-1">
             Total Sales
@@ -125,7 +126,53 @@ else
   private Admin? admin;
   private string? fullName;
   private string? username;
-  private void ButtonClicked() => NavigationManager.NavigateTo("sql_server/crud/admin_pages");
+  private void ButtonClicked() => NavigationManager.NavigateTo("sqlite/crud/admin_pages"); //sql_server
+  [Parameter] public double TargetValueTProducts { get; set; } = 1000;
+  [Parameter] public double TargetValueTOrders { get; set; } = 11000;
+  [Parameter] public double TargetValueTUsers { get; set; } = 1234567;
+  [Parameter] public double TargetValueTSales { get; set; } = 2345678;
+  [Parameter] public int DurationMs { get; set; } = 250;
+  [Parameter] public int FrameRate { get; set; } = 120;
+
+  private double displayValueTProducts = 0;
+  private double displayValueTOrders = 0;
+  private double displayValueTUsers = 0;
+  private double displayValueTSales = 0;
+  private double incrementTProducts;
+  private double incrementTOrders;
+  private double incrementTUsers;
+  private double incrementTSales;
+  private int totalFrames;
+  private int currentFrame = 0;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      totalFrames = DurationMs / (1000 / FrameRate);
+      incrementTProducts = TargetValueTProducts / totalFrames;
+      incrementTOrders = TargetValueTOrders / totalFrames;
+      incrementTUsers = TargetValueTUsers / totalFrames;
+      incrementTSales = TargetValueTSales / totalFrames;
+
+      while (currentFrame < totalFrames)
+      {
+        displayValueTProducts += incrementTProducts;
+        displayValueTOrders += incrementTOrders;
+        displayValueTUsers += incrementTUsers;
+        displayValueTSales += incrementTSales;
+        currentFrame++;
+        StateHasChanged();
+        await Task.Delay(1000 / FrameRate);
+      }
+
+      displayValueTProducts = TargetValueTProducts; // snap to final value
+      displayValueTOrders = TargetValueTOrders; // snap to final value
+      displayValueTUsers = TargetValueTUsers; // snap to final value
+      displayValueTSales = TargetValueTSales; // snap to final value
+      StateHasChanged();
+    }
+  }
 
   protected override async Task OnInitializedAsync()
   {
