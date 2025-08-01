@@ -33,9 +33,7 @@ else
 
 <div class="my-3"></div>
 
-@* This is the Dashboard.
-
-<button class="btn btn-primary" @onclick="ButtonClicked">Manage Admins</button> *@
+<button class="btn btn-primary my-3" @onclick="ButtonClicked">Simulate Test Data</button>
 
 <div class="container m-0 p-0">
   <div class="row">
@@ -126,7 +124,7 @@ else
   private Admin? admin;
   private string? fullName;
   private string? username;
-  private void ButtonClicked() => NavigationManager.NavigateTo("sqlite/crud/admin_pages"); //sql_server
+  private void ButtonClicked() => NavigationManager.NavigateTo("sql_server/crud/admin_pages"); //sql_server sqlite
   [Parameter] public double TargetValueTProducts { get; set; } = 1000;
   [Parameter] public double TargetValueTOrders { get; set; } = 11000;
   [Parameter] public double TargetValueTUsers { get; set; } = 1234567;

@@ -110,7 +110,6 @@ class SQLServerHelper(BlazorSQLServerContext context)
     var message = outputParam.Value?.ToString();
     return message;
   } // reference
-  #endregion
 
   public async Task<List<RandText>> GetRandTextsWOParamAsync(string spName)
   {
@@ -120,6 +119,10 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .AsNoTracking()
         .ToListAsync();
   } // working method for reference; not currently in use
+
+  #endregion FOR REFERENCE ONLY
+
+  #region LIST METHODS
 
   public async Task<List<RandText>> GetRandTextsFromSqlReadOnlyAsync(string spName, params object?[] parameters)
   {
@@ -145,6 +148,34 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .AsNoTracking()
         .ToListAsync();
   }
+
+  public async Task<List<UserListDM>> UserListFromSqlReadOnlyAsync(string spName, params object?[] parameters)
+  {
+    var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
+    {
+        ("function_key", SqlDbType.VarChar, 100),
+        ("sp_output", SqlDbType.NVarChar, 100)
+    };
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuples(paramDefs, parameters);
+
+    if (parameters.Length != sqlParameter.Length)
+    {
+      throw new ArgumentException("Parameters count mismatch.");
+    }
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    return await _context.UserListDM
+        .FromSql(sqlParam)
+        .AsNoTracking()
+        .ToListAsync();
+  }
+
+  #endregion LIST METHODS
+
+  #region SINGLE-VALUE METHODS
+
   public async Task<RandText?> GetRandTextsFromSqlAsync(string spName, params object?[] parameters)
   {
     var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
@@ -171,9 +202,16 @@ class SQLServerHelper(BlazorSQLServerContext context)
 
     return result.FirstOrDefault();
   }
-  #endregion
+
+  #endregion SINGLE-VALUE METHODS
+
+  #endregion READ-ONLY (AsNoTracking) METHODS
+
 
   #region NON-READ-ONLY METHODS
+
+  #region LIST METHODS
+
   public async Task<List<RandText>> GetListRandTextsFromSqlAsync(string spName, params object?[] parameters)
   {
     var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
@@ -196,6 +234,11 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .FromSql(sqlParam) // The FromSql and FromSqlInterpolated methods are safe against SQL injection, and always integrate parameter data as a separate SQL parameter. To read more: [Passing parameters](https://learn.microsoft.com/en-us/ef/core/querying/sql-queries?tabs=sqlserver#passing-parameters)
         .ToListAsync();
   }
+
+  #endregion LIST METHODS
+
+  #region SINGLE-VALUE METHODS
+
   public async Task<SqlOutput?> CreDelUpdRandTextsFromSqlAsync(string spName, params object?[] parameters)
   {
     var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
@@ -241,5 +284,7 @@ class SQLServerHelper(BlazorSQLServerContext context)
     // return result;
     return await MinimalDbSettings.UsingCommand(_context, spName, sqlParameter);
   } // reference
-  #endregion
+
+  #endregion SINGLE-VALUE METHODS
+  #endregion NON-READ-ONLY METHODS
 }

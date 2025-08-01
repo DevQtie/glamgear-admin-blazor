@@ -6,7 +6,8 @@ namespace GlamGearAdmin.Data.SQLServer
     {
         public DbSet<Models.SQLServer.RandText> RandText { get; set; } = default!;
         public DbSet<Models.SQLServer.Admin> Admin { get; set; } = default!;
-        public DbSet<Models.SQLServer.SqlOutput> SqlOutput { get; set; }
+        public DbSet<Models.SQLServer.SqlOutput> SqlOutput { get; set; } // Works well with OUTPUT parameter in SQL Server
+        public DbSet<Models.SQLServer.UserListDM> UserListDM { get; set; } = default!;
         // to add another data model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -17,6 +18,9 @@ namespace GlamGearAdmin.Data.SQLServer
 
             modelBuilder.Entity<Models.SQLServer.SqlOutput>()
             .HasNoKey();
+
+            modelBuilder.Entity<Models.SQLServer.UserListDM>()
+            .HasNoKey().ToView(null);
 
             // to add another modelBuilder
         }

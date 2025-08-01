@@ -39,13 +39,18 @@
             @if (navSubmenu == NavSubmenu.FirstSubM)
             {
                 <div class="nav-item py-1">
-                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/add-products">
-                        <span class="fst-normal">Add Products</span>
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/product-list">
+                        <span class="fst-normal">Product List</span>
                     </NavLink>
                 </div>
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/manage-products">
                         <span class="fst-normal">Manage Products</span>
+                    </NavLink>
+                </div>
+                <div class="nav-item py-1">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/add-products">
+                        <span class="fst-normal">Add Products</span>
                     </NavLink>
                 </div>
             }
@@ -90,6 +95,11 @@
 
             @if (navSubmenu == NavSubmenu.ThirdSubM)
             {
+                <div class="nav-item py-1">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/user-list">
+                        <span class="fst-normal">User List</span>
+                    </NavLink>
+                </div>
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/unverified-users">
                         <span class="fst-normal">Unverified Users</span>

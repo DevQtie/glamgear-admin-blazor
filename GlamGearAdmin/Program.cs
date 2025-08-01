@@ -9,7 +9,7 @@ using GlamGearAdmin.Data.SQLiteAuth;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BlazorSQLServerContext") ?? throw new InvalidOperationException("Connection string 'BlazorSQLServerContext' not found.")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BlazorSQLServerContextLocal") ?? throw new InvalidOperationException("Connection string 'BlazorSQLServerContextLocal' not found.")));
 builder.Services.AddDbContextFactory<BlazorAuthContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BlazorSqliteAuthContext") ?? throw new InvalidOperationException("Connection string 'BlazorSqliteAuthContext' not found.")));
 builder.Services.AddDbContextFactory<BlazorWebAppAdminContext>(options =>
