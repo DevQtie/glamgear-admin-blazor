@@ -149,20 +149,11 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .ToListAsync();
   }
 
-  public async Task<List<UserListDM>> UserListFromSqlReadOnlyAsync(string spName, params object?[] parameters)
+  public async Task<List<UserListDM>> UserListFromSqlReadOnlyAsyncList(string spName, Dictionary<string, object?> parameters)
   {
-    var paramDefs = new (string Name, SqlDbType Type, int? Size)[]
-    {
-        ("function_key", SqlDbType.VarChar, 100),
-        ("sp_output", SqlDbType.NVarChar, 100)
-    };
+    var paramDefs = SQLServerInnerHelper.RpiAPSMSpManageUsersDataWOutputParams();
 
-    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuples(paramDefs, parameters);
-
-    if (parameters.Length != sqlParameter.Length)
-    {
-      throw new ArgumentException("Parameters count mismatch.");
-    }
+    SqlParameter[]? sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDict(paramDefs, parameters);
 
     var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
 
@@ -196,6 +187,22 @@ class SQLServerHelper(BlazorSQLServerContext context)
     var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
 
     var result = await _context.RandText
+        .FromSql(sqlParam)
+        .AsNoTracking()
+        .ToListAsync();
+
+    return result.FirstOrDefault();
+  }
+
+  public async Task<UserListDM?> UserListFromSqlReadOnlyAsync(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.RpiAPSMSpManageUsersDataWOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDict(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    var result = await _context.UserListDM
         .FromSql(sqlParam)
         .AsNoTracking()
         .ToListAsync();

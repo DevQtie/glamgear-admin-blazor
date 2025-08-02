@@ -60,7 +60,7 @@
             {
                 var count = scatterChartDataset.Data.Count;
 
-                var newData = new List<ScatterChartDataPoint?>();
+                var newData = new List<ScatterChartDataPoint>();
                 for (var i = 0; i < count; i++)
                 {
                     newData.Add(new(random.Next(200), random.Next(200)));
@@ -148,9 +148,9 @@
         };
     }
 
-    private List<ScatterChartDataPoint?> GetRandomData()
+    private List<ScatterChartDataPoint> GetRandomData()
     {
-        var data = new List<ScatterChartDataPoint?>();
+        var data = new List<ScatterChartDataPoint>();
         for (var index = 0; index < dataLabelsCount; index++)
         {
             data.Add(new ScatterChartDataPoint(random.Next(200), random.Next(200)));

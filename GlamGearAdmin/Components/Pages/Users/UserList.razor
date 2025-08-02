@@ -1,5 +1,6 @@
 @page "/users/user-list"
 @rendermode InteractiveServer
+@* @rendermode @(new InteractiveServerRenderMode(prerender: false)) // to prevent the execution of OnInitializedAsync twice *@
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using GlamGearAdmin.Models.SQLServer
@@ -127,7 +128,7 @@ else
                   <!--Remove text-nowrap if there are more link button to show-->
 
                   <Tooltip Class="d-flex justify-content-center" Title="Review" Placement="TooltipPlacement.Top"><a
-                      class="btn btn-primary btn-sm" href="@($"sql_server/crud/admin_pages/edit?userid={a.UserID}")">
+                      class="btn btn-outline-primary btn-sm" href="@($"users/review-user?userid={a.UserID}")">
                       <Icon Name="IconName.PencilSquare" />
                     </a></Tooltip>
                   @* <Tooltip Class="d-flex justify-content-center" Title="Tooltip Left" Placement="TooltipPlacement.Top"><a
@@ -307,7 +308,8 @@ else
   {
     context = DbFactory.CreateDbContext();
     var sQLServerHelper = new SQLServerHelper(context);
-    userList = await sQLServerHelper.UserListFromSqlReadOnlyAsync("rpiAPSM_spManageUsersDataWOutput", "USER_LIST", null);
+    var spParam = SQLServerInnerHelper.RpiAPSMSpManageUsersDataWOutputPageParams(functionKey: "USER_LIST");
+    userList = await sQLServerHelper.UserListFromSqlReadOnlyAsyncList("rpiAPSM_spManageUsersDataWOutput", spParam);
     pagination.TotalRecords = userList.Count;
   }
 

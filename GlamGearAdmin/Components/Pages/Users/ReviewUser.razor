@@ -1,0 +1,73 @@
+@page "/users/review-user"
+@using Microsoft.EntityFrameworkCore
+@using GlamGearAdmin.Models.SQLServer
+@using GlamGearAdmin.Data.SQLServer
+@implements IAsyncDisposable
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h3>Review User</h3>
+
+<div>
+  <hr />
+  @if (reviewUserList is null)
+  {
+    <div class="position-absolute top-50 start-50 translate-middle">
+      <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+  else
+  {
+    <dl class="row">
+      <dt class="col-sm-2">Role</dt>
+      <dd class="col-sm-10">@reviewUserList.RoleType</dd>
+      <dt class="col-sm-2">Display Name</dt>
+      <dd class="col-sm-10">@reviewUserList.DispName</dd>
+      <dt class="col-sm-2">Remarks</dt>
+      @if (@reviewUserList.Remarks == null)
+      {
+        <dd class="col-sm-10">-</dd>
+
+      }
+      else
+      {
+        <dd class="col-sm-10">@reviewUserList.Remarks</dd>
+      }
+      <dt class="col-sm-2">Date Registered</dt>
+      <dd class="col-sm-10">@reviewUserList.DtRegistered</dd>
+    </dl>
+    <div>
+      <a href="@($"/users/user-list")">Back to List</a>
+    </div>
+  }
+</div>
+
+@code {
+  private UserListDM? reviewUserList = new();
+  private BlazorSQLServerContext context = default!;
+
+  [SupplyParameterFromQuery(Name = "userid")]
+  private string? id { get; set; }
+
+  protected override async Task OnInitializedAsync()
+  {
+    context = DbFactory.CreateDbContext();
+    var sQLServerHelper = new SQLServerHelper(context);
+    var spParam = SQLServerInnerHelper.RpiAPSMSpManageUsersDataWOutputPageParams(userID: id, functionKey: "REVIEW_USER");
+    reviewUserList = await sQLServerHelper.UserListFromSqlReadOnlyAsync("rpiAPSM_spManageUsersDataWOutput", spParam);
+
+    if (reviewUserList is null)
+    {
+      NavigationManager.NavigateTo("notfound");
+    }
+  }
+
+  public async ValueTask DisposeAsync() // this is important
+  {
+    await context.DisposeAsync();
+  }
+}
