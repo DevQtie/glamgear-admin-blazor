@@ -129,6 +129,7 @@ static class MinimalDbSettings
   #endregion FOR REFERENCE ONLY
 
   #region PRIMARY BUSINESS LOGIC
+
   public static SqlParameter[] FromSqlSQLParamArrayOfTuplesAndDict((string Name, SqlDbType Type, int? Size)[] paramDefs, Dictionary<string, object?> parameters)
   {
     var paramUpdatedValues = parameters.Values.ToList();
@@ -138,6 +139,30 @@ static class MinimalDbSettings
         var param = def.Size is null
         ? new SqlParameter(def.Name, def.Type)
         : new SqlParameter(def.Name, def.Type, def.Size.Value);
+
+        if (def.Name == parameters.Keys.ToList()[i]) {
+          param.Value = paramUpdatedValues[i] ?? DBNull.Value;
+        } else {
+          throw new ArgumentException("Parameters misconfiguration found.");
+        }
+        return param;
+      })];
+  }
+
+  public static SqlParameter[] FromSqlSQLParamArrayOfTuplesAndDictPreScale((string Name, SqlDbType Type, int? Size, byte? Precision, byte? Scale)[] paramDefs, Dictionary<string, object?> parameters)
+  {
+    var paramUpdatedValues = parameters.Values.ToList();
+    return [.. paramDefs
+      .Select((def, i) =>
+      {
+        var param = def.Size is null
+        ? new SqlParameter(def.Name, def.Type)
+        : (def.Size is not null && def.Precision is null && def.Scale is null) ?
+        new SqlParameter(def.Name, def.Type, def.Size.Value) :
+        new SqlParameter(def.Name, def.Type) {
+          Precision = def.Precision ?? 0,
+          Scale = def.Scale ?? 0
+        };
 
         if (def.Name == parameters.Keys.ToList()[i]) {
           param.Value = paramUpdatedValues[i] ?? DBNull.Value;

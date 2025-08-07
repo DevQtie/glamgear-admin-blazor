@@ -146,13 +146,17 @@ else
             output = await sQLServerHelper.CreDelUpdStringOutputAsync("rpiAPSM_spRandomTextWParam", id, Admin?.RandomText,
             "MOD_REC");
 
-            if (output is null)
+            if (output is not null && output == "SUCCESSFUL")
+            {
+                await JS.InvokeVoidAsync("showLiveToast");
+            }
+            else if (output is not null && output != "SUCCESSFUL")
             {
                 await JS.InvokeVoidAsync("showLiveToastError");
             }
             else
             {
-                await JS.InvokeVoidAsync("showLiveToast");
+                await JS.InvokeVoidAsync("showLiveToastError");
             }
         }
         catch (DbUpdateConcurrencyException) // I'm not sure if this is needed

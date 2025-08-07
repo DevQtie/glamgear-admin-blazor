@@ -7,6 +7,7 @@
 @using GlamGearAdmin.Data.SQLServer
 @implements IAsyncDisposable
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+@inject NavigationManager NavigationManager
 
 <PageTitle>User List</PageTitle>
 
@@ -22,6 +23,7 @@
 }
 else
 {
+  <button class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</button>
   <div class="input-group mb-3 w-50">
     <input type="search" class="form-control border-outline-secondary" placeholder="Filter by display name"
       @bind="dispNameFilter" @bind:event="oninput" />
@@ -196,6 +198,7 @@ else
 }
 
 @code {
+  private void ButtonClicked() => NavigationManager.NavigateTo("simulate/images");
   private enum PaginationPerPage
   {
     Five = 5,
@@ -308,8 +311,8 @@ else
   {
     context = DbFactory.CreateDbContext();
     var sQLServerHelper = new SQLServerHelper(context);
-    var spParam = SQLServerInnerHelper.RpiAPSMSpManageUsersDataWOutputPageParams(functionKey: "USER_LIST");
-    userList = await sQLServerHelper.UserListFromSqlReadOnlyAsyncList("rpiAPSM_spManageUsersDataWOutput", spParam);
+    var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(functionKey: "USER_LIST");
+    userList = await sQLServerHelper.UserListFromSqlAsyncList("rpiAPSM_spManageUsersDataWOutput", spParam);
     pagination.TotalRecords = userList.Count;
   }
 

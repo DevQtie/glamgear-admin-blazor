@@ -8,6 +8,8 @@ namespace GlamGearAdmin.Data.SQLServer
         public DbSet<Models.SQLServer.Admin> Admin { get; set; } = default!;
         public DbSet<Models.SQLServer.SqlOutput> SqlOutput { get; set; } // Works well with OUTPUT parameter in SQL Server
         public DbSet<Models.SQLServer.UserListDM> UserListDM { get; set; } = default!;
+        public DbSet<Models.SQLServer.SimulateKYCImg> ReviewUserMD { get; set; } = default!;
+        public DbSet<Models.SQLServer.UserListSingleDM> UserListSingleDM { get; set; } = default!;
         // to add another data model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,6 +22,12 @@ namespace GlamGearAdmin.Data.SQLServer
             .HasNoKey();
 
             modelBuilder.Entity<Models.SQLServer.UserListDM>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.SimulateKYCImg>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.UserListSingleDM>()
             .HasNoKey().ToView(null);
 
             // to add another modelBuilder

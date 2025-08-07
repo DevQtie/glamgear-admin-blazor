@@ -1,0 +1,368 @@
+@page "/simulate/images"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using GlamGearAdmin.Models.SQLServer
+@using GlamGearAdmin.Data.SQLServer
+@implements IAsyncDisposable
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<PageTitle>Simulation</PageTitle>
+
+<h3>Simulation</h3>
+
+<div class="border rounded rounded-secondary p-3 m-2">
+  <h5>KYC</h5>
+  <EditForm Model="simKYCImage" OnValidSubmit="SimulateKYCImages" FormName="create" Enhance>
+    <DataAnnotationsValidator />
+    <div class="container-fluid p-0">
+      <div class="row">
+        <div class="col-12 col-lg-6 mb-3">
+          <InputFile class="btn btn-outline-primary my-1" OnChange="HandleFrontImageUpload" accept="image/*" />
+          <ValidationMessage For="() => simKYCImage.FrontImg" class="text-danger" />
+
+          @if (simKYCImage.FrontImg is not null)
+          {
+            <img src="@simKYCImage.FrontImg" class="img-thumbnail my-3" alt="Front ID" />
+          }
+        </div>
+
+        <div class="col-12 col-lg-6 mb-3">
+          <InputFile class="btn btn-outline-primary my-1" OnChange="HandleBackImageUpload" accept="image/*" />
+          <ValidationMessage For="() => simKYCImage.BackImg" class="text-danger" />
+
+          @if (simKYCImage.BackImg is not null)
+          {
+            <img src="@simKYCImage.BackImg" class="img-thumbnail my-3" alt="Back ID" />
+          }
+        </div>
+
+        <div class="col-12 col-lg-6 mb-3">
+          <InputFile class="btn btn-outline-primary my-1" OnChange="HandleSelfieImageUpload" accept="image/*" />
+          <ValidationMessage For="() => simKYCImage.SelfieImg" class="text-danger" />
+
+          @if (simKYCImage.SelfieImg is not null)
+          {
+            <img src="@simKYCImage.SelfieImg" class="img-thumbnail my-3" alt="Selfie" />
+          }
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </EditForm>
+</div>
+
+<div class="border rounded rounded-secondary p-3 m-2">
+  <h5>Product</h5>
+  <EditForm Model="simProductImg" OnValidSubmit="SimulateProductImages" FormName="create" Enhance>
+    <DataAnnotationsValidator />
+    <div class="container-fluid p-0">
+      <div class="column">
+        <div class="col-12 col-lg-12 mb-3">
+          <InputFile class="btn btn-outline-primary my-1" OnChange="HandleProductImageUpload" accept="image/*"
+            multiple />
+          <ValidationMessage For="() => simProductImg.ProductImgList" class="text-danger" />
+
+          @if (simProductImg.ProductImgList is not null)
+          {
+            @foreach (var img in simProductImg.ProductImgList)
+            {
+              <img src="@img.img" class="img-thumbnail m-3" alt="Front ID" />
+            }
+          }
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </EditForm>
+</div>
+
+<div id="liveToast" class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 mb-3 me-3"
+  role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+  <div class="d-flex">
+    <div class="toast-body">
+      New records created successfully!
+    </div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"
+      @onclick="DisposeToastThenNavigate"></button>
+  </div>
+</div>
+
+<div id="liveToastError"
+  class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 mb-3 me-3" role="alert"
+  aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+  <div class="d-flex">
+    @if (errorMessage is not null)
+    {
+      <div class="toast-body">
+        Someting went wrong: "@errorMessage". Please try again later.
+      </div>
+    }
+    else
+    {
+      <div class="toast-body">
+        Someting went wrong. Please try again later.
+      </div>
+    }
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+      aria-label="Close"></button>
+  </div>
+</div>
+
+<script>
+  window.showLiveToast = () => {
+    const toastEl = document.getElementById('liveToast');
+    if (toastEl) {
+      const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+      toast.show();
+
+      toastEl.addEventListener('hidden.bs.toast', () => {
+        window.location.replace('/users/user-list');
+      });
+    }
+  };
+  window.showLiveToastError = () => {
+    const toastEl = document.getElementById('liveToastError');
+    if (toastEl) {
+      const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+      toast.show();
+    }
+  };
+</script>
+
+
+@code {
+  [SupplyParameterFromForm]
+  private SimulateKYCImg simKYCImage { get; set; } = new();
+
+  [SupplyParameterFromForm]
+  private SimulateProductImg simProductImg { get; set; } = new();
+  private BlazorSQLServerContext context = default!;
+  private string? output;
+  private string? errorMessage;
+
+  protected override void OnInitialized()
+  {
+    context = DbFactory.CreateDbContext();
+  }
+  private async Task HandleFrontImageUpload(InputFileChangeEventArgs e)
+  {
+    const long maxAllowedSize = 3L * 1024L * 1024L; // 3 MB
+
+    var file = e.File;
+
+    try
+    {
+      using var readStream = file.OpenReadStream(maxAllowedSize);
+      using var memoryStream = new MemoryStream();
+
+      await readStream.CopyToAsync(memoryStream);
+      var base64 = Convert.ToBase64String(memoryStream.ToArray());
+
+      simKYCImage.FrontImg = $"data:{file.ContentType};base64,{base64}";
+    }
+    catch (IOException ex)
+    {
+      errorMessage = ex.Message;
+      simKYCImage.FrontImg = null;
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+    catch (Exception ex)
+    {
+      errorMessage = ex.Message;
+      simKYCImage.FrontImg = null;
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+  }
+
+  private async Task HandleBackImageUpload(InputFileChangeEventArgs e)
+  {
+    const long maxAllowedSize = 3L * 1024L * 1024L; // 3 MB
+
+    var file = e.File;
+
+    try
+    {
+      using var readStream = file.OpenReadStream(maxAllowedSize);
+      using var memoryStream = new MemoryStream();
+
+      await readStream.CopyToAsync(memoryStream);
+      var base64 = Convert.ToBase64String(memoryStream.ToArray());
+
+      simKYCImage.BackImg = $"data:{file.ContentType};base64,{base64}";
+    }
+    catch (IOException ex)
+    {
+      errorMessage = ex.Message;
+      simKYCImage.BackImg = null;
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+    catch (Exception ex)
+    {
+      errorMessage = ex.Message;
+      simKYCImage.BackImg = null;
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+  }
+
+  private async Task HandleSelfieImageUpload(InputFileChangeEventArgs e)
+  {
+    const long maxAllowedSize = 3L * 1024L * 1024L; // 3 MB
+
+    var file = e.File;
+
+    try
+    {
+      using var readStream = file.OpenReadStream(maxAllowedSize);
+      using var memoryStream = new MemoryStream();
+
+      await readStream.CopyToAsync(memoryStream);
+      var base64 = Convert.ToBase64String(memoryStream.ToArray());
+
+      simKYCImage.SelfieImg = $"data:{file.ContentType};base64,{base64}";
+    }
+    catch (IOException ex)
+    {
+      errorMessage = ex.Message;
+      simKYCImage.SelfieImg = null;
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+    catch (Exception ex)
+    {
+      errorMessage = ex.Message;
+      simKYCImage.SelfieImg = null;
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+  }
+
+  private async Task SimulateKYCImages()
+  {
+    var sQLServerHelper = new SQLServerHelper(context);
+    string userID = "USER-2025-06-11-10-50-53-9593-CBBB88BF9DDB";
+    byte[]? frontID = SQLServerInnerHelper.TryExtractImageBytes(simKYCImage?.FrontImg);
+    byte[]? backID = SQLServerInnerHelper.TryExtractImageBytes(simKYCImage?.BackImg);
+    byte[]? selfie = SQLServerInnerHelper.TryExtractImageBytes(simKYCImage?.SelfieImg);
+    var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(
+    userID: userID,
+    frontID: frontID,
+    backID: backID,
+    selfie: selfie,
+    functionKey: "SIMULATE_USERS_KYC");
+    output = await sQLServerHelper.VerifyUserStringOutputAsync("rpiAPSM_spManageUsersDataWOutput", spParam);
+    if (output is not null && output == "SUCCESSFUL")
+    {
+      await JS.InvokeVoidAsync("showLiveToast");
+    }
+    else if (output is not null && output != "SUCCESSFUL")
+    {
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+    else
+    {
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+  }
+
+
+  private async Task HandleProductImageUpload(InputFileChangeEventArgs e)
+  {
+    long maxAllowedSize = 3L * 1024L * 1024L; //3 MB limit
+    int maxFileCount = 8;
+    try
+    {
+      int getItemPostCount = simProductImg.ProductImgList.Count;
+      int getItemPreCount = e.GetMultipleFiles(maxFileCount).Count() + getItemPostCount;
+      if (getItemPostCount != 0 && maxFileCount < getItemPreCount)
+      {
+        errorMessage = "The max allowed count of items was exceeded.";
+        await JS.InvokeVoidAsync("showLiveToastError");
+      }
+      else
+      {
+        foreach (var file in e.GetMultipleFiles(maxFileCount))
+        {
+          using var readStream = file.OpenReadStream(maxAllowedSize);
+          using var memoryStream = new MemoryStream();
+
+          await readStream.CopyToAsync(memoryStream);
+          var base64 = Convert.ToBase64String(memoryStream.ToArray());
+          simProductImg.ProductImgList.Add(($"data:{file.ContentType};base64,{base64}", file.Name, file.Size));
+        }
+        simProductImg.ProductImgList.Reverse();
+      }
+    }
+    catch (IOException ex)
+    {
+      errorMessage = ex.Message;
+      simProductImg.ProductImgList.Clear();
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+    catch (Exception ex)
+    {
+      errorMessage = ex.Message;
+      simProductImg.ProductImgList.Clear();
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+  }
+
+  private async Task SimulateProductImages()
+  {
+    var sQLServerHelper = new SQLServerHelper(context);
+    string prodID = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
+    int getLength = prodID.Count();
+    string reprocessedStringID = "";
+    string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+    for (int i = 0; i <= getLength; i++)
+    {
+      if (i < 13)
+      {
+        reprocessedStringID = prodID.Substring(0, i);
+        if (i == 12)
+        {
+          break;
+        }
+      }
+    }
+    string concatString = String.Concat("PROD-", dateNow, "-", reprocessedStringID);
+    foreach (var imgData in simProductImg.ProductImgList)
+    {
+      byte[]? prodImg = SQLServerInnerHelper.TryExtractImageBytes(imgData.img);
+      var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(
+      prodID: concatString,
+      prodImg: prodImg,
+      imgName: imgData.name,
+      size: imgData.size,
+      functionKey: "SIMULATE_PRODUCT_IMAGE");
+      output = await sQLServerHelper.SimulateProdImgStringOutputAsync("rpiAPSM_spManageAdminProductsWOutput", spParam);
+      if (output is not null && output != "SUCCESSFUL")
+      {
+        break; // needs improvements
+      }
+
+    }
+    if (output is not null && output == "SUCCESSFUL")
+    {
+      await JS.InvokeVoidAsync("showLiveToast");
+    }
+    else if (output is not null && output != "SUCCESSFUL")
+    {
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+    else
+    {
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+  }
+
+  private void DisposeToastThenNavigate()
+  {
+    NavigationManager.NavigateTo("/users/user-list", replace: true);
+  }
+
+  public async ValueTask DisposeAsync() // this is important
+  {
+    await context.DisposeAsync();
+  }
+
+}

@@ -1,5 +1,13 @@
 @page "/products/product-list"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
 
 <PageTitle>Product List</PageTitle>
 
 <h3>Product List</h3>
+
+<button class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</button>
+
+@code {
+  private void ButtonClicked() => NavigationManager.NavigateTo("simulate/images");
+}

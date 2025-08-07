@@ -112,13 +112,17 @@
         var sQLServerHelper = new SQLServerHelper(context);
         output = await sQLServerHelper.CreDelUpdStringOutputAsync("rpiAPSM_spRandomTextWParam", null, Admin?.RandomText,
         "ADD_NEW_REC");
-        if (output is null)
+        if (output is not null && output == "SUCCESSFUL")
+        {
+            await JS.InvokeVoidAsync("showLiveToast");
+        }
+        else if (output is not null && output != "SUCCESSFUL")
         {
             await JS.InvokeVoidAsync("showLiveToastError");
         }
         else
         {
-            await JS.InvokeVoidAsync("showLiveToast");
+            await JS.InvokeVoidAsync("showLiveToastError");
         }
     }
 
