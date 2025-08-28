@@ -78,7 +78,8 @@ else
           </th>
           <th @onclick='() => SortBy("DispName")' class="cursor-pointer">Display Name @SortIcon("DispName")</th>
           <th @onclick='() => SortBy("Remarks")' class="cursor-pointer">Remarks @SortIcon("Remarks")</th>
-          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtStamp")</th>
+          <th @onclick='() => SortBy("DtModified")' class="cursor-pointer">Date Modified @SortIcon("DtModified")</th>
+          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtRegistered")</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -122,6 +123,7 @@ else
             }
             <td class="align-middle">@a.DispName</td>
             <td class="align-middle">@a.Remarks</td>
+            <td class="align-middle">@a.DtModified</td>
             <td class="align-middle">@a.DtRegistered</td>
             <td class="align-middle text-nowrap">
               <div class="d-flex flex-column h-100 justify-content-center gap-2">
@@ -152,7 +154,8 @@ else
           </th>
           <th @onclick='() => SortBy("DispName")' class="cursor-pointer">Display Name @SortIcon("DispName")</th>
           <th @onclick='() => SortBy("Remarks")' class="cursor-pointer">Remarks @SortIcon("Remarks")</th>
-          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtStamp")</th>
+          <th @onclick='() => SortBy("DtModified")' class="cursor-pointer">Date Modified @SortIcon("DtModified")</th>
+          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtRegistered")</th>
           <th>Actions</th>
         </tr>
       </thead>

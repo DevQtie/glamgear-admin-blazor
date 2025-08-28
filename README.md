@@ -5,6 +5,12 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.12.1.0-alpha
+
+- Additional field for overall user list.
+- Additional field for unverified user list.
+- Additional field for verified user list.
+
 ## 1.12.0.0-alpha
 
 - Note: If it is actually a simple model (for other Razor pages), this should not be used. I've left it as is for reference.

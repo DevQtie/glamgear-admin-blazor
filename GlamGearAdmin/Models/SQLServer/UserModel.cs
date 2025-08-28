@@ -30,6 +30,9 @@ public class UserListDM
   [Column("remarks")]
   public string? Remarks { get; set; }
 
+  [Column("dt_modified")]
+  public string? DtModified { get; set; }
+
   [Column("dt_registered")]
   public string? DtRegistered { get; set; }
 }
