@@ -111,7 +111,7 @@
                     </NavLink>
                 </div>
                 <div class="nav-item py-1">
-                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="users/other-users">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="@($"users/other-users/{data}")"> @* @($"users/other-users/{data}") testing purposes *@
                         <span class="fst-normal">Other Users</span>
                     </NavLink>
                 </div>
@@ -158,6 +158,8 @@
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
     private NavSubmenu navSubmenu = NavSubmenu.None;
     private bool submenuClicked = false;
+
+    private long data = 2L * 1024L * 1024L; @* Example data, can be set to any value *@
 
     private string? GetVersion()
     {

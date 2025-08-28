@@ -379,6 +379,12 @@ main[b-y8gzvrohei] {
   background-repeat: no-repeat;
   background-position: center;
 }
+/* _content/GlamGearAdmin/Components/Pages/Products/ProdList.razor.rz.scp.css */
+.cus-img-thumbnail-sm[b-kujw1kii1s] {
+  min-width: 55px !important;
+  max-width: 55px !important;
+  height: auto !important;
+}
 /* _content/GlamGearAdmin/Components/Pages/SQLite/CRUD/AdminPages/Index.razor.rz.scp.css */
 [b-ebto4qvm9c] tr {
   height: 3em;

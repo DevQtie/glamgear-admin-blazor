@@ -78,6 +78,30 @@
   </EditForm>
 </div>
 
+<div class="border rounded rounded-secondary p-3 m-2">
+  <h5>Simulate Filestream and Non-Filestream Image Data</h5>
+  <EditForm Model="simTestImage" OnValidSubmit="SimulateTestImages" FormName="create" Enhance>
+    <DataAnnotationsValidator />
+    <div class="container-fluid p-0">
+      <div class="column">
+        <div class="col-12 col-lg-12 mb-3">
+          <InputFile class="btn btn-outline-primary my-1" OnChange="HandleTestImageUpload" accept="image/*" multiple />
+          <ValidationMessage For="() => simTestImage.TestImgList" class="text-danger" />
+
+          @if (simTestImage.TestImgList is not null)
+          {
+            @foreach (var img in simTestImage.TestImgList)
+            {
+              <img src="@img.img" class="img-thumbnail m-3" alt="Front ID" />
+            }
+          }
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </EditForm>
+</div>
+
 <div id="liveToast" class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 mb-3 me-3"
   role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
   <div class="d-flex">
@@ -138,6 +162,9 @@
 
   [SupplyParameterFromForm]
   private SimulateProductImg simProductImg { get; set; } = new();
+
+  [SupplyParameterFromForm]
+  private SimulateTestImg simTestImage { get; set; } = new();
   private BlazorSQLServerContext context = default!;
   private string? output;
   private string? errorMessage;
@@ -264,11 +291,10 @@
     }
   }
 
-
   private async Task HandleProductImageUpload(InputFileChangeEventArgs e)
   {
-    long maxAllowedSize = 3L * 1024L * 1024L; //3 MB limit
-    int maxFileCount = 8;
+    const long maxAllowedSize = 3L * 1024L * 1024L; //3 MB limit
+    const int maxFileCount = 8;
     try
     {
       int getItemPostCount = simProductImg.ProductImgList.Count;
@@ -306,6 +332,47 @@
     }
   }
 
+  private async Task HandleTestImageUpload(InputFileChangeEventArgs e)
+  {
+    const long maxAllowedSize = 101L * 1024L * 1024L; //20 MB limit
+    const int maxFileCount = 20;
+    try
+    {
+      int getItemPostCount = simTestImage.TestImgList.Count;
+      int getItemPreCount = e.GetMultipleFiles(maxFileCount).Count() + getItemPostCount;
+      if (getItemPostCount != 0 && maxFileCount < getItemPreCount)
+      {
+        errorMessage = "The max allowed count of items was exceeded.";
+        await JS.InvokeVoidAsync("showLiveToastError");
+      }
+      else
+      {
+        foreach (var file in e.GetMultipleFiles(maxFileCount))
+        {
+          using var readStream = file.OpenReadStream(maxAllowedSize);
+          using var memoryStream = new MemoryStream();
+
+          await readStream.CopyToAsync(memoryStream);
+          var base64 = Convert.ToBase64String(memoryStream.ToArray());
+          simTestImage.TestImgList.Add(($"data:{file.ContentType};base64,{base64}", file.Name, file.Size));
+        }
+        simTestImage.TestImgList.Reverse();
+      }
+    }
+    catch (IOException ex)
+    {
+      errorMessage = ex.Message;
+      simTestImage.TestImgList.Clear();
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+    catch (Exception ex)
+    {
+      errorMessage = ex.Message;
+      simTestImage.TestImgList.Clear();
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+  }
+
   private async Task SimulateProductImages()
   {
     var sQLServerHelper = new SQLServerHelper(context);
@@ -335,6 +402,39 @@
       size: imgData.size,
       functionKey: "SIMULATE_PRODUCT_IMAGE");
       output = await sQLServerHelper.SimulateProdImgStringOutputAsync("rpiAPSM_spManageAdminProductsWOutput", spParam);
+      if (output is not null && output != "SUCCESSFUL")
+      {
+        break; // needs improvements
+      }
+
+    }
+    if (output is not null && output == "SUCCESSFUL")
+    {
+      await JS.InvokeVoidAsync("showLiveToast");
+    }
+    else if (output is not null && output != "SUCCESSFUL")
+    {
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+    else
+    {
+      await JS.InvokeVoidAsync("showLiveToastError");
+    }
+  }
+
+  private async Task SimulateTestImages()
+  {
+    var sQLServerHelper = new SQLServerHelper(context);
+    foreach (var imgData in simTestImage.TestImgList)
+    {
+      byte[]? testImg = SQLServerInnerHelper.TryExtractImageBytes(imgData.img);
+      var spParam = SQLServerInnerHelper.ManageImageSimulatorWOutputPageParams(
+      imgName: imgData.name,
+      size: imgData.size,
+      imgData: testImg,
+      imgDataNonFT: testImg,
+      functionKey: "SIMULATE_IMAGE");
+      output = await sQLServerHelper.SimulateTestImgStringOutputAsync("rpiAPSM_spSimFStreamAndNonFStreamData", spParam);
       if (output is not null && output != "SUCCESSFUL")
       {
         break; // needs improvements

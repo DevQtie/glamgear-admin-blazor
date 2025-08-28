@@ -1,5 +1,13 @@
 @page "/users/other-users"
+@page "/users/other-users/{data:long}"
 
 <PageTitle>Other Users</PageTitle>
 
 <h3>Other Users</h3>
+
+Data: @data
+
+@code {
+  [Parameter]
+  public long data { get; set; }
+}

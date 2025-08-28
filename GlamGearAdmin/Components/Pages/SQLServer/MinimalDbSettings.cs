@@ -130,24 +130,24 @@ static class MinimalDbSettings
 
   #region PRIMARY BUSINESS LOGIC
 
-  public static SqlParameter[] FromSqlSQLParamArrayOfTuplesAndDict((string Name, SqlDbType Type, int? Size)[] paramDefs, Dictionary<string, object?> parameters)
-  {
-    var paramUpdatedValues = parameters.Values.ToList();
-    return [.. paramDefs
-      .Select((def, i) =>
-      {
-        var param = def.Size is null
-        ? new SqlParameter(def.Name, def.Type)
-        : new SqlParameter(def.Name, def.Type, def.Size.Value);
+public static SqlParameter[] FromSqlSQLParamArrayOfTuplesAndDict((string Name, SqlDbType Type, int? Size)[] paramDefs, Dictionary<string, object?> parameters)
+{
+  var paramUpdatedValues = parameters.Values.ToList();
+  return [.. paramDefs
+    .Select((def, i) =>
+    {
+      var param = def.Size is null
+      ? new SqlParameter(def.Name, def.Type)
+      : new SqlParameter(def.Name, def.Type, def.Size.Value);
 
-        if (def.Name == parameters.Keys.ToList()[i]) {
-          param.Value = paramUpdatedValues[i] ?? DBNull.Value;
-        } else {
-          throw new ArgumentException("Parameters misconfiguration found.");
-        }
-        return param;
-      })];
-  }
+      if (def.Name == parameters.Keys.ToList()[i]) {
+        param.Value = paramUpdatedValues[i] ?? DBNull.Value;
+      } else {
+        throw new ArgumentException("Parameters misconfiguration found.");
+      }
+      return param;
+    })];
+}
 
   public static SqlParameter[] FromSqlSQLParamArrayOfTuplesAndDictPreScale((string Name, SqlDbType Type, int? Size, byte? Precision, byte? Scale)[] paramDefs, Dictionary<string, object?> parameters)
   {
@@ -173,14 +173,14 @@ static class MinimalDbSettings
       })];
   }
 
-  public static FormattableString FromSqlSQLParamLessDynamic(string spName, SqlParameter[] sqlParameters)
+public static FormattableString FromSqlSQLParamLessDynamic(string spName, SqlParameter[] sqlParameters)
+{
+  return sqlParameters.Length switch
   {
-    return sqlParameters.Length switch
-    {
-      // 0 => $"EXEC {storedProcedure}", // this isn't allowed here.
-      1 => $"EXEC {spName} {sqlParameters[0]}",
-      2 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}",
-      3 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}, {sqlParameters[2]}",
+    // 0 => $"EXEC {storedProcedure}", // this isn't allowed here.
+    1 => $"EXEC {spName} {sqlParameters[0]}",
+    2 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}",
+    3 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}, {sqlParameters[2]}",
       4 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}, {sqlParameters[2]}, {sqlParameters[3]}",
       5 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}, {sqlParameters[2]}, {sqlParameters[3]}, {sqlParameters[4]}",
       6 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}, {sqlParameters[2]}, {sqlParameters[3]}, {sqlParameters[4]}, {sqlParameters[5]}",
@@ -229,9 +229,9 @@ static class MinimalDbSettings
       49 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}, {sqlParameters[2]}, {sqlParameters[3]}, {sqlParameters[4]}, {sqlParameters[5]}, {sqlParameters[6]}, {sqlParameters[7]}, {sqlParameters[8]}, {sqlParameters[9]}, {sqlParameters[10]}, {sqlParameters[11]}, {sqlParameters[12]}, {sqlParameters[13]}, {sqlParameters[14]}, {sqlParameters[15]}, {sqlParameters[16]}, {sqlParameters[17]}, {sqlParameters[18]}, {sqlParameters[19]}, {sqlParameters[20]}, {sqlParameters[21]}, {sqlParameters[22]}, {sqlParameters[23]}, {sqlParameters[24]}, {sqlParameters[25]}, {sqlParameters[26]}, {sqlParameters[27]}, {sqlParameters[28]}, {sqlParameters[29]}, {sqlParameters[30]}, {sqlParameters[31]}, {sqlParameters[32]}, {sqlParameters[33]}, {sqlParameters[34]}, {sqlParameters[35]}, {sqlParameters[36]}, {sqlParameters[37]}, {sqlParameters[38]}, {sqlParameters[39]}, {sqlParameters[40]}, {sqlParameters[41]}, {sqlParameters[42]}, {sqlParameters[43]}, {sqlParameters[44]}, {sqlParameters[45]}, {sqlParameters[46]}, {sqlParameters[47]}, {sqlParameters[48]}",
       50 => $"EXEC {spName} {sqlParameters[0]}, {sqlParameters[1]}, {sqlParameters[2]}, {sqlParameters[3]}, {sqlParameters[4]}, {sqlParameters[5]}, {sqlParameters[6]}, {sqlParameters[7]}, {sqlParameters[8]}, {sqlParameters[9]}, {sqlParameters[10]}, {sqlParameters[11]}, {sqlParameters[12]}, {sqlParameters[13]}, {sqlParameters[14]}, {sqlParameters[15]}, {sqlParameters[16]}, {sqlParameters[17]}, {sqlParameters[18]}, {sqlParameters[19]}, {sqlParameters[20]}, {sqlParameters[21]}, {sqlParameters[22]}, {sqlParameters[23]}, {sqlParameters[24]}, {sqlParameters[25]}, {sqlParameters[26]}, {sqlParameters[27]}, {sqlParameters[28]}, {sqlParameters[29]}, {sqlParameters[30]}, {sqlParameters[31]}, {sqlParameters[32]}, {sqlParameters[33]}, {sqlParameters[34]}, {sqlParameters[35]}, {sqlParameters[36]}, {sqlParameters[37]}, {sqlParameters[38]}, {sqlParameters[39]}, {sqlParameters[40]}, {sqlParameters[41]}, {sqlParameters[42]}, {sqlParameters[43]}, {sqlParameters[44]}, {sqlParameters[45]}, {sqlParameters[46]}, {sqlParameters[47]}, {sqlParameters[48]}, {sqlParameters[49]}",
       // ... you can add more here...
-      _ => throw new ArgumentException("Too many parameters provided."),
-    };
-  }
+    _ => throw new ArgumentException("Too many parameters provided."),
+  };
+}
 
   public static FormattableString FromSqlSQLParamDynamic(string spName, SqlParameter[] sqlParameters)
   {

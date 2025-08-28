@@ -1,0 +1,754 @@
+@page "/users/review-user"
+@page "/users/review1/{userId}/user"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using GlamGearAdmin.Models.SQLServer
+@using GlamGearAdmin.Data.SQLServer
+@implements IAsyncDisposable
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<PageTitle>Details</PageTitle>
+
+<h3>Review User</h3>
+
+<script src="lib/customjs/reviewuser.js"></script>
+
+<div>
+    <hr />
+    @if (reviewUserListSingle is null)
+    {
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="my-3">
+            @if (status)
+            {
+                <span>Status: </span>
+                <Tooltip Title="Verified" Placement="TooltipPlacement.Top">
+                    <Icon Name="IconName.PatchCheckFill" Color="IconColor.Success" />
+                </Tooltip>
+
+            }
+            else
+            {
+                <span>Status: </span>
+                <Tooltip Title="Not yet verified" Placement="TooltipPlacement.Top">
+                    <Icon Name="IconName.PatchExclamationFill" Color="IconColor.Danger" />
+                </Tooltip>
+
+            }
+
+        </div>
+        <EditForm EditContext="editContext" OnValidSubmit="VerifyUser" FormName="reviewUser" Enhance>
+            @* <ObjectGraphDataAnnotationsValidator /> *@
+            <DataAnnotationsValidator />
+            <div class="container-fluid overflow-x-auto mw-40">
+                <div class="row py-1 border rounded border-secondary-subtle text-center my-1">
+
+                    <!-- Left side: user info -->
+                    <div class="col-6 d-flex flex-column justify-content-center align-items-center">
+                        <dl class="row m-0">
+                            <dt class="col-sm-3 text-start p-0">#</dt>
+                            <dd class="col-sm-9">@rowNum</dd>
+
+                            <dt class="col-sm-3 text-start p-0">Role</dt>
+                            @if (isModifyUser)
+                            {
+                                <dd class="col-sm-9">
+
+                                    @if (userRoles is null)
+                                    {
+                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                            <div class="spinner-grow text-danger spinner-grow-sm" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small">
+                                            <DropdownToggleButton>@(VerifyRemRoleUser.SelectedRole ?? "Please select a role")
+                                            </DropdownToggleButton>
+                                            <DropdownMenu>
+                                                @foreach (var role in userRoles)
+                                                {
+                                                    <DropdownItem @onclick="() => OnRoleItemSelected(role)" Active="@role.IsActive"
+                                                        Disabled="@(role.RoleType == "Programmer")">@role.RoleType
+                                                    </DropdownItem>
+                                                }
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <ValidationMessage For="() => VerifyRemRoleUser.SelectedRole" class="text-danger" />
+                                    }
+
+                                </dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.RoleType</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Display Name</dt>
+                            @if (reviewUserListSingle.DispName == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.DispName</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Username</dt>
+                            @if (reviewUserListSingle.Username == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Username</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Fullname</dt>
+                            @if (reviewUserListSingle.Fullname == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Fullname</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Gender</dt>
+                            @if (reviewUserListSingle.Gender == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Gender</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Birthdate</dt>
+                            @if (reviewUserListSingle.Birthdate == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Birthdate</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Nationality</dt>
+                            @if (reviewUserListSingle.Nationality == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Nationality</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Country</dt>
+                            @if (reviewUserListSingle.Country == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Country</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Province</dt>
+                            @if (reviewUserListSingle.Province == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Province</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">City/<br>Municipality</dt>
+                            @if (reviewUserListSingle.CityMun == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.CityMun</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Brgy</dt>
+                            @if (reviewUserListSingle.Brgy == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Brgy</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Unit/House/<br>Bldg./St.</dt>
+                            @if (reviewUserListSingle.UnitHBldgSt == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.UnitHBldgSt</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Village/<br>Subdivision</dt>
+                            @if (reviewUserListSingle.VillSub == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.VillSub</dd>
+                            }
+                        </dl>
+
+                        @if (isModifyUser || isReevaluateUser)
+                        {
+                            <div class="row py-1 text-center m-1 w-100">
+                                <div class="col-6 d-flex flex-column justify-content-center align-items-center ps-0">
+                                    <button type="submit" class="btn btn-primary w-100 text-wrap">Save Changes</button>
+                                </div>
+                                <div class="col-6 d-flex flex-column justify-content-center align-items-center pe-0">
+                                    <button @onclick="Discard" type="button"
+                                        class="btn btn-outline-danger w-100 text-wrap">Discard</button>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+
+                    <!-- Right side: actions -->
+                    <div class="col-6 d-flex flex-column justify-content-center align-items-center gap-3 py-3">
+                        <dl class="row m-0">
+
+                            <dt class="col-sm-3 text-start p-0">Zip Code</dt>
+                            @if (reviewUserListSingle.ZipCode == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.ZipCode</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Source of Fund</dt>
+                            @if (reviewUserListSingle.SourceOfFund == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.SourceOfFund</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Employment<br>Status</dt>
+                            @if (reviewUserListSingle.EmpStat == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.EmpStat</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Employer</dt>
+                            @if (reviewUserListSingle.Employer == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Employer</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Occupation</dt>
+                            @if (reviewUserListSingle.Occupation == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.Occupation</dd>
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Remarks</dt>
+                            @if (isReevaluateUser)
+                            {
+                                <dd class="col-sm-9">
+                                    @if (userRemarks is null)
+                                    {
+                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                            <div class="spinner-grow text-danger spinner-grow-sm" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small" Class="w-100">
+                                            <DropdownToggleButton Class="text-truncate">@(VerifyRemRoleUser.SelectedRemark ??
+                                                                                    "Please select a remark")</DropdownToggleButton>
+                                            <DropdownMenu data-bs-display="static">
+                                                @foreach (var remark in userRemarks)
+                                                {
+                                                    <DropdownItem @onclick="() => OnRemarkItemSelected(remark)">@remark.Remarks
+                                                    </DropdownItem>
+                                                }
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                        <ValidationMessage For="() => VerifyRemRoleUser.SelectedRemark" class="text-danger" />
+                                    }
+                                </dd>
+                            }
+                            else
+                            {
+                                @if (reviewUserListSingle.Remarks == null)
+                                {
+                                    <dd class="col-sm-9 fw-bold">-</dd>
+                                }
+                                else
+                                {
+                                    <dd class="col-sm-9">@reviewUserListSingle.Remarks</dd>
+                                }
+                            }
+
+                            <dt class="col-sm-3 text-start p-0">Date Registered</dt>
+                            <dd class="col-sm-9">@reviewUserListSingle.DtRegistered</dd>
+
+                            <dt class="col-sm-3 text-start p-0">Date Modified</dt>
+                            <dd class="col-sm-9">@reviewUserListSingle.DtModified</dd>
+
+                            @if (status)
+                            {
+                                <dt class="col-sm-3 text-start p-0">Verified By</dt>
+                            }
+                            else
+                            {
+                                <dt class="col-sm-3 text-start p-0">Modified By</dt>
+                            }
+                            @if (reviewUserListSingle.VerifiedBy == null)
+                            {
+                                <dd class="col-sm-9 fw-bold">-</dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-9">@reviewUserListSingle.VerifiedBy</dd>
+                            }
+                        </dl>
+
+                        @if (status || isModifyUser || isReevaluateUser)
+                        {
+                            <button type="button" class="btn btn-primary w-100 text-wrap" @onclick="ThrowErrorToast">Verify
+                                User</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary w-100 text-wrap" type="button" data-bs-toggle="modal"
+                                data-bs-target="#verifyModal">Verify User</button>
+                        }
+                        <button @onclick="ReevaluateUser" type="button" class="btn btn-danger w-100 text-wrap">Reevaluate
+                            User</button>
+                        <button @onclick="ModifyUser" type="button" class="btn btn-warning w-100 text-wrap">Modify User
+                            Role</button>
+                    </div>
+
+                </div>
+
+                @if (reviewUserListImageSingle is null)
+                {
+                    <div class="position-absolute top-50 start-50 translate-middle">
+                        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+
+                    <div class="container-fluid p-0">
+                        <div class="row gap-2">
+
+                            <div class="col">
+                                <div class="row py-1 border rounded border-secondary-subtle text-center my-2">
+                                    <dl class="row d-flex justify-content-center gap-2">
+                                        <dt class="col-sm-1 text-start">Front ID</dt>
+                                        <dd class="col-sm-10 m-0">
+                                            @if (frontID is not null)
+                                            {
+                                                <a href="@frontID" target="_blank">
+                                                    <img src="@frontID" class="img-thumbnail my-3 p-0 w-50 h-auto" alt="Front ID" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted fw-bold">-</span>
+                                            }
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row py-1 border rounded border-secondary-subtle text-center my-2">
+                                    <dl class="row d-flex justify-content-center gap-2">
+                                        <dt class="col-sm-1 text-start">Back ID</dt>
+                                        <dd class="col-sm-10 m-0">
+                                            @if (backID is not null)
+                                            {
+                                                <a href="@backID" target="_blank">
+                                                    <img src="@backID" class="img-thumbnail my-3 p-0 w-50 h-auto" alt="Back ID" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted fw-bold">-</span>
+                                            }
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="row py-1 border rounded border-secondary-subtle text-center my-2">
+                                    <dl class="row d-flex justify-content-center gap-2">
+                                        <dt class="col-sm-1 text-start">Selfie</dt>
+                                        <dd class="col-sm-10 m-0">
+                                            @if (selfie is not null)
+                                            {
+                                                <a href="@selfie" target="_blank">
+                                                    <img src="@selfie" class="img-thumbnail my-3 p-0 w-50 h-auto" alt="Selfie" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted fw-bold">-</span>
+                                            }
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        </EditForm>
+    }
+</div>
+
+<div id="liveToast" class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 end-0 mb-3 me-3"
+    role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+    <div class="d-flex">
+        <div class="toast-body">
+            Successfully modified!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+            aria-label="Close"></button>
+    </div>
+</div>
+
+<div id="liveToastError"
+    class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 mb-3 me-3" role="alert"
+    aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+    <div class="d-flex">
+        @if (errorMessage is not null)
+        {
+            <div class="toast-body">
+                @errorMessage
+            </div>
+        }
+        else
+        {
+            <div class="toast-body">
+                Someting went wrong. Please try again later.
+            </div>
+        }
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+            aria-label="Close"></button>
+    </div>
+</div>
+
+<div class="modal fade" id="verifyModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="verifyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+                Are you sure you want to verify this user?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <EditForm method="post" Model="VerifyRemRoleUser" OnValidSubmit="VerifyUser" FormName="reviewUser"
+                    Enhance>
+                    @* <input type="hidden" name="ReturnUrl" value="@currentUrl" /> *@
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private EditContext? editContext;
+    private ValidationMessageStore? messageStore;
+    private VerifyRemRoleUser VerifyRemRoleUser = new VerifyRemRoleUser();
+    private UserListSingleDM? reviewUserListSingle = new();
+    private UserListImageSingleDM? reviewUserListImageSingle = new();
+    private List<UserRoles>? userRoles = new();
+    private List<UserRemarks>? userRemarks = new();
+    private BlazorSQLServerContext context = default!;
+
+    [SupplyParameterFromQuery(Name = "status")]
+    private bool status { get; set; }
+
+    [SupplyParameterFromQuery(Name = "row")]
+    private long rowNum { get; set; }
+
+    [Parameter]
+    public string? userId { get; set; }
+
+    private string? frontID;
+    private string? backID;
+    private string? selfie;
+    private bool isModifyUser = false;
+    private bool isReevaluateUser = false;
+    private string? errorMessage;
+    private string? output;
+
+    protected override async Task OnInitializedAsync()
+    {
+        editContext = new EditContext(VerifyRemRoleUser);
+        messageStore = new ValidationMessageStore(editContext);
+
+        editContext.OnValidationRequested += HandleValidationRequested;
+        context = DbFactory.CreateDbContext();
+        await LoadPlainText();
+        await LoadImages();
+    }
+
+    private async Task LoadPlainText()
+    {
+        var sQLServerHelper = new SQLServerHelper(context);
+        var spParamPlainText = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, functionKey:
+        "REVIEW_USER");
+        reviewUserListSingle = await sQLServerHelper.UserListFromSqlAsync("rpiAPSM_spManageUsersDataWOutput", spParamPlainText);
+        // TODO: Let this load first.
+
+        if (reviewUserListSingle is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        StateHasChanged();
+    }
+
+    private async Task LoadImages()
+    {
+        var sQLServerHelper = new SQLServerHelper(context);
+
+        var spParamImage = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, functionKey:
+        "REVIEW_USER_IMAGES");
+        reviewUserListImageSingle = await sQLServerHelper.UserListImageFromSqlAsync("rpiAPSM_spManageUsersDataWOutput",
+        spParamImage);
+
+        if (reviewUserListImageSingle is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        frontID = dbDataToImg(reviewUserListImageSingle?.FrontID);
+        backID = dbDataToImg(reviewUserListImageSingle?.BackID);
+        selfie = dbDataToImg(reviewUserListImageSingle?.Selfie);
+    }
+
+    private string? dbDataToImg(byte[]? imgBytes)
+    {
+        if (imgBytes is null || imgBytes.Length == 0)
+        {
+            return null;
+        }
+        else
+        {
+            return $"data:image/png;base64,{Convert.ToBase64String(imgBytes)}";
+        }
+
+    }
+
+    private async Task ModifyUser()
+    {
+        VerifyRemRoleUser.SelectedRemark = null;
+        isModifyUser = true;
+        isReevaluateUser = false;
+        var sQLServerHelper = new SQLServerHelper(context);
+        var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, functionKey:
+        "RET_USER_ROLE_W_OTHER_OPT");
+        userRoles = await sQLServerHelper.UserRoleListFromSqlAsyncList("rpiAPSM_spManageUsersDataWOutput", spParam);
+    }
+
+    private async Task ReevaluateUser()
+    {
+        VerifyRemRoleUser.SelectedRoleID = null;
+        VerifyRemRoleUser.SelectedRole = null;
+        isReevaluateUser = true;
+        isModifyUser = false;
+        var sQLServerHelper = new SQLServerHelper(context);
+        var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(functionKey:
+        "REMARKS_OPTION_LIST");
+        userRemarks = await sQLServerHelper.UserRemarksListFromSqlAsyncList("rpiAPSM_spManageUsersDataWOutput", spParam);
+    }
+
+    private void Discard()
+    {
+        isModifyUser = false;
+        isReevaluateUser = false;
+    }
+
+    private void OnRoleItemSelected(UserRoles item)
+    {
+        VerifyRemRoleUser.SelectedRoleID = item.RoleID ?? string.Empty;
+        VerifyRemRoleUser.SelectedRole = item.RoleType ?? string.Empty;
+        SetActiveRole(VerifyRemRoleUser.SelectedRoleID);
+    }
+
+    private void OnRemarkItemSelected(UserRemarks item)
+    {
+        VerifyRemRoleUser.SelectedRemarkID = item.RemarkID ?? string.Empty;
+        VerifyRemRoleUser.SelectedRemark = item.Remarks ?? string.Empty;
+    }
+
+    private void SetActiveRole(string id)
+    {
+        if (userRoles is null) return;
+
+        foreach (var role in userRoles)
+            role.IsActive = role.RoleID == id;
+    }
+
+    private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs e)
+    {
+        messageStore!.Clear();
+
+        if (string.IsNullOrWhiteSpace(VerifyRemRoleUser.SelectedRole))
+        {
+            if (isModifyUser)
+            {
+                messageStore.Add(() => VerifyRemRoleUser.SelectedRole, "Required field.");
+            }
+        }
+        else
+        {
+            // Only validate VerifyRemRoleUser.SelectedRemark if VerifyRemRoleUser.SelectedRole is valid
+            if (string.IsNullOrWhiteSpace(VerifyRemRoleUser.SelectedRemark))
+            {
+                if (isReevaluateUser)
+                {
+                    messageStore.Add(() => VerifyRemRoleUser.SelectedRemark, "Required field.");
+                }
+            }
+        }
+    }
+
+    private async Task VerifyUser()
+    {
+        if (isModifyUser)
+        {
+            var sQLServerHelper = new SQLServerHelper(context);
+            var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, roleID:
+            VerifyRemRoleUser.SelectedRoleID, functionKey:
+            "MODIFY_USER_ROLE");
+            output = await sQLServerHelper.VerifyUserStringOutputAsync("rpiAPSM_spManageUsersDataWOutput", spParam);
+            if (output is not null && output == "SUCCESSFUL")
+            {
+                await JS.InvokeVoidAsync("showLiveToast");
+            }
+            else if (output is not null && output != "SUCCESSFUL")
+            {
+                errorMessage = null;
+                await JS.InvokeVoidAsync("showLiveToastError");
+            }
+            else
+            {
+                errorMessage = null;
+                await JS.InvokeVoidAsync("showLiveToastError");
+            }
+        }
+        else if (isReevaluateUser)
+        {
+            var sQLServerHelper = new SQLServerHelper(context);
+            var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, remarkID:
+            VerifyRemRoleUser.SelectedRemarkID, functionKey:
+            "REEVALUATE_USER");
+            output = await sQLServerHelper.VerifyUserStringOutputAsync("rpiAPSM_spManageUsersDataWOutput", spParam);
+            if (output is not null && output == "SUCCESSFUL")
+            {
+                await JS.InvokeVoidAsync("showLiveToast");
+            }
+            else if (output is not null && output != "SUCCESSFUL")
+            {
+                errorMessage = null;
+                await JS.InvokeVoidAsync("showLiveToastError");
+            }
+            else
+            {
+                errorMessage = null;
+                await JS.InvokeVoidAsync("showLiveToastError");
+            }
+        }
+        else
+        {
+            var sQLServerHelper = new SQLServerHelper(context);
+            var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, userIDModifier: "DevQt",
+            functionKey:
+            "VERIFY_A_USER");
+            output = await sQLServerHelper.VerifyUserStringOutputAsync("rpiAPSM_spManageUsersDataWOutput", spParam);
+            if (output is not null && output == "SUCCESSFUL")
+            {
+                await JS.InvokeVoidAsync("showLiveToast");
+            }
+            else if (output is not null && output != "SUCCESSFUL")
+            {
+                errorMessage = null;
+                await JS.InvokeVoidAsync("showLiveToastError");
+            }
+            else
+            {
+                errorMessage = null;
+                await JS.InvokeVoidAsync("showLiveToastError");
+            }
+        }
+    }
+
+    private async Task ThrowErrorToast()
+    {
+        if (status)
+        {
+            errorMessage = "The user is already verified.";
+        }
+        else
+        {
+            errorMessage = "Please discard the current process first to continue.";
+        }
+        await JS.InvokeVoidAsync("showLiveToastError");
+    }
+
+    private async Task NavigateBack()
+    {
+        await JS.InvokeVoidAsync("goBack");
+    }
+
+    public async ValueTask DisposeAsync() // this is important
+    {
+        await context.DisposeAsync();
+    }
+}

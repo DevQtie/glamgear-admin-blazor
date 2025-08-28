@@ -9,11 +9,15 @@ using GlamGearAdmin.Data.SQLiteAuth;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BlazorSQLServerContextLocal") ?? throw new InvalidOperationException("Connection string 'BlazorSQLServerContextLocal' not found.")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BlazorSQLServerContextServer") ?? throw new InvalidOperationException("Connection string 'BlazorSQLServerContextServer' not found.")));
 builder.Services.AddDbContextFactory<BlazorAuthContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BlazorSqliteAuthContext") ?? throw new InvalidOperationException("Connection string 'BlazorSqliteAuthContext' not found.")));
 builder.Services.AddDbContextFactory<BlazorWebAppAdminContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BlazorWebAppAdminContext") ?? throw new InvalidOperationException("Connection string 'BlazorWebAppAdminContext' not found.")));
+
+builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BlazorSQLServerContextServer"),
+        sqlServerOptions => sqlServerOptions.CommandTimeout(60))); // Timeout is in seconds. However, if you have any doubts, please read: https://stackoverflow.com/a/7023772/14041392
 
 builder.Services.AddBlazorBootstrap();
 

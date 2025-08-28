@@ -10,6 +10,10 @@ namespace GlamGearAdmin.Data.SQLServer
         public DbSet<Models.SQLServer.UserListDM> UserListDM { get; set; } = default!;
         public DbSet<Models.SQLServer.SimulateKYCImg> ReviewUserMD { get; set; } = default!;
         public DbSet<Models.SQLServer.UserListSingleDM> UserListSingleDM { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductList> ProductList { get; set; } = default!;
+        public DbSet<Models.SQLServer.UserRoles> UserRoles { get; set; } = default!;
+        public DbSet<Models.SQLServer.UserRemarks> UserRemarks { get; set; } = default!;
+        public DbSet<Models.SQLServer.UserListImageSingleDM> UserListImageSingleDM { get; set; } = default!;
         // to add another data model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,6 +32,18 @@ namespace GlamGearAdmin.Data.SQLServer
             .HasNoKey().ToView(null);
 
             modelBuilder.Entity<Models.SQLServer.UserListSingleDM>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductList>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.UserRoles>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.UserRemarks>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.UserListImageSingleDM>()
             .HasNoKey().ToView(null);
 
             // to add another modelBuilder

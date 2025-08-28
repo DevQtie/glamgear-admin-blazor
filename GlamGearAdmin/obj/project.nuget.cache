@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "8TkuMia9QJY=",
+  "dgSpecHash": "56JLGy76mQs=",
   "success": true,
   "projectFilePath": "C:\\Users\\alagu\\Desktop\\AlberthsFiles\\ECommerceMain\\GlamGearAdmin\\GlamGearAdmin\\GlamGearAdmin.csproj",
   "expectedPackageFiles": [
@@ -60,6 +60,7 @@
     "C:\\Users\\alagu\\.nuget\\packages\\microsoft.aspnetcore.authorization\\9.0.6\\microsoft.aspnetcore.authorization.9.0.6.nupkg.sha512",
     "C:\\Users\\alagu\\.nuget\\packages\\microsoft.aspnetcore.components\\9.0.6\\microsoft.aspnetcore.components.9.0.6.nupkg.sha512",
     "C:\\Users\\alagu\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\9.0.6\\microsoft.aspnetcore.components.analyzers.9.0.6.nupkg.sha512",
+    "C:\\Users\\alagu\\.nuget\\packages\\microsoft.aspnetcore.components.dataannotations.validation\\3.2.0-rc1.20223.4\\microsoft.aspnetcore.components.dataannotations.validation.3.2.0-rc1.20223.4.nupkg.sha512",
     "C:\\Users\\alagu\\.nuget\\packages\\microsoft.aspnetcore.components.forms\\9.0.6\\microsoft.aspnetcore.components.forms.9.0.6.nupkg.sha512",
     "C:\\Users\\alagu\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\9.0.6\\microsoft.aspnetcore.components.quickgrid.9.0.6.nupkg.sha512",
     "C:\\Users\\alagu\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid.entityframeworkadapter\\9.0.6\\microsoft.aspnetcore.components.quickgrid.entityframeworkadapter.9.0.6.nupkg.sha512",

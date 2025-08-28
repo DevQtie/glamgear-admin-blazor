@@ -245,6 +245,15 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .ToListAsync();
   }
 
+  public async Task<string?> SimulateTestImgStringOutputAsync(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageImageSimulatorWithOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    return await MinimalDbSettings.UsingCommand(_context, spName, sqlParameter);
+  }
+
   #endregion NON-READ-ONLY METHODS
 
   #endregion FOR REFERENCE ONLY
@@ -308,6 +317,45 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .ToListAsync();
   }
 
+  public async Task<List<ProductList>> ProdListFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
+
+    SqlParameter[]? sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    return await _context.ProductList
+        .FromSql(sqlParam)
+        .ToListAsync();
+  }
+
+  public async Task<List<UserRoles>> UserRoleListFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageUsersDataWithoutOutputParams();
+
+    SqlParameter[]? sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDict(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    return await _context.UserRoles
+        .FromSql(sqlParam)
+        .ToListAsync();
+  }
+
+  public async Task<List<UserRemarks>> UserRemarksListFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageUsersDataWithoutOutputParams();
+
+    SqlParameter[]? sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDict(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    return await _context.UserRemarks
+        .FromSql(sqlParam)
+        .ToListAsync();
+  }
+
   #endregion LIST METHODS
 
   #region SINGLE-VALUE METHODS
@@ -327,7 +375,22 @@ class SQLServerHelper(BlazorSQLServerContext context)
     return result.FirstOrDefault();
   }
 
-  public async Task<string?> VerifyUserStringOutputAsync(string spName, Dictionary<string, object?> parameters) // outside of testing, this should be used in user verification
+  public async Task<UserListImageSingleDM?> UserListImageFromSqlAsync(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageUsersDataWithoutOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDict(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    var result = await _context.UserListImageSingleDM
+        .FromSql(sqlParam)
+        .ToListAsync();
+
+    return result.FirstOrDefault();
+  }
+
+  public async Task<string?> VerifyUserStringOutputAsync(string spName, Dictionary<string, object?> parameters) // aside from testing, this should be used in user verification
   {
     var paramDefs = SQLServerInnerHelper.ManageUsersDataWithOutputParams();
 

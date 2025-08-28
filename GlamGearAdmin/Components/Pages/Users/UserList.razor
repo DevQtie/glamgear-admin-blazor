@@ -2,7 +2,6 @@
 @rendermode InteractiveServer
 @* @rendermode @(new InteractiveServerRenderMode(prerender: false)) // to prevent the execution of OnInitializedAsync twice *@
 @using Microsoft.EntityFrameworkCore
-@using Microsoft.AspNetCore.Components.QuickGrid
 @using GlamGearAdmin.Models.SQLServer
 @using GlamGearAdmin.Data.SQLServer
 @implements IAsyncDisposable
@@ -28,171 +27,170 @@ else
     <input type="search" class="form-control border-outline-secondary" placeholder="Filter by display name"
       @bind="dispNameFilter" @bind:event="oninput" />
   </div>
-  <div>
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap my-4">
-      <div>
-        <nav>
-          <ul class="pagination pagination-md m-0">
-            <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
-              <button class="page-link" @onclick="PreviousPage">Previous</button>
-            </li>
-            <li class="page-item">
-              <span class="page-link text-secondary bg-transparent">Page
-                @pagination.CurrentPage of @TotalPages</span>
-            </li>
-            <li class="page-item">
-              <span class="page-link text-secondary bg-transparent">Showing @pagedUserList.Count() of
-                @filteredUserList.Count() records</span>
-            </li>
-            <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
-              <button class="page-link" @onclick="NextPage">Next</button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div role="group">
-        <button class="@(initPerPage == PaginationPerPage.Five ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="FivePerPageBtn">@($"{(int)PaginationPerPage.Five}")</button>
-        <button class="@(initPerPage == PaginationPerPage.Ten ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="TenPerPageBtn">@($"{(int)PaginationPerPage.Ten}")</button>
-        <button class="@(initPerPage == PaginationPerPage.Fifteen ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="FifteenPerPageBtn">@($"{(int)PaginationPerPage.Fifteen}")</button>
-        <button class="@(initPerPage == PaginationPerPage.Thirty ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="ThirthPerPageBtn">@($"{(int)PaginationPerPage.Thirty}")</button>
-        <button class="@(initPerPage == PaginationPerPage.Fifty ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="FiftyPerPageBtn">@($"{(int)PaginationPerPage.Fifty}")</button>
-        <button class="@(initPerPage == PaginationPerPage.ShowAll ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="ShowAllPerPageBtn">Show All</button>
-        <span class="fw-normal">Per Page</span>
-      </div>
+  <div class="d-flex justify-content-between align-items-center flex-wrap my-4">
+    <div>
+      <nav>
+        <ul class="pagination pagination-md m-0">
+          <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
+            <button class="page-link" @onclick="PreviousPage">Previous</button>
+          </li>
+          <li class="page-item">
+            <span class="page-link text-secondary bg-transparent">Page
+              @pagination.CurrentPage of @TotalPages</span>
+          </li>
+          <li class="page-item">
+            <span class="page-link text-secondary bg-transparent">Showing @pagedUserList.Count() of
+              @filteredUserList.Count() records</span>
+          </li>
+          <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
+            <button class="page-link" @onclick="NextPage">Next</button>
+          </li>
+        </ul>
+      </nav>
     </div>
+    <div role="group">
+      <button class="@(initPerPage == PaginationPerPage.Five ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FivePerPageBtn">@($"{(int)PaginationPerPage.Five}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Ten ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="TenPerPageBtn">@($"{(int)PaginationPerPage.Ten}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Fifteen ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FifteenPerPageBtn">@($"{(int)PaginationPerPage.Fifteen}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Thirty ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="ThirthPerPageBtn">@($"{(int)PaginationPerPage.Thirty}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Fifty ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FiftyPerPageBtn">@($"{(int)PaginationPerPage.Fifty}")</button>
+      <button class="@(initPerPage == PaginationPerPage.ShowAll ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="ShowAllPerPageBtn">Show All</button>
+      <span class="fw-normal">Per Page</span>
+    </div>
+  </div>
 
-    <div class="table-responsive card m-0">
-      <table class="table table-bordered table-striped table-hover overflow-auto m-0">
-        <thead class="align-middle">
+  <div class="table-responsive card m-0">
+    <table class="table table-bordered table-hover overflow-auto m-0">
+      <thead class="align-middle">
+        <tr>
+          <th @onclick='() => SortBy("#")' class="cursor-pointer"># @SortIcon("#")</th>
+          <th @onclick='() => SortBy("RoleType")' class="cursor-pointer">Role @SortIcon("RoleType")</th>
+          <th @onclick='() => SortBy("PendingVer")' class="cursor-pointer">Pending Verification @SortIcon("PendingVer")
+          </th>
+          <th @onclick='() => SortBy("IsVerified")' class="cursor-pointer">Verification Status @SortIcon("IsVerified")
+          </th>
+          <th @onclick='() => SortBy("DispName")' class="cursor-pointer">Display Name @SortIcon("DispName")</th>
+          <th @onclick='() => SortBy("Remarks")' class="cursor-pointer">Remarks @SortIcon("Remarks")</th>
+          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtStamp")</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var a in SortedUserList)
+        {
           <tr>
-            <th @onclick='() => SortBy("#")' class="cursor-pointer"># @SortIcon("#")</th>
-            <th @onclick='() => SortBy("RoleType")' class="cursor-pointer">Role @SortIcon("RoleType")</th>
-            <th @onclick='() => SortBy("PendingVer")' class="cursor-pointer">Pending Verification @SortIcon("PendingVer")
-            </th>
-            <th @onclick='() => SortBy("IsVerified")' class="cursor-pointer">Verification Status @SortIcon("IsVerified")
-            </th>
-            <th @onclick='() => SortBy("DispName")' class="cursor-pointer">Display Name @SortIcon("DispName")</th>
-            <th @onclick='() => SortBy("Remarks")' class="cursor-pointer">Remarks @SortIcon("Remarks")</th>
-            <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtStamp")</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach (var a in SortedUserList)
-          {
-            <tr>
-              <td class="align-middle">@a.Hash</td>
-              <td class="align-middle">@a.RoleType</td>
-              @if (a.PendingVer)
-              {
-                <td class="align-middle">
-                  <Tooltip Title="Needs attention" Placement="TooltipPlacement.Top">
-                    <Icon Name="IconName.PatchExclamationFill" Color="IconColor.Danger" />
-                  </Tooltip>
-                </td>
-              }
-              else
-              {
-                <td class="align-middle">
-                  <Tooltip Title="No action required" Placement="TooltipPlacement.Top">
-                    <Icon Name="IconName.PatchCheckFill" Color="IconColor.Success" />
-                  </Tooltip>
-                </td>
-              }
-              @if (a.IsVerified)
-              {
-                <td class="align-middle">
-                  <Tooltip Title="No action required" Placement="TooltipPlacement.Top">
-                    <Icon Name="IconName.PatchCheckFill" Color="IconColor.Success" />
-                  </Tooltip>
-                </td>
-              }
-              else
-              {
-                <td class="align-middle">
-                  <Tooltip Title="Needs attention" Placement="TooltipPlacement.Top">
-                    <Icon Name="IconName.PatchExclamationFill" Color="IconColor.Danger" />
-                  </Tooltip>
-                </td>
-              }
-              <td class="align-middle">@a.DispName</td>
-              <td class="align-middle">@a.Remarks</td>
-              <td class="align-middle">@a.DtRegistered</td>
-              <td class="align-middle text-nowrap">
-                <div class="d-flex flex-column h-100 justify-content-center gap-2">
-                  <!--Remove text-nowrap if there are more link button to show-->
-
-                  <Tooltip Class="d-flex justify-content-center" Title="Review" Placement="TooltipPlacement.Top"><a
-                      class="btn btn-outline-primary btn-sm" href="@($"users/review-user?userid={a.UserID}")">
-                      <Icon Name="IconName.PencilSquare" />
-                    </a></Tooltip>
-                  @* <Tooltip Class="d-flex justify-content-center" Title="Tooltip Left" Placement="TooltipPlacement.Top"><a
+            <td class="align-middle">@a.Hash</td>
+            <td class="align-middle">@a.RoleType</td>
+            @if (a.PendingVer)
+            {
+              <td class="align-middle">
+                <Tooltip Title="Needs attention" Placement="TooltipPlacement.Top">
+                  <Icon Name="IconName.PatchExclamationFill" Color="IconColor.Danger" />
+                </Tooltip>
+              </td>
+            }
+            else
+            {
+              <td class="align-middle">
+                <Tooltip Title="No action required" Placement="TooltipPlacement.Top">
+                  <Icon Name="IconName.PatchCheckFill" Color="IconColor.Success" />
+                </Tooltip>
+              </td>
+            }
+            @if (a.IsVerified)
+            {
+              <td class="align-middle">
+                <Tooltip Title="No action required" Placement="TooltipPlacement.Top">
+                  <Icon Name="IconName.PatchCheckFill" Color="IconColor.Success" />
+                </Tooltip>
+              </td>
+            }
+            else
+            {
+              <td class="align-middle">
+                <Tooltip Title="Needs attention" Placement="TooltipPlacement.Top">
+                  <Icon Name="IconName.PatchExclamationFill" Color="IconColor.Danger" />
+                </Tooltip>
+              </td>
+            }
+            <td class="align-middle">@a.DispName</td>
+            <td class="align-middle">@a.Remarks</td>
+            <td class="align-middle">@a.DtRegistered</td>
+            <td class="align-middle text-nowrap">
+              <div class="d-flex flex-column h-100 justify-content-center gap-2">
+                <!--Remove text-nowrap if there are more link button to show-->
+                <Tooltip Class="d-flex justify-content-center" Title="Review" Placement="TooltipPlacement.Top">
+                  <a class="btn btn-outline-primary btn-sm"
+                    href="@($"users/review/{a.UserID}/user?status={IsVerified(a.PendingVer, a.IsVerified):bool}&row={a.Hash}")">
+                    <Icon Name="IconName.PencilSquare" />
+                  </a>
+                </Tooltip>
+                @* <Tooltip Class="d-flex justify-content-center" Title="Tooltip Left" Placement="TooltipPlacement.Top"><a
                       class="btn btn-outline-primary btn-sm"
                       href="@($"sql_server/crud/admin_pages/details?userid={a.UserID}")">
                       <Icon Name="IconName.InfoCircleFill" />
                     </a></Tooltip> *@ <!--reserved-->
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-        <thead class="align-middle">
-          <tr>
-            <th @onclick='() => SortBy("RoleType")' class="cursor-pointer">Role @SortIcon("RoleType")</th>
-            <th @onclick='() => SortBy("PendingVer")' class="cursor-pointer">Pending Verification @SortIcon("PendingVer")
-            </th>
-            <th @onclick='() => SortBy("IsVerified")' class="cursor-pointer">Verification Status @SortIcon("IsVerified")
-            </th>
-            <th @onclick='() => SortBy("DispName")' class="cursor-pointer">Display Name @SortIcon("DispName")</th>
-            <th @onclick='() => SortBy("Remarks")' class="cursor-pointer">Remarks @SortIcon("Remarks")</th>
-            <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtStamp")</th>
-            <th>Actions</th>
+              </div>
+            </td>
           </tr>
-        </thead>
-      </table>
-    </div>
+        }
+      </tbody>
+      <thead class="align-middle">
+        <tr>
+          <th @onclick='() => SortBy("RoleType")' class="cursor-pointer">Role @SortIcon("RoleType")</th>
+          <th @onclick='() => SortBy("PendingVer")' class="cursor-pointer">Pending Verification @SortIcon("PendingVer")
+          </th>
+          <th @onclick='() => SortBy("IsVerified")' class="cursor-pointer">Verification Status @SortIcon("IsVerified")
+          </th>
+          <th @onclick='() => SortBy("DispName")' class="cursor-pointer">Display Name @SortIcon("DispName")</th>
+          <th @onclick='() => SortBy("Remarks")' class="cursor-pointer">Remarks @SortIcon("Remarks")</th>
+          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtStamp")</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap my-4">
-      <div>
-        <nav>
-          <ul class="pagination pagination-md m-0">
-            <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
-              <button class="page-link" @onclick="PreviousPage">Previous</button>
-            </li>
-            <li class="page-item disabled">
-              <span class="page-link">Page @pagination.CurrentPage of @TotalPages</span>
-            </li>
-            <li class="page-item disabled">
-              <span class="page-link">Showing @pagedUserList.Count() of @filteredUserList.Count() records</span>
-            </li>
-            <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
-              <button class="page-link" @onclick="NextPage">Next</button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div role="group">
-        <button class="@(initPerPage == PaginationPerPage.Five ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="FivePerPageBtn">@($"{(int)PaginationPerPage.Five}")</button>
-        <button class="@(initPerPage == PaginationPerPage.Ten ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="TenPerPageBtn">@($"{(int)PaginationPerPage.Ten}")</button>
-        <button class="@(initPerPage == PaginationPerPage.Fifteen ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="FifteenPerPageBtn">@($"{(int)PaginationPerPage.Fifteen}")</button>
-        <button class="@(initPerPage == PaginationPerPage.Thirty ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="ThirthPerPageBtn">@($"{(int)PaginationPerPage.Thirty}")</button>
-        <button class="@(initPerPage == PaginationPerPage.Fifty ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="FiftyPerPageBtn">@($"{(int)PaginationPerPage.Fifty}")</button>
-        <button class="@(initPerPage == PaginationPerPage.ShowAll ? "btn btn-primary" : "btn btn-outline-secondary")"
-          @onclick="ShowAllPerPageBtn">Show All</button>
-        <span class="fw-normal">Per Page</span>
-      </div>
+  <div class="d-flex justify-content-between align-items-center flex-wrap my-4">
+    <div>
+      <nav>
+        <ul class="pagination pagination-md m-0">
+          <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
+            <button class="page-link" @onclick="PreviousPage">Previous</button>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Page @pagination.CurrentPage of @TotalPages</span>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Showing @pagedUserList.Count() of @filteredUserList.Count() records</span>
+          </li>
+          <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
+            <button class="page-link" @onclick="NextPage">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div role="group">
+      <button class="@(initPerPage == PaginationPerPage.Five ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FivePerPageBtn">@($"{(int)PaginationPerPage.Five}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Ten ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="TenPerPageBtn">@($"{(int)PaginationPerPage.Ten}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Fifteen ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FifteenPerPageBtn">@($"{(int)PaginationPerPage.Fifteen}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Thirty ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="ThirthPerPageBtn">@($"{(int)PaginationPerPage.Thirty}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Fifty ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FiftyPerPageBtn">@($"{(int)PaginationPerPage.Fifty}")</button>
+      <button class="@(initPerPage == PaginationPerPage.ShowAll ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="ShowAllPerPageBtn">Show All</button>
+      <span class="fw-normal">Per Page</span>
     </div>
   </div>
 }
@@ -340,6 +338,26 @@ else
       builder.AddContent(0, sortAscending ? "▲" : "▼");
     }
   };
+
+  private bool IsVerified(bool penStat, bool verStat)
+  {
+    if (!penStat && verStat)
+    { // not pending verification && verified
+      return true;
+    }
+    else if (penStat && !verStat)
+    { // pending verification && not verified
+      return false;
+    }
+    else if (penStat && verStat)
+    { // pending verification && verified
+      return false; // this is a special case
+    }
+    else
+    { // not pending verification && not verified
+      return false;
+    }
+  }
 
   public class PaginationState
   {
