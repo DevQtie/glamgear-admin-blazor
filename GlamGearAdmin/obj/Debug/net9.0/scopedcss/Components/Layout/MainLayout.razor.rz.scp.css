@@ -104,3 +104,7 @@ main[b-y8gzvrohei] {
     right: 0.75rem;
     top: 0.5rem;
 }
+
+.cust-cursor-pointer[b-y8gzvrohei] {
+    cursor: ew-resize !important;
+}

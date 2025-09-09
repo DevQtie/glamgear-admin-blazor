@@ -22,7 +22,7 @@
 }
 else
 {
-  <button class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</button>
+  @* <button class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</button> *@
   <div class="input-group mb-3 w-50">
     <input type="search" class="form-control border-outline-secondary" placeholder="Filter by display name"
       @bind="dispNameFilter" @bind:event="oninput" />
@@ -40,8 +40,8 @@ else
               @pagination.CurrentPage of @TotalPages</span>
           </li>
           <li class="page-item">
-            <span class="page-link text-secondary bg-transparent">Showing @pagedUserList.Count() of
-              @filteredUserList.Count() records</span>
+            <span class="page-link text-secondary bg-transparent">Showing @pagedUserList!.Count() of
+              @filteredUserList!.Count() records</span>
           </li>
           <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
             <button class="page-link" @onclick="NextPage">Next</button>
@@ -79,12 +79,13 @@ else
           <th @onclick='() => SortBy("DispName")' class="cursor-pointer">Display Name @SortIcon("DispName")</th>
           <th @onclick='() => SortBy("Remarks")' class="cursor-pointer">Remarks @SortIcon("Remarks")</th>
           <th @onclick='() => SortBy("DtModified")' class="cursor-pointer">Date Modified @SortIcon("DtModified")</th>
-          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtRegistered")</th>
+          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtRegistered")
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        @foreach (var a in SortedUserList)
+        @foreach (var a in SortedUserList!)
         {
           <tr>
             <td class="align-middle">@a.Hash</td>
@@ -121,7 +122,7 @@ else
                 </Tooltip>
               </td>
             }
-            <td class="align-middle">@a.DispName</td>
+            <td class="align-middle fw-bold">@a.DispName</td>
             <td class="align-middle">@a.Remarks</td>
             <td class="align-middle">@a.DtModified</td>
             <td class="align-middle">@a.DtRegistered</td>
@@ -155,7 +156,8 @@ else
           <th @onclick='() => SortBy("DispName")' class="cursor-pointer">Display Name @SortIcon("DispName")</th>
           <th @onclick='() => SortBy("Remarks")' class="cursor-pointer">Remarks @SortIcon("Remarks")</th>
           <th @onclick='() => SortBy("DtModified")' class="cursor-pointer">Date Modified @SortIcon("DtModified")</th>
-          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtRegistered")</th>
+          <th @onclick='() => SortBy("DtRegistered")' class="cursor-pointer">Date Registered @SortIcon("DtRegistered")
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -173,7 +175,7 @@ else
             <span class="page-link">Page @pagination.CurrentPage of @TotalPages</span>
           </li>
           <li class="page-item disabled">
-            <span class="page-link">Showing @pagedUserList.Count() of @filteredUserList.Count() records</span>
+            <span class="page-link">Showing @pagedUserList!.Count() of @filteredUserList!.Count() records</span>
           </li>
           <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
             <button class="page-link" @onclick="NextPage">Next</button>
@@ -213,37 +215,38 @@ else
   }
   private static PaginationPerPage initPerPage = PaginationPerPage.Five;
   private BlazorSQLServerContext context = default!;
-  private List<UserListDM> userList = new();
+  private List<UserListDM>? userList = new();
   private PaginationState pagination = new PaginationState();
   private string dispNameFilter = string.Empty;
 
-  private IEnumerable<UserListDM> filteredUserList => string.IsNullOrWhiteSpace(dispNameFilter)
+  private IEnumerable<UserListDM>? filteredUserList => string.IsNullOrWhiteSpace(dispNameFilter)
   ? userList : (initPerPage ==
   PaginationPerPage.ShowAll)
-  ? userList.Where(data => data.DispName?.ToLower().Contains(dispNameFilter.ToLower()) == true) : userList.Where(data
+  ? userList!.Where(data => data.DispName?.ToLower().Contains(dispNameFilter.ToLower()) == true) : userList!.Where(data
   =>
   data.DispName?.ToLower().Contains(dispNameFilter.ToLower()) == true);
 
-  private IEnumerable<UserListDM> pagedUserList => filteredUserList
+  private IEnumerable<UserListDM>? pagedUserList => filteredUserList!
   .Skip((pagination.CurrentPage - 1) * pagination.ItemsPerPage)
   .Take(pagination.ItemsPerPage);
 
-  private int TotalPages => (int)Math.Ceiling((double)filteredUserList.Count() / pagination.ItemsPerPage);
+  private int TotalPages => (int)Math.Ceiling((double)filteredUserList!.Count() / pagination.ItemsPerPage);
   private string currentSortColumn = ""; // to let the SP's select ordered by script handle sorting
   private bool sortAscending = true;
-  private IEnumerable<UserListDM> SortedUserList => currentSortColumn switch
+  private IEnumerable<UserListDM>? SortedUserList => currentSortColumn switch
   {
-    "#" => sortAscending ? pagedUserList.OrderBy(a => a.Hash) : pagedUserList.OrderByDescending(a =>
+    "#" => sortAscending ? pagedUserList!.OrderBy(a => a.Hash) : pagedUserList!.OrderByDescending(a =>
     a.Hash),
-    "RoleType" => sortAscending ? pagedUserList.OrderBy(a => a.RoleType) : pagedUserList.OrderByDescending(a =>
+    "RoleType" => sortAscending ? pagedUserList!.OrderBy(a => a.RoleType) : pagedUserList!.OrderByDescending(a =>
     a.RoleType),
-    "PendingVer" => sortAscending ? pagedUserList.OrderBy(a => a.PendingVer) : pagedUserList.OrderByDescending(a =>
+    "PendingVer" => sortAscending ? pagedUserList!.OrderBy(a => a.PendingVer) : pagedUserList!.OrderByDescending(a =>
     a.PendingVer),
-    "IsVerified" => sortAscending ? pagedUserList.OrderBy(a => a.IsVerified) : pagedUserList.OrderByDescending(a =>
+    "IsVerified" => sortAscending ? pagedUserList!.OrderBy(a => a.IsVerified) : pagedUserList!.OrderByDescending(a =>
     a.IsVerified),
-    "DispName" => sortAscending ? pagedUserList.OrderBy(a => a.DispName) : pagedUserList.OrderByDescending(a => a.DispName),
-    "Remarks" => sortAscending ? pagedUserList.OrderBy(a => a.Remarks) : pagedUserList.OrderByDescending(a => a.Remarks),
-    "DtRegistered" => sortAscending ? pagedUserList.OrderBy(a => a.DtRegistered) : pagedUserList.OrderByDescending(a =>
+    "DispName" => sortAscending ? pagedUserList!.OrderBy(a => a.DispName) : pagedUserList!.OrderByDescending(a =>
+    a.DispName),
+    "Remarks" => sortAscending ? pagedUserList!.OrderBy(a => a.Remarks) : pagedUserList!.OrderByDescending(a => a.Remarks),
+    "DtRegistered" => sortAscending ? pagedUserList!.OrderBy(a => a.DtRegistered) : pagedUserList!.OrderByDescending(a =>
     a.DtRegistered),
     _ => pagedUserList
   };
@@ -313,6 +316,8 @@ else
   {
     context = DbFactory.CreateDbContext();
     var sQLServerHelper = new SQLServerHelper(context);
+    userList = null; // ensure spinner shows
+    StateHasChanged(); // force re-render to show spinner
     var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(functionKey: "UNVERIFIED_USER_LIST");
     userList = await sQLServerHelper.UserListFromSqlAsyncList("rpiAPSM_spManageUsersDataWOutput", spParam);
     pagination.TotalRecords = userList.Count;

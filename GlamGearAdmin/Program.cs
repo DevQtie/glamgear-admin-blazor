@@ -6,6 +6,7 @@ using GlamGearAdmin.Components.Account;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using GlamGearAdmin.Data.SQLiteAuth;
+using GlamGearAdmin.Models.AppModels;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
@@ -40,6 +41,11 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+// builder.Services.AddScoped<ThemeToggler>();
+
+builder.Services.AddCascadingValue(sp =>
+    new SidebarToggler() { CollapseNavMenu = false });
 
 builder.Services.AddAuthentication(options =>
     {

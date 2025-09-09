@@ -1,5 +1,405 @@
 @page "/products/manage-products"
+@using GlamGearAdmin.Data.SQLServer
+@using GlamGearAdmin.Models.SQLServer
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@inject NavigationManager NavigationManager
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 
 <PageTitle>Manage Products</PageTitle>
 
 <h3>Manage Products</h3>
+
+@if (prodPTList is null)
+{
+  <div class="position-absolute top-50 start-50 translate-middle">
+    <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+}
+else
+{
+  @* <button class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</button> *@
+  <div class="input-group mb-3 w-50">
+    <input type="search" class="form-control border-outline-secondary" placeholder="Filter by display name"
+      @bind="prodNameFilter" @bind:event="oninput" />
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap my-4">
+    <div>
+      <nav>
+        <ul class="pagination pagination-md m-0">
+          <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
+            <button class="page-link" @onclick="PreviousPage">Previous</button>
+          </li>
+          <li class="page-item">
+            <span class="page-link text-secondary bg-transparent">Page
+              @pagination.CurrentPage of @TotalPages</span>
+          </li>
+          <li class="page-item">
+            <span class="page-link text-secondary bg-transparent">Showing @pagedProdList!.Count() of
+              @filteredProdList!.Count() records</span>
+          </li>
+          <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
+            <button class="page-link" @onclick="NextPage">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div role="group">
+      <button class="@(initPerPage == PaginationPerPage.Five ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FivePerPageBtn">@($"{(int)PaginationPerPage.Five}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Ten ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="TenPerPageBtn">@($"{(int)PaginationPerPage.Ten}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Fifteen ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FifteenPerPageBtn">@($"{(int)PaginationPerPage.Fifteen}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Thirty ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="ThirthPerPageBtn">@($"{(int)PaginationPerPage.Thirty}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Fifty ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FiftyPerPageBtn">@($"{(int)PaginationPerPage.Fifty}")</button>
+      <button class="@(initPerPage == PaginationPerPage.ShowAll ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="ShowAllPerPageBtn">Show All</button>
+      <span class="fw-normal">Per Page</span>
+    </div>
+  </div>
+
+  <div class="table-responsive card m-0">
+    <table class="table table-bordered table-hover overflow-auto m-0">
+      <thead class="align-middle">
+        <tr>
+          <th @onclick='() => SortBy("#")' class="cursor-pointer"># @SortIcon("#")</th>
+          <th @onclick='() => SortBy("ProdImg")' class="cursor-pointer">Image @SortIcon("ProdImg")
+          </th>
+          <th @onclick='() => SortBy("ProdName")' class="cursor-pointer">Product Name @SortIcon("ProdName")
+          </th>
+          <th @onclick='() => SortBy("OrigPrice")' class="cursor-pointer">Orig. Price @SortIcon("OrigPrice")</th>
+          <th @onclick='() => SortBy("DiscPrice")' class="cursor-pointer">Disc. Price @SortIcon("DiscPrice")</th>
+          <th @onclick='() => SortBy("Stock")' class="cursor-pointer">Stock
+            <Tooltip Class="ps-1"
+              Title="Main: NA (Has variants); Sub: NA (Has no variants); Sub: {int} (Total stock of all variants)"
+              Placement="TooltipPlacement.Top">
+              <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
+            </Tooltip>
+            @SortIcon("Stock")
+          </th>
+          <th @onclick='() => SortBy("PromoTags")' class="cursor-pointer">Promo Tags @SortIcon("PromoTags")</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var a in SortedProdList!) // TODO: render plaintext first, then image
+        {
+          <tr>
+            <td class="align-middle">@a.Hash</td>
+            <td class="align-middle">
+              <a href="@DbDataToImg(a.ProdImg)" target="_blank">
+                <img src="@DbDataToImg(a.ProdImg)" class="img-thumbnail rounded rounded-3 cus-img-thumbnail-sm p-0 my-1"
+                  alt="Product" />
+              </a>
+            </td>
+            <td class="align-middle fw-bold">@a.ProdName</td>
+            <td class="align-middle">@($"₱{a.OrigPrice:N2}")</td>
+            <td class="align-middle">@($"₱{a.DiscPrice:N2}") <Tooltip Class="ps-1 fw-bold" Title="Discount in percent"
+                Placement="TooltipPlacement.Top">@($"({a.DiscPercent})")</Tooltip>
+            </td>
+            <td class="align-middle">@a.Stock
+            </td>
+            <td class="align-middle">@a.PromoTags</td>
+            <td class="align-middle text-nowrap">
+              <div class="d-flex flex-column h-100 justify-content-center gap-2">
+                <!--Remove text-nowrap if there are more link button to show-->
+
+                <Tooltip Class="d-flex justify-content-center" Title="Review" Placement="TooltipPlacement.Top"><a
+                    class="btn btn-outline-primary btn-sm" href="@($"products/review/{a.ProdID}/product")">
+                    <Icon Name="IconName.PencilSquare" />
+                  </a></Tooltip>
+                @* <Tooltip Class="d-flex justify-content-center" Title="Tooltip Left" Placement="TooltipPlacement.Top"><a
+                    class="btn btn-outline-primary btn-sm"
+                    href="@($"sql_server/crud/admin_pages/details?userid={a.UserID}")">
+                    <Icon Name="IconName.InfoCircleFill" />
+                  </a></Tooltip> *@ <!--reserved-->
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+      <thead class="align-middle">
+        <tr>
+          <th @onclick='() => SortBy("#")' class="cursor-pointer"># @SortIcon("#")</th>
+          <th @onclick='() => SortBy("ProdImg")' class="cursor-pointer">Image @SortIcon("ProdImg")
+          </th>
+          <th @onclick='() => SortBy("ProdName")' class="cursor-pointer">Product Name @SortIcon("ProdName")
+          </th>
+          <th @onclick='() => SortBy("OrigPrice")' class="cursor-pointer">Orig. Price @SortIcon("OrigPrice")</th>
+          <th @onclick='() => SortBy("DiscPrice")' class="cursor-pointer">Disc. Price @SortIcon("DiscPrice")</th>
+          <th @onclick='() => SortBy("Stock")' class="cursor-pointer">Stock
+            <Tooltip Class="ps-1"
+              Title="Main: NA (Has variants); Sub: NA (Has no variants); Sub: {int} (Total stock of all variants)"
+              Placement="TooltipPlacement.Top">
+              <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
+            </Tooltip>
+            @SortIcon("Stock")
+          </th>
+          <th @onclick='() => SortBy("PromoTags")' class="cursor-pointer">Promo Tags @SortIcon("PromoTags")</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap my-4">
+    <div>
+      <nav>
+        <ul class="pagination pagination-md m-0">
+          <li class="page-item @(pagination.CurrentPage == 1 ? "disabled" : "")">
+            <button class="page-link" @onclick="PreviousPage">Previous</button>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Page @pagination.CurrentPage of @TotalPages</span>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Showing @pagedProdList!.Count() of @filteredProdList!.Count() records</span>
+          </li>
+          <li class="page-item @(pagination.CurrentPage >= TotalPages ? "disabled" : "")">
+            <button class="page-link" @onclick="NextPage">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div role="group">
+      <button class="@(initPerPage == PaginationPerPage.Five ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FivePerPageBtn">@($"{(int)PaginationPerPage.Five}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Ten ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="TenPerPageBtn">@($"{(int)PaginationPerPage.Ten}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Fifteen ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FifteenPerPageBtn">@($"{(int)PaginationPerPage.Fifteen}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Thirty ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="ThirthPerPageBtn">@($"{(int)PaginationPerPage.Thirty}")</button>
+      <button class="@(initPerPage == PaginationPerPage.Fifty ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="FiftyPerPageBtn">@($"{(int)PaginationPerPage.Fifty}")</button>
+      <button class="@(initPerPage == PaginationPerPage.ShowAll ? "btn btn-primary" : "btn btn-outline-secondary")"
+        @onclick="ShowAllPerPageBtn">Show All</button>
+      <span class="fw-normal">Per Page</span>
+    </div>
+  </div>
+}
+
+@code {
+  private void ButtonClicked() => NavigationManager.NavigateTo("simulate/images");
+  private enum PaginationPerPage
+  {
+    Five = 5,
+    Ten = 10,
+    Fifteen = 15,
+    Thirty = 30,
+    Fifty = 50,
+    ShowAll = 0,
+  }
+
+  private static PaginationPerPage initPerPage = PaginationPerPage.Five;
+  private BlazorSQLServerContext context = default!;
+  private List<ProductPlainTextList>? prodPTList = new(); @* TODO: The plaintext model should be rendered first, before the image model. *@
+  private List<ProductImgList>? prodImgList = new();
+  private PaginationState pagination = new PaginationState();
+  private string prodNameFilter = string.Empty;
+
+  private IEnumerable<ProductPlainTextList>? filteredProdList => string.IsNullOrWhiteSpace(prodNameFilter)
+  ? prodPTList : (initPerPage ==
+  PaginationPerPage.ShowAll)
+  ? prodPTList!.Where(data => data.ProdName?.ToLower().Contains(prodNameFilter.ToLower()) == true) :
+  prodPTList!.Where(data
+  =>
+  data.ProdName?.ToLower().Contains(prodNameFilter.ToLower()) == true);
+
+  private IEnumerable<ProductPlainTextList>? pagedProdList => filteredProdList!
+  .Skip((pagination.CurrentPage - 1) * pagination.ItemsPerPage)
+  .Take(pagination.ItemsPerPage);
+
+  private int TotalPages => (int)Math.Ceiling((double)filteredProdList!.Count() / pagination.ItemsPerPage);
+  private string currentSortColumn = ""; // to let the SP's select ordered by script handle sorting
+  private bool sortAscending = true;
+  private IEnumerable<ProductPlainTextList>? SortedProdList => currentSortColumn switch
+  {
+    "#" => sortAscending ? pagedProdList!.OrderBy(a => a.Hash) : pagedProdList!.OrderByDescending(a =>
+    a.Hash),
+    "ProdImg" => sortAscending ? pagedProdList!.OrderBy(a => a.ProdImg) : pagedProdList!.OrderByDescending(a =>
+    a.ProdImg),
+    "ProdName" => sortAscending ? pagedProdList!.OrderBy(a => a.ProdName) : pagedProdList!.OrderByDescending(a =>
+    a.ProdName),
+    "OrigPrice" => sortAscending ? pagedProdList!.OrderBy(a => a.OrigPrice) : pagedProdList!.OrderByDescending(a =>
+    a.OrigPrice),
+    "DiscPrice" => sortAscending ? pagedProdList!.OrderBy(a => a.DiscPrice) : pagedProdList!.OrderByDescending(a =>
+    a.DiscPrice),
+    "Stock" => sortAscending ? pagedProdList!.OrderBy(a => a.Stock) : pagedProdList!.OrderByDescending(a =>
+    a.Stock),
+    "PromoTags" => sortAscending ? pagedProdList!.OrderBy(a => a.PromoTags) : pagedProdList!.OrderByDescending(a =>
+    a.PromoTags),
+    _ => pagedProdList
+  }; // TODO: render plaintext first, then image
+
+  private void SortBy(string column)
+  {
+    if (currentSortColumn == column)
+    {
+      sortAscending = !sortAscending;
+    }
+    else
+    {
+      currentSortColumn = column;
+      sortAscending = true;
+    }
+  }
+
+  private void FivePerPageBtn()
+  {
+    initPerPage = PaginationPerPage.Five;
+  }
+
+  private void TenPerPageBtn()
+  {
+    initPerPage = PaginationPerPage.Ten;
+    if (pagination.CurrentPage > TotalPages)
+    {
+      pagination.CurrentPage = TotalPages;
+    }
+  }
+
+  private void FifteenPerPageBtn()
+  {
+    initPerPage = PaginationPerPage.Fifteen;
+    if (pagination.CurrentPage > TotalPages)
+    {
+      pagination.CurrentPage = TotalPages;
+    }
+  }
+
+  private void ThirthPerPageBtn()
+  {
+    initPerPage = PaginationPerPage.Thirty;
+    if (pagination.CurrentPage > TotalPages)
+    {
+      pagination.CurrentPage = TotalPages;
+    }
+  }
+
+  private void FiftyPerPageBtn()
+  {
+    initPerPage = PaginationPerPage.Fifty;
+    if (pagination.CurrentPage > TotalPages)
+    {
+      pagination.CurrentPage = TotalPages;
+    }
+  }
+
+  private void ShowAllPerPageBtn()
+  {
+    initPerPage = PaginationPerPage.ShowAll;
+    if (pagination.CurrentPage > TotalPages)
+    {
+      pagination.CurrentPage = TotalPages;
+    }
+  }
+  protected override async Task OnInitializedAsync()
+  {
+    context = DbFactory.CreateDbContext();
+    await LoadPlainTexts();
+    // await LoadImages(); mitigating overheads, I'm out of ideas on how to resolve it
+  }
+
+  private async Task LoadPlainTexts() // TODO: The plaintext model should be rendered first, before the image model.
+  {
+    var sQLServerHelper = new SQLServerHelper(context);
+    prodPTList = null; // ensure spinner shows
+    StateHasChanged(); // force re-render to show spinner
+    var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(functionKey: "PRODUCT_PLAINTEXT_LIST");
+    prodPTList = await sQLServerHelper.ProdPTListFromSqlAsyncList("rpiAPSM_spManageProductsWOutput", spParam);
+    pagination.TotalRecords = prodPTList.Count;
+
+    if (prodPTList is null)
+    {
+      NavigationManager.NavigateTo("notfound");
+    }
+    StateHasChanged();
+  }
+
+  private async Task LoadImages()
+  {
+    var sQLServerHelper = new SQLServerHelper(context);
+    prodImgList = null; // ensure spinner shows
+    StateHasChanged(); // force re-render to show spinner
+    var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(functionKey: "PRODUCT_IMG_LIST");
+    prodImgList = await sQLServerHelper.ProdImgListFromSqlAsyncList("rpiAPSM_spManageProductsWOutput", spParam);
+
+    if (prodImgList is null)
+    {
+      NavigationManager.NavigateTo("notfound");
+    }
+    StateHasChanged();
+  }
+
+  private string? DbDataToImg(byte[]? imgBytes)
+  {
+    if (imgBytes is null || imgBytes.Length == 0)
+    {
+      return null;
+    }
+    else
+    {
+      return $"data:image/png;base64,{Convert.ToBase64String(imgBytes)}";
+    }
+
+  }
+
+  private void NextPage()
+  {
+    if (pagination.CurrentPage < TotalPages)
+    {
+      pagination.CurrentPage++;
+    }
+  }
+
+  private void PreviousPage()
+  {
+    if (pagination.CurrentPage > 1)
+    {
+      pagination.CurrentPage--;
+    }
+  }
+
+
+  private RenderFragment SortIcon(string column) => builder =>
+  {
+    if (currentSortColumn == column)
+    {
+      builder.AddContent(0, sortAscending ? "▲" : "▼");
+    }
+  };
+
+  public class PaginationState
+  {
+    public int ItemsPerPage
+    {
+      get
+      {
+        return initPerPage == PaginationPerPage.ShowAll
+        ? TotalRecords
+        : (int)initPerPage;
+      }
+    }
+    @* public int ItemsPerPage
+        {
+            get => (int)initPerPage; set => initPerPage = (PaginationPerPage)value;
+        } *@
+    public int CurrentPage { get; set; } = 1;
+
+    // Injected or externally set by your page
+    public int TotalRecords { get; set; }
+  }
+
+  public async ValueTask DisposeAsync() // this is important
+  {
+    await context.DisposeAsync();
+  }
+}

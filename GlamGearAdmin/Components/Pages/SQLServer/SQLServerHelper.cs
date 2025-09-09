@@ -4,6 +4,7 @@ using GlamGearAdmin.Data.SQLServer;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 class SQLServerHelper(BlazorSQLServerContext context)
 {
@@ -317,7 +318,7 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .ToListAsync();
   }
 
-  public async Task<List<ProductList>> ProdListFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  public async Task<List<ProductPlainTextList>> ProdPTListFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
   {
     var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
 
@@ -325,7 +326,20 @@ class SQLServerHelper(BlazorSQLServerContext context)
 
     var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
 
-    return await _context.ProductList
+    return await _context.ProductPlainTextList
+        .FromSql(sqlParam)
+        .ToListAsync();
+  }
+
+  public async Task<List<ProductImgList>> ProdImgListFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
+
+    SqlParameter[]? sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamLessDynamic(spName, sqlParameter);
+
+    return await _context.ProductImgList
         .FromSql(sqlParam)
         .ToListAsync();
   }
@@ -356,11 +370,26 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .ToListAsync();
   }
 
+  public async Task<List<ProductPromoTagFR>> ProductPromoTagFRFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamDynamic(spName, sqlParameter);
+
+    return await _context.ProductPromoTagFR
+        .FromSql(sqlParam)
+        .ToListAsync();
+  }
+
   #endregion LIST METHODS
 
   #region SINGLE-VALUE METHODS
 
-  public async Task<UserListSingleDM?> UserListFromSqlAsync(string spName, Dictionary<string, object?> parameters)
+  #region Data class model
+
+  public async Task<UserListSingleDM?> UserListSingleFromSqlAsync(string spName, Dictionary<string, object?> parameters)
   {
     var paramDefs = SQLServerInnerHelper.ManageUsersDataWithoutOutputParams();
 
@@ -375,7 +404,7 @@ class SQLServerHelper(BlazorSQLServerContext context)
     return result.FirstOrDefault();
   }
 
-  public async Task<UserListImageSingleDM?> UserListImageFromSqlAsync(string spName, Dictionary<string, object?> parameters)
+  public async Task<UserListImageSingleDM?> UserListSingleImageFromSqlAsync(string spName, Dictionary<string, object?> parameters)
   {
     var paramDefs = SQLServerInnerHelper.ManageUsersDataWithoutOutputParams();
 
@@ -389,6 +418,25 @@ class SQLServerHelper(BlazorSQLServerContext context)
 
     return result.FirstOrDefault();
   }
+
+  public async Task<ProductMainForReview?> ProductMainFRFromSqlAsync(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamDynamic(spName, sqlParameter);
+
+    var result = await _context.ProductMainForReview
+        .FromSql(sqlParam)
+        .ToListAsync();
+
+    return result.FirstOrDefault();
+  }
+
+  #endregion Data class model
+
+  #region String output only
 
   public async Task<string?> VerifyUserStringOutputAsync(string spName, Dictionary<string, object?> parameters) // aside from testing, this should be used in user verification
   {
@@ -407,6 +455,8 @@ class SQLServerHelper(BlazorSQLServerContext context)
 
     return await MinimalDbSettings.UsingCommand(_context, spName, sqlParameter);
   }
+
+  #endregion String output only
 
   #endregion SINGLE-VALUE METHODS
 

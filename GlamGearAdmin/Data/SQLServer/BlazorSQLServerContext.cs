@@ -10,10 +10,18 @@ namespace GlamGearAdmin.Data.SQLServer
         public DbSet<Models.SQLServer.UserListDM> UserListDM { get; set; } = default!;
         public DbSet<Models.SQLServer.SimulateKYCImg> ReviewUserMD { get; set; } = default!;
         public DbSet<Models.SQLServer.UserListSingleDM> UserListSingleDM { get; set; } = default!;
-        public DbSet<Models.SQLServer.ProductList> ProductList { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductPlainTextList> ProductPlainTextList { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductImgList> ProductImgList { get; set; } = default!;
         public DbSet<Models.SQLServer.UserRoles> UserRoles { get; set; } = default!;
         public DbSet<Models.SQLServer.UserRemarks> UserRemarks { get; set; } = default!;
         public DbSet<Models.SQLServer.UserListImageSingleDM> UserListImageSingleDM { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductMainForReview> ProductMainForReview { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductPromoTagFR> ProductPromoTagFR { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductSpecsFR> ProductSpecsFR { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductVariantsFR> ProductVariantsFR { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductVariantSpecsFR> ProductVariantSpecsFR { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductImgFR> ProductImgFR { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductVarImgFR> ProductVarImgFR { get; set; } = default!;
         // to add another data model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,7 +42,10 @@ namespace GlamGearAdmin.Data.SQLServer
             modelBuilder.Entity<Models.SQLServer.UserListSingleDM>()
             .HasNoKey().ToView(null);
 
-            modelBuilder.Entity<Models.SQLServer.ProductList>()
+            modelBuilder.Entity<Models.SQLServer.ProductPlainTextList>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductImgList>()
             .HasNoKey().ToView(null);
 
             modelBuilder.Entity<Models.SQLServer.UserRoles>()
@@ -44,6 +55,27 @@ namespace GlamGearAdmin.Data.SQLServer
             .HasNoKey().ToView(null);
 
             modelBuilder.Entity<Models.SQLServer.UserListImageSingleDM>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductMainForReview>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductPromoTagFR>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductSpecsFR>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductVariantsFR>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductVariantSpecsFR>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductImgFR>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductVarImgFR>()
             .HasNoKey().ToView(null);
 
             // to add another modelBuilder

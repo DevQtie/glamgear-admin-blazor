@@ -5,6 +5,16 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.12.3.0-alpha
+
+- The `CGGSchema1.0.3` was migrated with an additional `ActiveSubmenu` field to handle side menu toggling, which will make the state of the selected submenu persistent across page reloads.
+
+## 1.12.2.0-alpha
+
+- Toggle theme (light, dark, and auto).
+- Toggle left-side navigation menu visibility.
+- Implemented `method="post"` in ReviewUser Razor page's EditForm.
+
 ## 1.12.1.0-alpha
 
 - Additional field for overall user list.

@@ -2,16 +2,19 @@
 using GlamGearAdmin.Data.SQLite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GlamGearAdmin.Data.Migrations
+namespace GlamGearAdmin.Data.SQLite.Migrations
 {
     [DbContext(typeof(BlazorWebAppAdminContext))]
-    partial class BlazorWebAppAdminContextModelSnapshot : ModelSnapshot
+    [Migration("20250909095051_CGGSchema1.0.3")]
+    partial class CGGSchema103
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.6");

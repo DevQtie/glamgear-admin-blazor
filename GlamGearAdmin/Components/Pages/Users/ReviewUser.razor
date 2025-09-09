@@ -46,7 +46,7 @@
             }
 
         </div>
-        <EditForm EditContext="editContext" OnValidSubmit="VerifyUser" FormName="reviewUser" Enhance>
+        <EditForm method="post" EditContext="editContext" OnValidSubmit="VerifyUser" FormName="reviewUser" Enhance>
             @* <ObjectGraphDataAnnotationsValidator /> has bugs, and should not be used *@
             <DataAnnotationsValidator />
             <div class="container-fluid overflow-x-auto mw-40">
@@ -305,7 +305,7 @@
                                             <DropdownMenu data-bs-display="static">
                                                 @foreach (var remark in userRemarks)
                                                 {
-                                                    <DropdownItem @onclick="() => OnRemarkItemSelected(remark)">@remark.Remarks
+                                                    <DropdownItem @onclick="() => OnRemarkItemSelected(remark)" Active="@remark.IsActive">@remark.Remarks
                                                     </DropdownItem>
                                                 }
                                             </DropdownMenu>
@@ -504,7 +504,7 @@
 @code {
     private EditContext? editContext;
     private ValidationMessageStore? messageStore;
-    private VerifyRemRoleUser VerifyRemRoleUser = new VerifyRemRoleUser(); // If it is actually a simple model (for other Razor pages), this should not be used. I've left it as is for reference.
+    private VerifyRemRoleUser VerifyRemRoleUser = new VerifyRemRoleUser(); // If it is actually a simple model (for other Razor pages), this should not be used (but then I insisted to still use it for the purpose of observation). I've left it as is for reference.
     private UserListSingleDM? reviewUserListSingle = new();
     private UserListImageSingleDM? reviewUserListImageSingle = new();
     private List<UserRoles>? userRoles = new();
@@ -535,17 +535,18 @@
 
         editContext.OnValidationRequested += HandleValidationRequested;
         context = DbFactory.CreateDbContext();
-        await LoadPlainText();
+        await LoadPlainTexts();
         await LoadImages();
     }
 
-    private async Task LoadPlainText()
+    private async Task LoadPlainTexts()
     {
         var sQLServerHelper = new SQLServerHelper(context);
+        reviewUserListSingle = null;
+        StateHasChanged();
         var spParamPlainText = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, functionKey:
         "REVIEW_USER");
-        reviewUserListSingle = await sQLServerHelper.UserListFromSqlAsync("rpiAPSM_spManageUsersDataWOutput", spParamPlainText);
-        // TODO: Let this load first.
+        reviewUserListSingle = await sQLServerHelper.UserListSingleFromSqlAsync("rpiAPSM_spManageUsersDataWOutput", spParamPlainText);
 
         if (reviewUserListSingle is null)
         {
@@ -557,10 +558,11 @@
     private async Task LoadImages()
     {
         var sQLServerHelper = new SQLServerHelper(context);
-
+        reviewUserListImageSingle = null;
+        StateHasChanged();
         var spParamImage = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, functionKey:
         "REVIEW_USER_IMAGES");
-        reviewUserListImageSingle = await sQLServerHelper.UserListImageFromSqlAsync("rpiAPSM_spManageUsersDataWOutput",
+        reviewUserListImageSingle = await sQLServerHelper.UserListSingleImageFromSqlAsync("rpiAPSM_spManageUsersDataWOutput",
         spParamImage);
 
         if (reviewUserListImageSingle is null)
@@ -591,6 +593,8 @@
         isModifyUser = true;
         isReevaluateUser = false;
         var sQLServerHelper = new SQLServerHelper(context);
+        userRoles = null;
+        StateHasChanged();
         var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, functionKey:
         "RET_USER_ROLE_W_OTHER_OPT");
         userRoles = await sQLServerHelper.UserRoleListFromSqlAsyncList("rpiAPSM_spManageUsersDataWOutput", spParam);
@@ -603,7 +607,9 @@
         isReevaluateUser = true;
         isModifyUser = false;
         var sQLServerHelper = new SQLServerHelper(context);
-        var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(functionKey:
+        userRemarks = null;
+        StateHasChanged();
+        var spParam = SQLServerInnerHelper.ManageUsersDataWOutputPageParams(userID: userId, functionKey:
         "REMARKS_OPTION_LIST");
         userRemarks = await sQLServerHelper.UserRemarksListFromSqlAsyncList("rpiAPSM_spManageUsersDataWOutput", spParam);
     }
@@ -625,6 +631,7 @@
     {
         VerifyRemRoleUser.SelectedRemarkID = item.RemarkID ?? string.Empty;
         VerifyRemRoleUser.SelectedRemark = item.Remarks ?? string.Empty;
+        SetActiveRemark(VerifyRemRoleUser.SelectedRemarkID);
     }
 
     private void SetActiveRole(string id)
@@ -635,6 +642,14 @@
             role.IsActive = role.RoleID == id;
     }
 
+    private void SetActiveRemark(string id)
+    {
+        if (userRemarks is null) return;
+
+        foreach (var remark in userRemarks)
+            remark.IsActive = remark.RemarkID == id;
+    }
+
     private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs e)
     {
         messageStore!.Clear();
@@ -643,7 +658,7 @@
         {
             if (string.IsNullOrWhiteSpace(VerifyRemRoleUser.SelectedRole))
             {
-                messageStore.Add(() => VerifyRemRoleUser.SelectedRole, "Required field.");
+                messageStore.Add(() => VerifyRemRoleUser.SelectedRole!, "Required field.");
             }
         }
         else if (isReevaluateUser)
@@ -651,13 +666,13 @@
             // Only validate VerifyRemRoleUser.SelectedRemark if VerifyRemRoleUser.SelectedRole is valid
             if (string.IsNullOrWhiteSpace(VerifyRemRoleUser.SelectedRemark))
             {
-                messageStore.Add(() => VerifyRemRoleUser.SelectedRemark, "Required field.");
+                messageStore.Add(() => VerifyRemRoleUser.SelectedRemark!, "Required field.");
             }
         }
         else
         {
-            messageStore.Add(() => VerifyRemRoleUser.SelectedRole, "Required field.");
-            messageStore.Add(() => VerifyRemRoleUser.SelectedRemark, "Required field.");
+            messageStore.Add(() => VerifyRemRoleUser.SelectedRole!, "Required field.");
+            messageStore.Add(() => VerifyRemRoleUser.SelectedRemark!, "Required field.");
         }
     }
 

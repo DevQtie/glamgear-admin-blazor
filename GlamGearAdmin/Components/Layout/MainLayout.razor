@@ -1,8 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using GlamGearAdmin.Models.AppModels
+@inherits LayoutComponentBase
 
 @implements IDisposable
 @inject NavigationManager NavigationManager
 @inject InternetCheckerService InternetChecker
+@* @inject ThemeToggler toggle *@
 
 @if (isOnline == null)
 {
@@ -15,17 +17,20 @@
 else if (isOnline == true)
 {
     <div class="page">
-        <div class="sidebar">
+        <div class=@(toggle!.CollapseNavMenu ? "sidebar d-none" : "sidebar d-block")>
             <NavMenu />
         </div>
 
         <main>
             <div class="border-bottom border-1 border-secondary-subtle top-row px-4">
-                <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+                <ThemeSwitcher @rendermode="RenderMode.InteractiveServer" Class="ms-0 p-0" />
+                <span><a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a></span>
             </div>
 
             <article class="content page-footer px-4 small">
+                @* <CascadingValue Value="@toggle"> *@
                 @Body
+                @* </CascadingValue> *@
             </article>
             <footer class="m-0 py-3 w-100 text-bg-dark">
                 <p class="text-white text-center m-0 small">&copy; @(DateTime.Today.Year) Raquel Pawnshop, Inc. All rights
@@ -74,6 +79,9 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    protected SidebarToggler? toggle { get; set; }
+    @* private ThemeToggler toggle = new() { CollapseNavMenu = false }; *@
     private string? currentUrl;
     private bool? isOnline;
 
@@ -83,6 +91,7 @@ else
     }
     protected override void OnInitialized()
     {
+        @* toggle.OnChange += StateHasChanged; *@
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
     }
@@ -95,6 +104,7 @@ else
 
     public void Dispose()
     {
+        @* toggle.OnChange -= StateHasChanged; *@
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }

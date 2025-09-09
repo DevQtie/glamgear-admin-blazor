@@ -1,13 +1,27 @@
 @using System.Reflection
+@using GlamGearAdmin.Models.AppModels
+@using GlamGearAdmin.Models.SQLite
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 
 @inject SignInManager<IdentityUser> SignInManager
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
+@* @inject ThemeToggler toggle *@
 
 <div class="border-bottom border-1 border-secondary-subtle top-row ps-1 navbar navbar-light bg-body-tertiary">
     <div class="container-fluid brand-lbl p-0">
         <a class="navbar-brand" href="/dashboard"><strong>GlamGear</strong><span class="fst-normal">Admin</span></a>
+
+        <span class="m-0">
+            <Tooltip Class="mb-2" Title="@(collapseNavMenu ? "Open sidebar" : "Close sidebar")"
+                Placement="TooltipPlacement.Bottom"> @*TODO: Implement a functional toggle side bar visibility*@
+                <Button Class="btn cust-cursor-pointer p-1" @onclick="ToggleNavMenuVisibility">
+                    <Icon Name="IconName.LayoutTextWindowReverse" />
+                </Button>
+            </Tooltip>
+        </span>
     </div>
 </div>
 
@@ -15,6 +29,18 @@
 
 <div class="border-end border-1 border-secondary-subtle nav-scrollable bg-body-tertiary"
     onclick="() => HandleNavScrollClick()">
+    @* <div class="d-flex align-items-center px-3 my-2 gap-2">
+        <span class="m-0">
+            <Tooltip Class="mb-2" Title="@(collapseNavMenu ? "Open sidebar" : "Close sidebar")"
+                Placement="TooltipPlacement.Bottom"> @*TODO: Implement a functional toggle side bar visibility
+    <Button Class="btn cust-cursor-pointer p-1" @onclick="ToggleNavMenuVisibility">
+        <Icon Name="IconName.LayoutTextWindowReverse" />
+    </Button>
+    </Tooltip>
+    </span>
+
+    <ThemeSwitcher Class="ms-0 p-0" />
+    </div> *@
     <nav class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/dashboard" Match="NavLinkMatch.All">
@@ -26,7 +52,7 @@
         @* inline "custom-active-main" class (reserved css class in the meantime) bool statement source code original reference (/w DevQt's modification): https://copilot.microsoft.com/shares/ZV8kXciTxVV73FVcPicdf *@
         <div class="nav-item px-3">
             <NavLink class="@(navSubmenu == NavSubmenu.FirstSubM ? "nav-link custom-active-main" : "nav-link")"
-                @onclick="() => TogleSubmenu(NavSubmenu.FirstSubM)">
+                @onclick="() => ToggleSubmenu(NavSubmenu.FirstSubM)">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <span class="bi bi-boxes-nav-menu" aria-hidden="true"></span>
                     <span class="flex-grow-1 fst-normal">Products</span>
@@ -38,11 +64,6 @@
 
             @if (navSubmenu == NavSubmenu.FirstSubM)
             {
-                <div class="nav-item py-1">
-                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/product-list">
-                        <span class="fst-normal">Product List</span>
-                    </NavLink>
-                </div>
                 <div class="nav-item py-1">
                     <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="products/manage-products">
                         <span class="fst-normal">Manage Products</span>
@@ -57,7 +78,7 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.SecondSubM)">
+            <NavLink class="nav-link" @onclick="() => ToggleSubmenu(NavSubmenu.SecondSubM)">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <span class="bi bi-ui-checks-nav-menu" aria-hidden="true"></span>
                     <span class="flex-grow-1 fst-normal">Orders</span>
@@ -83,7 +104,7 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" @onclick="() => TogleSubmenu(NavSubmenu.ThirdSubM)">
+            <NavLink class="nav-link" @onclick="() => ToggleSubmenu(NavSubmenu.ThirdSubM)">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span>
                     <span class="flex-grow-1 fst-normal">Users</span>
@@ -110,11 +131,11 @@
                         <span class="fst-normal">Verified Users</span>
                     </NavLink>
                 </div>
-                <div class="nav-item py-1">
-                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="@($"users/other-users/{data}")"> @* @($"users/other-users/{data}") testing purposes *@
+                @* <div class="nav-item py-1">
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="@($"users/other-users/{data}")"> @* @($"users/other-users/{data}") testing purposes
                         <span class="fst-normal">Other Users</span>
                     </NavLink>
-                </div>
+                </div> *@
             }
         </div>
 
@@ -145,21 +166,27 @@
 </div>
 
 @code {
+    private Admin? admin;
+    [CascadingParameter]
+    public SidebarToggler? toggle { get; set; }
     // TODO: The main menu with arrow should be placed to the right-most side and the label remains the same.
-    private enum NavSubmenu @* source code original reference: https://stackoverflow.com/a/66690427/14041392 *@
-    {
-        None,
-        FirstSubM,
-        SecondSubM,
-        ThirdSubM,
-    }
 
     private bool collapseNavMenu = true;
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-    private NavSubmenu navSubmenu = NavSubmenu.None;
+    private NavSubmenu navSubmenu;
     private bool submenuClicked = false;
 
-    private long data = 2L * 1024L * 1024L; @* Example data, can be set to any value *@
+    @*private long data = 2L * 1024L * 1024L; @* Example data, can be set to any value *@
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        admin = await context.Admin.FirstOrDefaultAsync(m => m.RoleType == "Developer");
+        if (admin is not null)
+        {
+            navSubmenu = admin.ActiveSubmenu;
+        }
+    }
 
     private string? GetVersion()
     {
@@ -172,7 +199,10 @@
         }
         return null;
     }
-
+    @* protected override void OnInitialized()
+    {
+        toggle.OnChange += StateHasChanged;
+    } *@
 
     private void ToggleNavMenu(NavSubmenu? submenu = null)
     {
@@ -180,13 +210,39 @@
         navSubmenu = submenu ?? navSubmenu;
     }
 
-    private void TogleSubmenu(NavSubmenu submenu)
+    private async Task ToggleSubmenu(NavSubmenu submenu)
     {
+        using var context = DbFactory.CreateDbContext();
+        admin!.ActiveSubmenu = submenu;
+        context.Attach(admin!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+
+            if (!AdminExists(admin!.UserID))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
         submenuClicked = true;
         if (navSubmenu == submenu)
             navSubmenu = NavSubmenu.None;
         else
             navSubmenu = submenu;
+    }
+
+    private bool AdminExists(string? userid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Admin.Any(e => e.UserID == userid);
     }
 
     private void HandleNavScrollClick() @* source code original reference: https://copilot.microsoft.com/shares/E2ZnBXGS5524gPuz1QC8J *@
@@ -198,5 +254,20 @@
 
         submenuClicked = false; @* Reset the flag after handling *@
     }
+
+    private void ToggleNavMenuVisibility()
+    {
+        @* toggle.OnChange += StateHasChanged; *@
+        toggle = new() { CollapseNavMenu = !toggle!.CollapseNavMenu };
+        @* StateHasChanged(); *@
+        @* toggle!.CollapseNavMenu = !toggle.CollapseNavMenu; *@
+        @* StateHasChanged(); *@
+        Console.WriteLine($"Nav menu visibility toggled: {toggle.CollapseNavMenu}");
+    }
+
+    @* public void Dispose()
+    {
+        toggle.OnChange -= StateHasChanged;
+    } *@
 
 }

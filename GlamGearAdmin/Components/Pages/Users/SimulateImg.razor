@@ -401,7 +401,7 @@
       imgName: imgData.name,
       size: imgData.size,
       functionKey: "SIMULATE_PRODUCT_IMAGE");
-      output = await sQLServerHelper.SimulateProdImgStringOutputAsync("rpiAPSM_spManageAdminProductsWOutput", spParam);
+      output = await sQLServerHelper.SimulateProdImgStringOutputAsync("rpiAPSM_spManageProductsWOutput", spParam);
       if (output is not null && output != "SUCCESSFUL")
       {
         break; // needs improvements

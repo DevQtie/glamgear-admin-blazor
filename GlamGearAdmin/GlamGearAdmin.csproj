@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <Version>1.12.1.0-alpha</Version>
+    <Version>1.12.3.0-alpha</Version> <!--Ensure that the README.md file is synchronized with this version specification. You can see that file in the root directory of this project. Documenting is important for DevQt.-->
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -154,4 +154,7 @@ public class UserRemarks
 
   [Column("remarks")]
   public string? Remarks { get; set; }
+
+  [Column("is_active")]
+  public bool IsActive { get; set; }
 }

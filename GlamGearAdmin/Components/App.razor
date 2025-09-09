@@ -1,4 +1,5 @@
-﻿@inject InternetCheckerService InternetChecker
+﻿@using GlamGearAdmin.Models.AppModels
+@inject InternetCheckerService InternetChecker
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,6 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
     @if (isOnline == null)
     {
         <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]" />
@@ -32,6 +34,7 @@
 <body>
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     @if (isOnline == null)
     {
         <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>

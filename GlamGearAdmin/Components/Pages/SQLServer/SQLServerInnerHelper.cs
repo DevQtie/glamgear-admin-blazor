@@ -135,7 +135,7 @@ static class SQLServerInnerHelper
     }
     #endregion  rpiAPSM_spManageUsersDataWOutput
 
-    #region rpiAPSM_spManageAdminProductsWOutput
+    #region rpiAPSM_spManageProductsWOutput
     // Should be in the same chronological order
     public static Dictionary<string, object?> ManageAdminProductsWOutputPageParams(
       object? prodID = null,
@@ -184,5 +184,5 @@ static class SQLServerInnerHelper
         return paramDefs;
     }
 
-    #endregion  rpiAPSM_spManageAdminProductsWOutput
+    #endregion  rpiAPSM_spManageProductsWOutput
 }

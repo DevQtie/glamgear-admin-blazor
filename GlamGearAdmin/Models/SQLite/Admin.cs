@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using GlamGearAdmin.Models.AppModels;
 
 namespace GlamGearAdmin.Models.SQLite;
 
@@ -23,4 +24,5 @@ public class Admin
     [StringLength(100, MinimumLength = 3)]
     [RegularExpression(@"^[A-Z]+[a-zA-Z\s-]*$")]
     public string? RoleType { get; set; }
+    public NavSubmenu ActiveSubmenu { get; set; } = NavSubmenu.None;
 }
