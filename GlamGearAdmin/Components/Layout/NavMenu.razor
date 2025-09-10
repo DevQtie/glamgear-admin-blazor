@@ -3,7 +3,8 @@
 @using GlamGearAdmin.Models.SQLite
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@* @rendermode InteractiveServer *@
 @inject NavigationManager NavigationManager
 
 @inject SignInManager<IdentityUser> SignInManager
