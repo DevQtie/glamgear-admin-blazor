@@ -1,10 +1,14 @@
 @page "/products/review-product"
 @page "/products/review/{prodId}/product"
-@rendermode @(new InteractiveServerRenderMode(prerender: false)) //This resolved the issue with Quill Editor rendering
+@* @rendermode @(new InteractiveServerRenderMode(prerender: false)) //This resolved the issue with Quill Editor rendering *@
+@* @rendermode InteractiveAuto *@
+@* @rendermode InteractiveServer *@
+@rendermode @(new InteractiveAutoRenderMode(prerender: false)) //This also resolved the issue with Quill Editor rendering
 @using Microsoft.EntityFrameworkCore
 @using GlamGearAdmin.Models.SQLServer
 @using GlamGearAdmin.Data.SQLServer
 @using System.Text.RegularExpressions
+@using System.Globalization
 @implements IAsyncDisposable
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 @inject NavigationManager NavigationManager
@@ -26,68 +30,79 @@
 }
 else
 {
+  @* <a class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</a> *@
     <div class="container-fluid overflow-x-auto mw-40">
-        <div class="row py-1 border rounded border-secondary-subtle text-center my-1">
+        <div class="row py-1 border rounded border-secondary-subtle text-center my-2">
             <EditForm EditContext="editContext" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
                 <div class="d-flex flex-column align-items-start mb-4">
                     <h5 class="fw-bold py-1">Basic Information</h5>
                     <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Name:</label>
-                        <InputText id="randomText"
-                            @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.ProdName"
-                            class="form-control" />
+                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Name</label>
+                        <div class="d-flex flex-column align-items-end w-100">
+                            <InputText id="randomText" class="form-control form-control-sm" maxlength="255"
+                                @bind-Value="ReviewThenModifyProduct.ProdNameEntry" @oninput="OnInputProdName" @onblur="FormatOnBlurProdName" />
+                            <p class="text-muted small m-0 mt-1">
+                                @($"{ReviewThenModifyProduct.ProdNameLC} / 255 characters")
+                            </p>
+                        </div>
                         <ValidationMessage
-                            For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.ProdName"
+                            For="() => ReviewThenModifyProduct.ProdNameEntry"
                             class="text-danger" />
-                    </div>
-                    <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Category:</label>
-                        <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small">
-                            <DropdownToggleButton>@(ReviewThenModifyProduct.SelectedCategory ?? "Select a category")
-                            </DropdownToggleButton>
-                            <DropdownMenu>
-                                @foreach (var category in ReviewThenModifyProduct.CompileProductProperties.ProductCategory)
-                                {
-                                    <DropdownItem @onclick="() => OnCategoryItemSelected(category)" Active="@category.State"
-                                        Disabled="@(category.ID == 2 || category.ID == 3)">
-                                        @category.Item
-                                    </DropdownItem>
-                                }
-                            </DropdownMenu>
-                        </Dropdown>
                     </div>
                     <div class="container m-0 p-0">
                         <div class="row">
                             <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Original Price:</label>
+                            <label for="randomText" class="form-label text-nowrap fw-bold">Product Category</label>
+                            <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small">
+                                <DropdownToggleButton>@(ReviewThenModifyProduct.SelectedCategory ?? "Select a category")
+                                </DropdownToggleButton>
+                                <DropdownMenu>
+                                    @foreach (var category in ReviewThenModifyProduct.CompileProductProperties.ProductCategory)
+                                    {
+                                        <DropdownItem @onclick="() => OnCategoryItemSelected(category)" Active="@category.State"
+                                            Disabled="@(category.ID == 2 || category.ID == 3)">
+                                            @category.Item
+                                        </DropdownItem>
+                                    }
+                                </DropdownMenu>
+                            </Dropdown>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                <label for="randomText" class="form-label text-nowrap fw-bold">Original Price</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">₱</span>
+                                    <InputText id="randomText"
+                                        @bind-Value="ReviewThenModifyProduct.FormattedOrigPrice"
+                                        class="form-control form-control-sm" @onblur="FormatOnBlurOrigPrice"/>
+                                    <ValidationMessage
+                                        For="() => ReviewThenModifyProduct.FormattedOrigPrice"
+                                        class="text-danger py-1" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                <label for="randomText" class="form-label text-nowrap fw-bold">Discounted Price</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">₱</span>
+                                    <InputText id="randomText"
+                                        @bind-Value="ReviewThenModifyProduct.FormattedDiscPrice"
+                                        class="form-control form-control-sm" @onblur="FormatOnBlurDiscPrice" />
+                                    <ValidationMessage
+                                        For="() => ReviewThenModifyProduct.FormattedDiscPrice"
+                                        class="text-danger py-1" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                <label for="randomText" class="form-label text-nowrap fw-bold">Stock</label>
                                 <InputNumber id="randomText"
-                                    @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.OrigPrice"
-                                    class="form-control" />
+                                    @bind-Value="ReviewThenModifyProduct.ProdStock"
+                                    class="form-control form-control-sm" @oninput="OnInputProdStock" @onblur="FormatOnBlurProdStock" />
                                 <ValidationMessage
-                                    For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.OrigPrice"
+                                    For="() => ReviewThenModifyProduct.ProdStock"
                                     class="text-danger" />
                             </div>
                             <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Discounted Price:</label>
-                                <InputNumber id="randomText"
-                                    @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.DiscPrice"
-                                    class="form-control" />
-                                <ValidationMessage
-                                    For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.DiscPrice"
-                                    class="text-danger" />
-                            </div>
-                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Stock:</label>
-                                <InputNumber id="randomText"
-                                    @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                    class="form-control" />
-                                <ValidationMessage
-                                    For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                    class="text-danger" />
-                            </div>
-                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Availability:</label>
+                                <label for="randomText" class="form-label text-nowrap fw-bold">Availability</label>
                                 <Switch
                                     @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Availability" />
                             </div>
@@ -95,13 +110,21 @@ else
                     </div>
 
                     <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Promo Tags:</label>
-                        <div class="suggestion-container w-100">
-                            <div id="@($"{Id}_tagsinput")" class="tagsinput">
+                        <label for="randomText" class="form-label text-nowrap fw-bold">Promo Tags</label>                        
+                        <div class="suggestion-container d-flex flex-column align-items-start w-100">
+                            <div id="@($"{Id}_tagsinput")" class="tagsinput w-100">
 
-                                @if (Tags != null && Tags.Any())
+                                @if (ReviewThenModifyProduct.CompileProductProperties.Tags.Count == 0)
                                 {
-                                    @foreach (var tag in Tags)
+                                    <div class="position-absolute top-50 start-50 translate-middle">
+                                        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @foreach (var tag in ReviewThenModifyProduct.CompileProductProperties.Tags)
                                     {
                                         <span class="tag bg-primary border rounded d-flex flex-column align-items-center">
                                             <span class="tag-text">@tag.TagValues</span>
@@ -113,106 +136,152 @@ else
 
                                 <div id="@($"{Id}_addTag")">
                                     <div class="@(IsContainSpecialCharacter ? "tag-tooltip" : string.Empty)">
-                                        <input id="@($"{Id}_tag")" class="tag-input" placeholder="Add tags"
+                                        @* <input id="@($"{Id}_tag")" class="tag-input" placeholder="Add tags"
                                             autocomplete="off" @bind-value="Value" @bind-value:event="oninput"
-                                            @onkeyup="AddTags" />
-
-                                        @if (IsContainSpecialCharacter)
-                                        {
-                                            <div class="error-right d-inline-flex p-2">
-                                                <i class="oi oi-warning text-warning p-1"></i>
-                                                <p class="text-left m-0 p-1">Special characters not allowed.</p>
-                                                <i></i>
-                                            </div>
-                                        }
+                                            @onkeyup="AddTags" /> *@
+                                        <AutoComplete @bind-Value="ReviewThenModifyProduct.TagRef"
+                                            id="@($"{Id}_tag")"
+                                            Class="tag-input border-0"
+                                            TItem="ProductTagsRefFRAutoComplete"
+                                            DataProvider="ProductTagRefDataProvider"
+                                            PropertyName="Tag"
+                                            Placeholder="Search a tag..."
+                                            Size="AutoCompleteSize.Small"
+                                            OnChanged="(ProductTagsRefFRAutoComplete tag) => OnAutoCompleteChanged(tag)" />
                                     </div>
                                 </div>
                             </div>
+                            <ValidationMessage For="@(() => ReviewThenModifyProduct.TagRef)" class="text-danger py-1" />
+                            <ValidationMessage For="@(() => ReviewThenModifyProduct.CompileProductProperties.Tags)" class="text-danger py-1" />
                         </div>
                     </div>
 
                     <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Specifications:</label>
+                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Images
+                            <Tooltip Class="ps-1"
+                                data-bs-html="true"
+                                Title="@ReviewThenModifyProduct.ImageNotes"
+                                Placement="TooltipPlacement.Right">
+                                <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
+                            </Tooltip>
+                            @* <a data-bs-toggle="tooltip" datab-bs-placement="right" data-bs-html="true" data-bs-title="@ReviewThenModifyProduct.ImageNotes">
+                                <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
+                            </a> has issues *@
+                        </label>
+                        <div class="container-fluid p-0">
+                        <div class="column">
+                            <div class="col-12 col-lg-12 mb-3">
+                                @if (ReviewThenModifyProduct.CompileProductProperties.ProductImages.Count == 0)
+                                {
+                                    @* <div class="position-absolute top-50 start-50 translate-middle">
+                                        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div> *@
+                                    <InputFile @ref="filePicker" class="btn btn-outline-primary my-1 d-none" OnChange="HandleProductImageUpload" accept="image/*"
+                                        multiple />
+                                    <button class="btn btn-primary rounded-circle"
+                                            style="width: 40px; height: 40px;"
+                                            @onclick="TriggerFileUpload"
+                                            title="Upload Image">
+                                        @* <i class="bi bi-camera"></i> *@
+                                        <Icon Name="IconName.Images" Color="IconColor.White" />
+                                    </button>
+                                    <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductImages" class="text-danger" />
+                                }
+                                else
+                                {
+                                    int totalCount = ReviewThenModifyProduct.CompileProductProperties.ProductImages.Count;
+                                    int counter = 0;
+                                    @foreach (var img in ReviewThenModifyProduct.CompileProductProperties.ProductImages)
+                                    {
+                                        counter++;
+                                        <div class="position-relative d-inline-block">
+                                            <a href="@GlobalMethod.DbDataToImg(img.ProdImg)" target="_blank">
+                                                <img src="@GlobalMethod.DbDataToImg(img.ProdImg)" class="img-thumbnail m-3" width="200px" alt="Product Image" />                                            
+                                            </a>
+                                            <button type="button"
+                                                class="btn btn-cust btn-sm fs-3 text-white rounded-circle position-absolute top-0 end-0 m-1 me-3 mt-2"
+                                                title="Remove image"
+                                                @onclick="() => DeleteImage(img.ProdID)">
+                                                &times;
+                                            </button>
+                                        </div>
+                                        @if (counter == totalCount)
+                                        {
+                                            <InputFile @ref="filePicker" class="btn btn-outline-primary my-1 d-none" OnChange="HandleProductImageUpload" accept="image/*"
+                                                multiple />
+                                            <button class="btn btn-primary rounded-circle"
+                                                    style="width: 40px; height: 40px;"
+                                                    @onclick="TriggerFileUpload"
+                                                    title="Upload Image">
+                                                @* <i class="bi bi-camera"></i> *@
+                                                <Icon Name="IconName.Images" Color="IconColor.White" />
+                                            </button>
+                                            <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductImages" class="text-danger" />
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 d-flex flex-column align-items-start w-100">
+                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Specifications</label>
                         
                         <div class="container m-0 p-0">
                             <div class="row">
+                                @if (ReviewThenModifyProduct.CompileProductProperties.ProductSpecs.Count == 0)
+                                {
+                                    <div class="position-absolute top-50 start-50 translate-middle">
+                                        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @foreach (var specs in ReviewThenModifyProduct.CompileProductProperties.ProductSpecs)
+                                    {
+                                        if (specs.KeyName!.Contains("Warranty Type", StringComparison.CurrentCultureIgnoreCase))
+                                        {
+                                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                                <label for="randomText" class="form-label text-nowrap fw-bold">@($"{specs.KeyName}")</label>
+                                                <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small" Class="w-100">
+                                                    <DropdownToggleButton>@(ReviewThenModifyProduct.SelectedWarrantyType ?? "Select a warranty type")
+                                                    </DropdownToggleButton>
+                                                    <DropdownMenu Class="w-100">
+                                                        @foreach (var warrantyType in ReviewThenModifyProduct.CompileProductProperties.ProductWarrantyType)
+                                                        {
+                                                            <DropdownItem @onclick="() => OnWarrantyTypeItemSelected(warrantyType)" Active="@warrantyType.State"
+                                                                Disabled="@(warrantyType.ID == 2)" Class="w-100">
+                                                                @warrantyType.Item
+                                                            </DropdownItem>
+                                                        }
+                                                    </DropdownMenu>
+                                                </Dropdown>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                                <label for="randomText" class="form-label text-nowrap fw-bold">@($"{specs.KeyName}")</label>
+                                                <InputText id="@($"{specs.KeyNameID}")"
+                                                    @bind-Value="specs.Value"
+                                                    class="form-control form-control-sm" />
+                                                <ValidationMessage id="@($"{specs.KeyNameID}")"
+                                                    For="() => specs.Value"
+                                                    class="text-danger" />
+                                            </div>
+                                        }
+                                    }
+                                }
                                 <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Diamond Shape:</label>
-                                <InputNumber id="randomText"
-                                    @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.OrigPrice"
-                                    class="form-control" />
-                                <ValidationMessage
-                                    For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.OrigPrice"
-                                    class="text-danger" />
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Material Type:</label>
-                                    <InputNumber id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.DiscPrice"
-                                        class="form-control" />
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.DiscPrice"
-                                        class="text-danger" />
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Main Jewelry Stone:</label>
-                                    <InputNumber id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="form-control" />
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="text-danger" />
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Brand:</label>
-                                    <InputNumber id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="form-control" />
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="text-danger" />
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Condition:</label>
-                                    <InputNumber id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="form-control" />
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="text-danger" />
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Warranty Type:</label>
-                                    <InputNumber id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="form-control" />
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="text-danger" />
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Box Content:</label>
-                                    <InputNumber id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="form-control" />
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="text-danger" />
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Add spec:</label>
-                                    <InputNumber id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="form-control" />
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Stock"
-                                        class="text-danger" />
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Sort list:</label>
-                                    <SortableList TItem="Employee" Data="employees" Context="item" OnUpdate="@OnEmployeeListUpdate">
+                                    <label for="randomText" class="form-label text-nowrap fw-bold">Sort list</label>
+                                    <SortableList TItem="ProductSpecsFRSort" Data="productSpecs" Context="item" OnUpdate="@OnProdSpecsListUpdate">
                                         <ItemTemplate>
-                                            @item.Name
+                                            @item.Value
                                         </ItemTemplate>
                                     </SortableList>
                                 </div>
@@ -222,9 +291,9 @@ else
                     
 
                     <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Description:</label>
-                        <div class="w-100">                            
-                            <div id="editor" class="w-100"></div>
+                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Description</label>
+                        <div class="w-100">
+                            <div id="editor" class="w-100 rounded-bottom"></div> @*Could be replaced with https://demos.blazorbootstrap.com/markdown if the images were accessible through a link.*@
                         </div>
                     </div>
                 </div>
@@ -233,7 +302,29 @@ else
     </div>
 }
 
+<div id="liveToastError"
+  class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 mb-3 me-3" role="alert"
+  aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+  <div class="d-flex">
+    @if (errorMessage is not null)
+    {
+      <div class="toast-body">
+        Someting went wrong: "@errorMessage". Please try again later.
+      </div>
+    }
+    else
+    {
+      <div class="toast-body">
+        Someting went wrong. Please try again later.
+      </div>
+    }
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+      aria-label="Close"></button>
+  </div>
+</div>
+
 @code {
+    private void ButtonClicked() => NavigationManager.NavigateTo("simulate/images");
     private EditContext? editContext;
     private ValidationMessageStore? messageStore;
     private ReviewThenModifyProduct ReviewThenModifyProduct = new ReviewThenModifyProduct();
@@ -241,11 +332,16 @@ else
     private Guid Id => Guid.NewGuid();
     protected string? Value { get; set; }
     protected bool IsContainSpecialCharacter { get; set; }
-    protected List<ProductPromoTagFR> Tags { get; set; } = new();
-
+    
     [Parameter]
     public string? prodId { get; set; }
-
+    public record ProductSpecsFRSort(string? KeyNameID, string? KeyName, string? Value, int Rank);
+    public record ProductTagsRefFRAutoComplete(string Tag);
+    public List<ProductSpecsFRSort> productSpecs = new();
+    public List<ProductTagsRefFRAutoComplete> productTagRef = new();
+    private string? errorMessage;
+    InputFile filePicker = new();
+    
     protected override async Task OnInitializedAsync()
     {
         editContext = new EditContext(ReviewThenModifyProduct);
@@ -253,8 +349,14 @@ else
 
         editContext.OnValidationRequested += HandleValidationRequested;
         context = DbFactory.CreateDbContext();
+        ReviewThenModifyProduct.SelectedCategory = "Jewelry";
+        SetActiveCategory(1);
         await RetrieveProductMainForReview();
         await RetrievePromoTagForReview();
+        await RetrievePromoTagRefForReview();
+        await RetrieveProductImagesForReview();
+        await RetrieveProductSpecsForReview();
+        await RetrieveProducDescriptionForReview();
     }
 
     private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs e)
@@ -295,22 +397,317 @@ else
         {
             NavigationManager.NavigateTo("notfound");
         }
+        ReviewThenModifyProduct.ProdNameEntry = ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.ProdName;
+        ReviewThenModifyProduct.ProdNameLC = ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.ProdName?.Length ?? 0;
+        ReviewThenModifyProduct.ProdStock = ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.Stock ?? 0;
         StateHasChanged();
     }
 
     private async Task RetrievePromoTagForReview()
     {
         var sQLServerHelper = new SQLServerHelper(context);
+        ReviewThenModifyProduct.CompileProductProperties.Tags = [];
         StateHasChanged();
         var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
         "REVIEW_PRODUCT_PROMO_TAG");
-        Tags = await
+        ReviewThenModifyProduct.CompileProductProperties.Tags = await
         sQLServerHelper.ProductPromoTagFRFromSqlAsyncList("rpiAPSM_spManageProductsWOutput", spParam);
-        if (Tags is null)
+        if (ReviewThenModifyProduct.CompileProductProperties.Tags is null)
         {
             NavigationManager.NavigateTo("notfound");
         }
         StateHasChanged();
+    }
+
+    private async Task RetrievePromoTagRefForReview()
+    {
+        var sQLServerHelper = new SQLServerHelper(context);
+        ReviewThenModifyProduct.CompileProductProperties.TagRefList = [];
+        StateHasChanged();
+        var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
+        "RETRIEVE_PROMO_TAG_REF");
+        ReviewThenModifyProduct.CompileProductProperties.TagRefList = await
+        sQLServerHelper.ProductPromoTagRefFRFromSqlAsyncList("rpiAPSM_spManageProductsWOutput", spParam);
+        if (ReviewThenModifyProduct.CompileProductProperties.Tags is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        ReviewThenModifyProduct.CompileProductProperties.TagRefList.Add(
+            new ProductPromoTagRefFR
+            {
+                Tag = "Simulate tag item 1"
+            }
+        );
+        ReviewThenModifyProduct.CompileProductProperties.TagRefList.Add(
+            new ProductPromoTagRefFR
+            {
+                Tag = "Simulate tag item 2"
+            }
+        );
+        StateHasChanged();
+    }
+
+    private async Task<AutoCompleteDataProviderResult<ProductTagsRefFRAutoComplete>> ProductTagRefDataProvider(AutoCompleteDataProviderRequest<ProductTagsRefFRAutoComplete> request)
+    {
+        var query = ReviewThenModifyProduct.CompileProductProperties.TagRefList.AsQueryable();
+
+        // Apply filtering if user typed something
+        if (!string.IsNullOrWhiteSpace(request.Filter?.Value))
+        {
+            query = query.Where(data =>
+                data.Tag.Contains(request.Filter.Value, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var productTagRef = query
+            .Select(data => new ProductTagsRefFRAutoComplete(data.Tag))
+            .ToList();
+
+        return await Task.FromResult(new AutoCompleteDataProviderResult<ProductTagsRefFRAutoComplete>
+        {
+            Data = productTagRef,
+            TotalCount = productTagRef.Count
+        });
+    }
+
+    private void OnAutoCompleteChanged(ProductTagsRefFRAutoComplete tagRef)
+    {
+        @* Console.WriteLine($"'{tagRef?.Tag}' selected."); *@
+        
+        IsContainSpecialCharacter = false;
+        var fieldTagRef = editContext!.Field(nameof(ReviewThenModifyProduct.TagRef));
+        messageStore?.Clear(fieldTagRef);
+
+        if (!String.IsNullOrEmpty(tagRef?.Tag))
+        {        
+            var fieldTag = editContext!.Field(nameof(ReviewThenModifyProduct.CompileProductProperties.Tags));
+            if (ReviewThenModifyProduct.CompileProductProperties.Tags.Count < 5)
+            {
+                if (!ReviewThenModifyProduct.CompileProductProperties.Tags.Exists(t => t.TagValues!.Equals(tagRef?.Tag, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    string pTagID = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
+                    int getLength = pTagID.Count();
+                    string reprocessedStringID = "";
+                    string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+                    for (int i = 0; i <= getLength; i++)
+                    {
+                        if (i < 13)
+                        {
+                            reprocessedStringID = pTagID.Substring(0, i);
+                            if (i == 12)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    string concatString = String.Concat("PROD_PT-", dateNow, "-", reprocessedStringID);
+                    ReviewThenModifyProduct.CompileProductProperties.Tags.Add(
+                        new ProductPromoTagFR
+                        {
+                            PromoID = concatString,
+                            TagValues = tagRef?.Tag.ToString()!,
+                        }
+                    );
+                    ReviewThenModifyProduct.TagRef = string.Empty;
+                    messageStore?.Clear(fieldTag);
+                }
+                else
+                {
+                    ReviewThenModifyProduct.TagRef = string.Empty;
+                }
+            }
+            else
+            {
+                messageStore!.Add(() => ReviewThenModifyProduct.TagRef!, "You can add promo tag of up to 5 items only.");
+            }
+
+        }
+        else
+        {
+            messageStore!.Add(() => ReviewThenModifyProduct.TagRef!, "Cannot be empty text.");
+        }
+    }
+
+    private async Task RetrieveProductImagesForReview()
+    {
+        var sQLServerHelper = new SQLServerHelper(context);
+        ReviewThenModifyProduct.CompileProductProperties.ProductImages = [];
+        StateHasChanged();
+        var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
+        "REVIEW_PRODUCT_IMAGES");
+        ReviewThenModifyProduct.CompileProductProperties.ProductImages = await
+        sQLServerHelper.ProductImagesFRFromSqlAsyncList("rpiAPSM_spManageProductsWOutput", spParam);
+        if (ReviewThenModifyProduct.CompileProductProperties.ProductImages is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        StateHasChanged();
+    }
+
+    private async Task RetrieveProductSpecsForReview()
+    {
+        var sQLServerHelper = new SQLServerHelper(context);
+        ReviewThenModifyProduct.CompileProductProperties.ProductSpecs = [];
+        StateHasChanged();
+        var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
+        "REVIEW_PRODUCT_SPECS");
+        ReviewThenModifyProduct.CompileProductProperties.ProductSpecs = await
+        sQLServerHelper.ProductSpecsFRFromSqlAsyncList("rpiAPSM_spManageProductsWOutput", spParam);
+        if (ReviewThenModifyProduct.CompileProductProperties.ProductSpecs is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        foreach(var data in ReviewThenModifyProduct.CompileProductProperties.ProductSpecs!)
+        {
+            productSpecs.Add(new ProductSpecsFRSort(data.KeyNameID, data.KeyName, data.Value, data.Rank));
+        }
+        ReviewThenModifyProduct.SelectedWarrantyType = ReviewThenModifyProduct.CompileProductProperties.ProductSpecs?.FirstOrDefault(d => d.KeyName!.Contains("Warranty Type", StringComparison.OrdinalIgnoreCase))?.Value;
+        ReviewThenModifyProduct.SelectedWarrantyTypeID = (int)ReviewThenModifyProduct.CompileProductProperties.ProductWarrantyType?.FirstOrDefault(d => d.Item!.Contains(ReviewThenModifyProduct.SelectedWarrantyType!, StringComparison.OrdinalIgnoreCase))?.ID!;
+        SetActiveWarrantyType((int)ReviewThenModifyProduct.SelectedWarrantyTypeID);
+        StateHasChanged();
+    }
+
+    private async Task RetrieveProducDescriptionForReview()
+    {
+        var sQLServerHelper = new SQLServerHelper(context);
+        ReviewThenModifyProduct.CompileProductProperties.ProductDescription = null;
+        StateHasChanged();
+        var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
+        "REVIEW_PROD_DESCRIPTION");
+        ReviewThenModifyProduct.CompileProductProperties.ProductDescription = await
+        sQLServerHelper.ProductDescriptionFRFromSqlAsync("rpiAPSM_spManageProductsWOutput", spParam);
+        if (ReviewThenModifyProduct.CompileProductProperties.ProductImages is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        await JS.InvokeVoidAsync("setContent", ReviewThenModifyProduct.CompileProductProperties.ProductDescription?.Description);
+        StateHasChanged();
+    }
+
+    @* private void OnInput(ChangeEventArgs e) // for reference only
+    {
+        ParseAndSetOrigPrice(e.Value?.ToString() ?? ""); //has bugs; discontinued
+    } *@
+
+    private void OnInputProdName(ChangeEventArgs  e)
+    {
+        int length = e.Value?.ToString()?.Length ?? 0;
+        if (length <= 255)
+        {
+            ReviewThenModifyProduct.ProdNameLC = length;
+        }
+    }
+
+    private void FormatOnBlurProdName(FocusEventArgs e)
+    {
+        int getLength = ReviewThenModifyProduct.ProdNameEntry?.Length ?? 0;
+        var field = editContext!.Field(nameof(ReviewThenModifyProduct.ProdNameEntry));
+        messageStore?.Clear(field);
+        if (getLength < 3)
+        {
+            messageStore!.Add(() => ReviewThenModifyProduct.ProdNameEntry!, "Product name should have at least 3 characters.");
+        }
+        else
+        {
+            messageStore?.Clear(field);
+        }
+    }
+
+    private void FormatOnBlurOrigPrice(FocusEventArgs e)
+    {
+        double value = Convert.ToDouble(ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.OrigPriceFormatted ?? "0.00");
+        ReviewThenModifyProduct.FormattedOrigPrice = value.ToString("N2");
+
+        string sanitize = ReviewThenModifyProduct?.FormattedOrigPrice?.ToString().Replace(",", "") ?? "0";
+        var field = editContext!.Field(nameof(ReviewThenModifyProduct.FormattedOrigPrice));
+        messageStore?.Clear(field);
+        if (decimal.TryParse(sanitize, out var val))
+        {
+            // Check if value is in range
+            if (val >= 1000m && val <= 1000000m)
+            {
+                messageStore?.Clear(field);
+            }
+            else
+            {
+                messageStore!.Add(() => ReviewThenModifyProduct!.FormattedOrigPrice, "Price must be between ₱1,000.00 and ₱1,000,000.00.");
+            }
+        }
+    }
+
+    private void FormatOnBlurDiscPrice(FocusEventArgs e)
+    {
+        double value = Convert.ToDouble(ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.DiscPriceFormatted ?? "0.00");
+        ReviewThenModifyProduct.FormattedDiscPrice = value.ToString("N2");
+
+        string sanitize = ReviewThenModifyProduct?.FormattedDiscPrice?.ToString().Replace(",", "") ?? "0";
+        var field = editContext!.Field(nameof(ReviewThenModifyProduct.FormattedDiscPrice));
+        messageStore?.Clear(field);
+        if (decimal.TryParse(sanitize, out var val))
+        {
+            // Check if value is in range
+            if (val >= 1000m && val <= 1000000m)
+            {
+                messageStore?.Clear(field);
+            }
+            else
+            {
+                messageStore!.Add(() => ReviewThenModifyProduct!.FormattedDiscPrice, "Price must be between ₱1,000.00 and ₱1,000,000.00.");
+            }
+        }
+    }
+
+    private void OnInputProdStock(ChangeEventArgs  e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var val))
+        {
+            if (val < 1)
+            {
+                ReviewThenModifyProduct.ProdStock = 1;
+            }
+        }
+    }
+
+    private void FormatOnBlurProdStock(FocusEventArgs e)
+    {
+        var field = editContext!.Field(nameof(ReviewThenModifyProduct.ProdStock));
+        messageStore?.Clear(field);
+        
+        if (ReviewThenModifyProduct.ProdStock < 1 || ReviewThenModifyProduct.ProdStock > 1000)
+        {
+            messageStore!.Add(() => ReviewThenModifyProduct.ProdStock!, "Product stock must be between 1 and 1000.");
+        }
+        else
+        {
+            messageStore?.Clear(field);
+        }
+    }
+
+    private void FormatOnBlurSpecs(FocusEventArgs e) // For reference, this has been discontinued for use in specs.
+    {
+        editContext!.NotifyValidationStateChanged();
+        @* foreach (var spec in ReviewThenModifyProduct.CompileProductProperties.ProductSpecsEntryHolderFR)
+        {
+            var fieldIdentifier = new FieldIdentifier(spec, nameof(spec.Value));
+            if (string.IsNullOrWhiteSpace(spec.Value))
+            {
+                messageStore!.Add(fieldIdentifier, $"{spec.KeyName} is required.");
+                editContext!.NotifyValidationStateChanged();
+            }
+            messageStore?.Clear(fieldIdentifier);
+            editContext!.NotifyValidationStateChanged();
+        } *@
+        
+        @* foreach (var specs in ReviewThenModifyProduct.CompileProductProperties.ProductSpecsEntryHolderFR)
+        {
+            if (string.IsNullOrWhiteSpace(specs.Value))
+            {
+                Console.WriteLine($"Spec {specs.KeyName} (ID={specs.KeyNameID}) is empty!");
+            }
+            else
+            {
+                Console.WriteLine($"Spec {specs.Value} (ID={specs.KeyNameID})");
+            }
+        } *@
     }
 
     private async Task UpdateProduct()
@@ -322,16 +719,29 @@ else
     {
         ReviewThenModifyProduct.SelectedCategoryID = item.ID;
         ReviewThenModifyProduct.SelectedCategory = item.Item ?? string.Empty;
-        SetActiveRole(ReviewThenModifyProduct.SelectedCategoryID);
+        SetActiveCategory(ReviewThenModifyProduct.SelectedCategoryID);
     }
 
-    private void SetActiveRole(int id)
+    private void SetActiveCategory(int id)
     {
         foreach (var category in ReviewThenModifyProduct.CompileProductProperties.ProductCategory)
             category.State = category.ID == id;
     }
 
-    protected void AddTags(KeyboardEventArgs eventArgs)
+    private void OnWarrantyTypeItemSelected(ProductWarrantyType item)
+    {
+        ReviewThenModifyProduct.SelectedWarrantyTypeID = item.ID;
+        ReviewThenModifyProduct.SelectedWarrantyType = item.Item ?? string.Empty;
+        SetActiveCategory((int)ReviewThenModifyProduct.SelectedWarrantyTypeID);
+    }
+
+    private void SetActiveWarrantyType(int id)
+    {
+        foreach (var warrantyType in ReviewThenModifyProduct.CompileProductProperties.ProductWarrantyType)
+            warrantyType.State = warrantyType.ID == id;
+    }
+
+    protected void AddTags(KeyboardEventArgs eventArgs) // for reference only
     {
         IsContainSpecialCharacter = false;
 
@@ -342,7 +752,7 @@ else
                 var regex = new Regex(@"[^a-zA-Z0-9\s]");
                 if (!regex.IsMatch(Value))
                 {
-                    if (!Tags.Exists(t => t.TagValues!.Equals(Value, StringComparison.CurrentCultureIgnoreCase)))
+                    if (!ReviewThenModifyProduct.CompileProductProperties.Tags.Exists(t => t.TagValues!.Equals(Value, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         @* Tags.Add(Value); *@
                     }
@@ -361,32 +771,116 @@ else
     {
         if (String.IsNullOrEmpty(value)) return;
 
-        var tag = Tags.FirstOrDefault(t => t.TagValues == value);
+        var tag = ReviewThenModifyProduct.CompileProductProperties.Tags.FirstOrDefault(t => t.TagValues == value);
         if (tag == null) return;
 
-        Tags.Remove(tag);
+        ReviewThenModifyProduct.CompileProductProperties.Tags.Remove(tag);
+        
+        var fieldTag = editContext!.Field(nameof(ReviewThenModifyProduct.CompileProductProperties.Tags));
+        var fieldTagRef = editContext!.Field(nameof(ReviewThenModifyProduct.TagRef));
+        messageStore?.Clear(fieldTag);
+        messageStore?.Clear(fieldTagRef);
+        if (ReviewThenModifyProduct.CompileProductProperties.Tags.Count == 0)
+        {            
+            messageStore!.Add(() => ReviewThenModifyProduct.CompileProductProperties.Tags, "Add at least one promotional tag.");
+        }
+    }
+
+    private async Task TriggerFileUpload()
+    {        
+        await JS.InvokeVoidAsync("triggerClick", filePicker.Element);
+    }
+
+    private async Task HandleProductImageUpload(InputFileChangeEventArgs e)
+    {
+        const long maxAllowedSize = 3L * 1024L * 1024L; //3 MB limit
+        const int maxFileCount = 8;
+        try
+        {
+        int getItemPostCount = ReviewThenModifyProduct.CompileProductProperties.ProductImages.Count;
+        int getItemPreCount = e.GetMultipleFiles(maxFileCount).Count() + getItemPostCount;
+        if (getItemPostCount != 0 && maxFileCount < getItemPreCount)
+        {
+            errorMessage = "The max allowed count of items was exceeded.";
+            await JS.InvokeVoidAsync("showLiveToastError");
+        }
+        else
+        {
+            foreach (var file in e.GetMultipleFiles(maxFileCount))
+            {
+                using var readStream = file.OpenReadStream(maxAllowedSize);
+                using var memoryStream = new MemoryStream();
+
+                await readStream.CopyToAsync(memoryStream);
+                @* var base64 = Convert.ToBase64String(memoryStream.ToArray()); *@
+                
+                string pImgID = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
+                int getLength = pImgID.Count();
+                string reprocessedStringID = "";
+                string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+                for (int i = 0; i <= getLength; i++)
+                {
+                    if (i < 13)
+                    {
+                        reprocessedStringID = pImgID.Substring(0, i);
+                        if (i == 12)
+                        {
+                            break;
+                        }
+                    }
+                }
+                string concatString = String.Concat("PROD_PT-", dateNow, "-", reprocessedStringID);
+                ReviewThenModifyProduct.CompileProductProperties.ProductImages.Add(
+                    new ProductImgFR
+                    {
+                        ProdID = concatString,
+                        ProdImg = memoryStream.ToArray(),
+                        Size = file.Size
+                    }
+                );
+            }
+            @* ReviewThenModifyProduct.CompileProductProperties.ProductImages.Reverse(); *@
+        }
+        }
+        catch (IOException ex)
+        {
+            errorMessage = ex.Message;
+            ReviewThenModifyProduct.CompileProductProperties.ProductImages.Clear();
+            await JS.InvokeVoidAsync("showLiveToastError");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            ReviewThenModifyProduct.CompileProductProperties.ProductImages.Clear();
+            await JS.InvokeVoidAsync("showLiveToastError");
+        }
+    }
+
+    protected void DeleteImage(string? value)
+    {
+        if (String.IsNullOrEmpty(value)) return;
+
+        var prodImg = ReviewThenModifyProduct.CompileProductProperties.ProductImages.FirstOrDefault(img => img.ProdID == value);
+        if (prodImg == null) return;
+
+        ReviewThenModifyProduct.CompileProductProperties.ProductImages.Remove(prodImg);
+    }
+
+    private void OnProdSpecsListUpdate(SortableListEventArgs args)
+    {
+        var itemToMove = productSpecs[args.OldIndex];
+
+        productSpecs.RemoveAt(args.OldIndex);
+
+        if (args.NewIndex < productSpecs.Count)
+            productSpecs.Insert(args.NewIndex, itemToMove);
+        else
+            productSpecs.Add(itemToMove);
     }
 
     public async ValueTask DisposeAsync() // this is important
     {
         await context.DisposeAsync();
     }
-
-
-    public List<Employee> employees = Enumerable.Range(1, 5).Select(i => new Employee(i, $"Product specification {i}")).ToList();
-
-    private void OnEmployeeListUpdate(SortableListEventArgs args)
-    {
-        var itemToMove = employees[args.OldIndex];
-
-        employees.RemoveAt(args.OldIndex);
-
-        if (args.NewIndex < employees.Count)
-            employees.Insert(args.NewIndex, itemToMove);
-        else
-            employees.Add(itemToMove);
-    }
-
-    public record Employee(int Id, string? Name);
 
 }

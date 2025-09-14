@@ -23,6 +23,7 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\b
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Humanizer.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Microsoft.AspNetCore.Authorization.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Microsoft.AspNetCore.Components.dll
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Microsoft.AspNetCore.Components.DataAnnotations.Validation.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Microsoft.AspNetCore.Components.Forms.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Microsoft.AspNetCore.Components.QuickGrid.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\publish\Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter.dll

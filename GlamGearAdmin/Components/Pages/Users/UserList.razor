@@ -225,22 +225,20 @@ else
     private List<UserListDM>? userList = new();
     private PaginationState pagination = new PaginationState();
     private string dispNameFilter = string.Empty;
-
     private IEnumerable<UserListDM>? filteredUserList => string.IsNullOrWhiteSpace(dispNameFilter)
-    ? userList : (initPerPage ==
+    ? (userList ?? Enumerable.Empty<UserListDM>()) : (initPerPage ==
     PaginationPerPage.ShowAll)
-    ? userList!.Where(data => data.DispName?.ToLower().Contains(dispNameFilter.ToLower()) == true) : userList!.Where(data
-    =>
-    data.DispName?.ToLower().Contains(dispNameFilter.ToLower()) == true);
+    ? userList!.Where(data => data.DispName?.Contains(dispNameFilter, StringComparison.OrdinalIgnoreCase) == true) :
+    userList!.Where(data => data.DispName?.Contains(dispNameFilter, StringComparison.OrdinalIgnoreCase) == true);
 
-    private IEnumerable<UserListDM>? pagedUserList => filteredUserList!
+    private IEnumerable<UserListDM>? pagedUserList => (filteredUserList ?? Enumerable.Empty<UserListDM>())
     .Skip((pagination.CurrentPage - 1) * pagination.ItemsPerPage)
     .Take(pagination.ItemsPerPage);
 
     private int TotalPages => (int)Math.Ceiling((double)filteredUserList!.Count() / pagination.ItemsPerPage);
     private string currentSortColumn = ""; // to let the SP's select ordered by script handle sorting
     private bool sortAscending = true;
-    private IEnumerable<UserListDM>? SortedUserList => currentSortColumn switch
+    private IEnumerable<UserListDM>? SortedUserList => (pagedUserList == null) ? (pagedUserList ?? Enumerable.Empty<UserListDM>()) : currentSortColumn switch
     {
         "#" => sortAscending ? pagedUserList!.OrderBy(a => a.Hash) : pagedUserList!.OrderByDescending(a =>
         a.Hash),
@@ -257,6 +255,7 @@ else
         a.DtRegistered),
         _ => pagedUserList
     };
+
     private void SortBy(string column)
     {
         if (currentSortColumn == column)

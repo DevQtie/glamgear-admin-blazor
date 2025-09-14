@@ -7,9 +7,10 @@
   "targets": {
     ".NETCoreApp,Version=v9.0": {},
     ".NETCoreApp,Version=v9.0/win-x64": {
-      "GlamGearAdmin/1.11.0.0-alpha": {
+      "GlamGearAdmin/1.13.0.0-alpha": {
         "dependencies": {
           "Blazor.Bootstrap": "3.4.0",
+          "Microsoft.AspNetCore.Components.DataAnnotations.Validation": "3.2.0-rc1.20223.4",
           "Microsoft.AspNetCore.Components.QuickGrid": "9.0.6",
           "Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter": "9.0.6",
           "Microsoft.AspNetCore.Components.WebAssembly.Server": "9.0.7",
@@ -636,6 +637,17 @@
         }
       },
       "Microsoft.AspNetCore.Components.Analyzers/9.0.6": {},
+      "Microsoft.AspNetCore.Components.DataAnnotations.Validation/3.2.0-rc1.20223.4": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Components.Forms": "9.0.6"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Microsoft.AspNetCore.Components.DataAnnotations.Validation.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.200.20.22304"
+          }
+        }
+      },
       "Microsoft.AspNetCore.Components.Forms/9.0.6": {
         "dependencies": {
           "Microsoft.AspNetCore.Components": "9.0.6"
@@ -2230,7 +2242,7 @@
     }
   },
   "libraries": {
-    "GlamGearAdmin/1.11.0.0-alpha": {
+    "GlamGearAdmin/1.13.0.0-alpha": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -2626,6 +2638,13 @@
       "sha512": "sha512-UXMjbezwMMoL21L20OB1BLGF9M1BFPzdWiezaiZSBG55z36BEXvs8hetKw7PiuytOdUqWFI1wkPd3MD9jpeKAw==",
       "path": "microsoft.aspnetcore.components.analyzers/9.0.6",
       "hashPath": "microsoft.aspnetcore.components.analyzers.9.0.6.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Components.DataAnnotations.Validation/3.2.0-rc1.20223.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VyZAAbuXuAVrh4Vii5Aq1N841iVhSjE4mTf/lVh+AgrKinaltE0IeEWPKv889j4ineX7i9BUiAqlGP7UpZwlnQ==",
+      "path": "microsoft.aspnetcore.components.dataannotations.validation/3.2.0-rc1.20223.4",
+      "hashPath": "microsoft.aspnetcore.components.dataannotations.validation.3.2.0-rc1.20223.4.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Components.Forms/9.0.6": {
       "type": "package",

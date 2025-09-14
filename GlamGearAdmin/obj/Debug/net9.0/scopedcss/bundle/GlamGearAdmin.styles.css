@@ -549,7 +549,7 @@ main[b-y8gzvrohei] {
     font-size: 14px;
     line-height: 20px;
     color: #556270;
-    padding: 5px 5px 0;
+    padding: 5px 5px 5px 5px;
     border: 1px solid #e6e6e6;
     border-radius: 2px
 }
@@ -567,7 +567,7 @@ main[b-y8gzvrohei] {
     color: #fff;
     padding: 5px 30px 5px 5px;
     border-radius: 2px;
-    margin: 0 5px 5px 0
+    margin: 0 5px 0 0
 }
 
 .tagsinput .tag .tag-remove[b-2lkjzqp3bm] {
@@ -661,6 +661,11 @@ main[b-y8gzvrohei] {
 .tagsinput div input:-ms-input-placeholder[b-2lkjzqp3bm] {
     color: #ccc;
     opacity: 1
+}
+
+.btn-cust:focus[b-2lkjzqp3bm] {
+    outline: none;
+    box-shadow: none;
 }
 /* _content/GlamGearAdmin/Components/Pages/SQLite/CRUD/AdminPages/Index.razor.rz.scp.css */
 [b-ebto4qvm9c] tr {

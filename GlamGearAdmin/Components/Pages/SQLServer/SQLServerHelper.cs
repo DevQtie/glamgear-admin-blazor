@@ -383,6 +383,45 @@ class SQLServerHelper(BlazorSQLServerContext context)
         .ToListAsync();
   }
 
+  public async Task<List<ProductPromoTagRefFR>> ProductPromoTagRefFRFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamDynamic(spName, sqlParameter);
+
+    return await _context.ProductPromoTagRefFR
+        .FromSql(sqlParam)
+        .ToListAsync();
+  }
+
+  public async Task<List<ProductImgFR>> ProductImagesFRFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamDynamic(spName, sqlParameter);
+
+    return await _context.ProductImgFR
+        .FromSql(sqlParam)
+        .ToListAsync();
+  }
+
+  public async Task<List<ProductSpecsFR>> ProductSpecsFRFromSqlAsyncList(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamDynamic(spName, sqlParameter);
+
+    return await _context.ProductSpecsFR
+        .FromSql(sqlParam)
+        .ToListAsync();
+  }
+
   #endregion LIST METHODS
 
   #region SINGLE-VALUE METHODS
@@ -428,6 +467,21 @@ class SQLServerHelper(BlazorSQLServerContext context)
     var sqlParam = MinimalDbSettings.FromSqlSQLParamDynamic(spName, sqlParameter);
 
     var result = await _context.ProductMainForReview
+        .FromSql(sqlParam)
+        .ToListAsync();
+
+    return result.FirstOrDefault();
+  }
+
+  public async Task<ProductDescription?> ProductDescriptionFRFromSqlAsync(string spName, Dictionary<string, object?> parameters)
+  {
+    var paramDefs = SQLServerInnerHelper.ManageAdminProductsWithoutOutputParams();
+
+    SqlParameter[] sqlParameter = MinimalDbSettings.FromSqlSQLParamArrayOfTuplesAndDictPreScale(paramDefs, parameters);
+
+    var sqlParam = MinimalDbSettings.FromSqlSQLParamDynamic(spName, sqlParameter);
+
+    var result = await _context.ProductDescription
         .FromSql(sqlParam)
         .ToListAsync();
 

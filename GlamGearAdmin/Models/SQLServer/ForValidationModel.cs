@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace GlamGearAdmin.Models.SQLServer;
@@ -72,7 +73,46 @@ public class ReviewThenModifyProduct
   public CompileProductProperties CompileProductProperties { get; set; }
   public int SelectedCategoryID { get; set; }
   public string? SelectedCategory { get; set; }
-  public (int key, object value, object? status)[] ProdCategory = [(1, "Jewelry", null), (2, "Luxury Bag", null), (3, "Gadget", null)];
+  public int SelectedWarrantyTypeID { get; set; }
+  public string? SelectedWarrantyType { get; set; }
+  public string? ProdNameEntry { get; set; }
+  public int ProdNameLC { get; set; }
+  public int ProdStock { get; set; }
+  public string ImageNotes { get; set; } = "1. Maximum 8 images can be uploaded.<br>2. Image size between 330x330 and 5000x5000 px. Max file size: 3MB.<br>3. Obscene image is strictly prohibited.";
+  public string? TagRef { get; set; }
+
+  [Parameter]
+  public EventCallback<decimal> ValueChanged { get; set; }
+
+  public string FormattedOrigPrice
+  {
+    get => CompileProductProperties.ProductMainForReview?.OrigPriceFormatted ?? "0.00"; // e.g., 1,000.00
+    set => ParseAndSetOrigPrice(value);
+  }
+
+  public string FormattedDiscPrice
+  {
+    get => CompileProductProperties.ProductMainForReview?.DiscPriceFormatted ?? "0.00"; // e.g., 1,000.00
+    set => ParseAndSetDiscPrice(value);
+  }
+  public void ParseAndSetOrigPrice(string input)
+  {
+    var cleaned = input.Replace(",", "");
+    if (decimal.TryParse(cleaned, out var parsed))
+    {
+      CompileProductProperties.ProductMainForReview!.OrigPrice = parsed;
+      ValueChanged.InvokeAsync(CompileProductProperties.ProductMainForReview.OrigPrice);
+    }
+  }
+  public void ParseAndSetDiscPrice(string input)
+  {
+    var cleaned = input.Replace(",", "");
+    if (decimal.TryParse(cleaned, out var parsed))
+    {
+      CompileProductProperties.ProductMainForReview!.DiscPrice = parsed;
+      ValueChanged.InvokeAsync(CompileProductProperties.ProductMainForReview.DiscPrice);
+    }
+  }
   public ReviewThenModifyProduct()
   {
     CompileProductProperties = new CompileProductProperties();
@@ -82,6 +122,11 @@ public class ReviewThenModifyProduct
 [Keyless]
 public class CompileProductProperties
 {
+  public List<ProductPromoTagFR> Tags { get; set; } = [];
+  public List<ProductPromoTagRefFR> TagRefList { get; set; } = [];
+  public List<ProductImgFR> ProductImages { get; set; } = [];
+  public List<ProductSpecsFR> ProductSpecs { get; set; } = [];
+  public ProductDescription? ProductDescription { get; set; }
   public ProductMainForReview? ProductMainForReview { get; set; }
   public ProductPromoTagFR? ProductPromoTagFR { get; set; }
   public ProductSpecsFR? ProductSpecsFR { get; set; }
@@ -94,10 +139,22 @@ public class CompileProductProperties
     new() { ID = 1, Item = "Jewelry", State = false },
     new() { ID = 2, Item = "Luxury bag", State = false },
     new() { ID = 3, Item = "Gadget", State = false }
-];
+  ];
+  public List<ProductWarrantyType> ProductWarrantyType { get; set; } =
+  [
+    new() { ID = 1, Item = "No Warranty", State = false },
+    new() { ID = 2, Item = "NA", State = false }
+  ];
 }
 
 public class ProductCategory
+{
+  public int ID { get; set; }
+  public string? Item { get; set; }
+  public bool State { get; set; }
+}
+
+public class ProductWarrantyType
 {
   public int ID { get; set; }
   public string? Item { get; set; }

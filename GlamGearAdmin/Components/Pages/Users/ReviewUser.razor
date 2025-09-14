@@ -569,22 +569,9 @@
         {
             NavigationManager.NavigateTo("notfound");
         }
-        frontID = dbDataToImg(reviewUserListImageSingle?.FrontID);
-        backID = dbDataToImg(reviewUserListImageSingle?.BackID);
-        selfie = dbDataToImg(reviewUserListImageSingle?.Selfie);
-    }
-
-    private string? dbDataToImg(byte[]? imgBytes)
-    {
-        if (imgBytes is null || imgBytes.Length == 0)
-        {
-            return null;
-        }
-        else
-        {
-            return $"data:image/png;base64,{Convert.ToBase64String(imgBytes)}";
-        }
-
+        frontID = GlobalMethod.DbDataToImg(reviewUserListImageSingle?.FrontID);
+        backID = GlobalMethod.DbDataToImg(reviewUserListImageSingle?.BackID);
+        selfie = GlobalMethod.DbDataToImg(reviewUserListImageSingle?.Selfie);
     }
 
     private async Task ModifyUser()

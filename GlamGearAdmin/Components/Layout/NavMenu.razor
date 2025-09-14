@@ -3,8 +3,7 @@
 @using GlamGearAdmin.Models.SQLite
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
-@* @rendermode InteractiveServer *@
+@rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 
 @inject SignInManager<IdentityUser> SignInManager
@@ -92,8 +91,8 @@
             @if (navSubmenu == NavSubmenu.SecondSubM)
             {
                 <div class="nav-item py-1">
-                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/order-list">
-                        <span class="fst-normal">Order List</span>
+                    <NavLink class="nav-link" @onclick="() => ToggleNavMenu()" href="orders/manage-orders">
+                        <span class="fst-normal">Manage Orders</span>
                     </NavLink>
                 </div>
                 <div class="nav-item py-1">
@@ -179,7 +178,7 @@
 
     @*private long data = 2L * 1024L * 1024L; @* Example data, can be set to any value *@
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() // need to optimize
     {
         using var context = DbFactory.CreateDbContext();
         admin = await context.Admin.FirstOrDefaultAsync(m => m.RoleType == "Developer");
@@ -223,7 +222,6 @@
         }
         catch (DbUpdateConcurrencyException)
         {
-
             if (!AdminExists(admin!.UserID))
             {
                 NavigationManager.NavigateTo("notfound");

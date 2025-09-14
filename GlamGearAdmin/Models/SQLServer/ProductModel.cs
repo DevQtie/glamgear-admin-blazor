@@ -51,7 +51,7 @@ public class ProductImgList
 [Keyless]
 public class ProductMainForReview
 {
-  [Required]
+  // [Required]
   [Column("prod_name")]
   [StringLength(255)]
   public string? ProdName { get; set; }
@@ -59,8 +59,42 @@ public class ProductMainForReview
   [Column(name: "orig_price", TypeName = "decimal(10, 2)")]
   public decimal OrigPrice { get; set; }
 
+  [NotMapped]
+  public string OrigPriceFormatted
+  {
+    get => OrigPrice.ToString("N2"); set
+    {
+      if (decimal.TryParse(value, out var parsed))
+      {
+        OrigPrice = parsed;
+      }
+      else
+      {
+        // Optional: handle invalid input
+        OrigPrice = 0;
+      }
+    }
+  }
+
   [Column(name: "disc_price", TypeName = "decimal(10, 2)")]
   public decimal DiscPrice { get; set; }
+
+  [NotMapped]
+  public string DiscPriceFormatted
+  {
+    get => DiscPrice.ToString("N2"); set
+    {
+      if (decimal.TryParse(value, out var parsed))
+      {
+        DiscPrice = parsed;
+      }
+      else
+      {
+        // Optional: handle invalid input
+        DiscPrice = 0;
+      }
+    }
+  }
 
   [Column("dis_perc")]
   public string? DiscPercent { get; set; }
@@ -83,16 +117,34 @@ public class ProductPromoTagFR // for review (FR)
 }
 
 [Keyless]
+public class ProductPromoTagRefFR // for review (FR)
+{
+  [Column("tag")]
+  public string Tag { get; set; } = string.Empty;
+}
+
+[Keyless]
 public class ProductSpecsFR // for review (FR)
 {
-  [Column("p_key_name_id")]
+  [Column("pk_name_id")]
   public string? KeyNameID { get; set; }
 
   [Column("key_name")]
   public string? KeyName { get; set; }
 
+  [Required(ErrorMessage = "This field is required.")]
   [Column("value")]
   public string? Value { get; set; }
+
+  [Column("rank")]
+  public int Rank { get; set; }
+}
+
+[Keyless]
+public class ProductDescription
+{
+  [Column("desc_data")]
+  public string? Description { get; set; }
 }
 
 [Keyless]
@@ -109,9 +161,6 @@ public class ProductVariantsFR // for review (FR)
 
   [Column("dis_perc")]
   public string? DiscPercent { get; set; }
-
-  [Column(name: "vat", TypeName = "decimal(10, 2)")]
-  public decimal VAT { get; set; }
 
   [Column("stock")]
   public int? Stock { get; set; }
@@ -149,7 +198,7 @@ public class ProductImgFR // for review (FR)
   public byte[]? ProdImg { get; set; }
 
   [Column(name: "img_f_kbsize", TypeName = "decimal(10, 3)")]
-  public decimal VAT { get; set; }
+  public decimal Size { get; set; }
 }
 
 [Keyless]

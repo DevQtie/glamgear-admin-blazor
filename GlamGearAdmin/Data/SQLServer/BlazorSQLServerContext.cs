@@ -17,7 +17,9 @@ namespace GlamGearAdmin.Data.SQLServer
         public DbSet<Models.SQLServer.UserListImageSingleDM> UserListImageSingleDM { get; set; } = default!;
         public DbSet<Models.SQLServer.ProductMainForReview> ProductMainForReview { get; set; } = default!;
         public DbSet<Models.SQLServer.ProductPromoTagFR> ProductPromoTagFR { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductPromoTagRefFR> ProductPromoTagRefFR { get; set; } = default!;
         public DbSet<Models.SQLServer.ProductSpecsFR> ProductSpecsFR { get; set; } = default!;
+        public DbSet<Models.SQLServer.ProductDescription> ProductDescription { get; set; } = default!;
         public DbSet<Models.SQLServer.ProductVariantsFR> ProductVariantsFR { get; set; } = default!;
         public DbSet<Models.SQLServer.ProductVariantSpecsFR> ProductVariantSpecsFR { get; set; } = default!;
         public DbSet<Models.SQLServer.ProductImgFR> ProductImgFR { get; set; } = default!;
@@ -63,6 +65,9 @@ namespace GlamGearAdmin.Data.SQLServer
             modelBuilder.Entity<Models.SQLServer.ProductPromoTagFR>()
             .HasNoKey().ToView(null);
 
+            modelBuilder.Entity<Models.SQLServer.ProductPromoTagRefFR>()
+            .HasNoKey().ToView(null);
+
             modelBuilder.Entity<Models.SQLServer.ProductSpecsFR>()
             .HasNoKey().ToView(null);
 
@@ -76,6 +81,9 @@ namespace GlamGearAdmin.Data.SQLServer
             .HasNoKey().ToView(null);
 
             modelBuilder.Entity<Models.SQLServer.ProductVarImgFR>()
+            .HasNoKey().ToView(null);
+
+            modelBuilder.Entity<Models.SQLServer.ProductDescription>()
             .HasNoKey().ToView(null);
 
             // to add another modelBuilder

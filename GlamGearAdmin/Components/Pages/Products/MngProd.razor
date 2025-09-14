@@ -70,8 +70,7 @@ else
       <thead class="align-middle">
         <tr>
           <th @onclick='() => SortBy("#")' class="cursor-pointer"># @SortIcon("#")</th>
-          <th @onclick='() => SortBy("ProdImg")' class="cursor-pointer">Image @SortIcon("ProdImg")
-          </th>
+          <th class="cursor-pointer">Image</th>
           <th @onclick='() => SortBy("ProdName")' class="cursor-pointer">Product Name @SortIcon("ProdName")
           </th>
           <th @onclick='() => SortBy("OrigPrice")' class="cursor-pointer">Orig. Price @SortIcon("OrigPrice")</th>
@@ -94,8 +93,8 @@ else
           <tr>
             <td class="align-middle">@a.Hash</td>
             <td class="align-middle">
-              <a href="@DbDataToImg(a.ProdImg)" target="_blank">
-                <img src="@DbDataToImg(a.ProdImg)" class="img-thumbnail rounded rounded-3 cus-img-thumbnail-sm p-0 my-1"
+              <a href="@GlobalMethod.DbDataToImg(a.ProdImg)" target="_blank">
+                <img src="@GlobalMethod.DbDataToImg(a.ProdImg)" class="img-thumbnail rounded rounded-3 cus-img-thumbnail-sm p-0 my-1"
                   alt="Product" />
               </a>
             </td>
@@ -128,8 +127,7 @@ else
       <thead class="align-middle">
         <tr>
           <th @onclick='() => SortBy("#")' class="cursor-pointer"># @SortIcon("#")</th>
-          <th @onclick='() => SortBy("ProdImg")' class="cursor-pointer">Image @SortIcon("ProdImg")
-          </th>
+          <th class="cursor-pointer">Image</th>
           <th @onclick='() => SortBy("ProdName")' class="cursor-pointer">Product Name @SortIcon("ProdName")
           </th>
           <th @onclick='() => SortBy("OrigPrice")' class="cursor-pointer">Orig. Price @SortIcon("OrigPrice")</th>
@@ -206,36 +204,35 @@ else
   private string prodNameFilter = string.Empty;
 
   private IEnumerable<ProductPlainTextList>? filteredProdList => string.IsNullOrWhiteSpace(prodNameFilter)
-  ? prodPTList : (initPerPage ==
+  ? (prodPTList ?? Enumerable.Empty<ProductPlainTextList>()) : (initPerPage ==
   PaginationPerPage.ShowAll)
-  ? prodPTList!.Where(data => data.ProdName?.ToLower().Contains(prodNameFilter.ToLower()) == true) :
-  prodPTList!.Where(data
-  =>
-  data.ProdName?.ToLower().Contains(prodNameFilter.ToLower()) == true);
+  ? prodPTList!.Where(data => data.ProdName?.Contains(prodNameFilter, StringComparison.OrdinalIgnoreCase) == true) :
+  prodPTList!.Where(data => data.ProdName?.Contains(prodNameFilter, StringComparison.OrdinalIgnoreCase) == true);
 
-  private IEnumerable<ProductPlainTextList>? pagedProdList => filteredProdList!
-  .Skip((pagination.CurrentPage - 1) * pagination.ItemsPerPage)
+  private IEnumerable<ProductPlainTextList>? pagedProdList => (filteredProdList ??
+  Enumerable.Empty<ProductPlainTextList>()).Skip((pagination.CurrentPage - 1) * pagination.ItemsPerPage)
   .Take(pagination.ItemsPerPage);
 
   private int TotalPages => (int)Math.Ceiling((double)filteredProdList!.Count() / pagination.ItemsPerPage);
   private string currentSortColumn = ""; // to let the SP's select ordered by script handle sorting
   private bool sortAscending = true;
-  private IEnumerable<ProductPlainTextList>? SortedProdList => currentSortColumn switch
+  private IEnumerable<ProductPlainTextList>? SortedProdList => (pagedProdList == null) ? (pagedProdList ??
+  Enumerable.Empty<ProductPlainTextList>()) : currentSortColumn switch
   {
     "#" => sortAscending ? pagedProdList!.OrderBy(a => a.Hash) : pagedProdList!.OrderByDescending(a =>
-    a.Hash),
+  a.Hash),
     "ProdImg" => sortAscending ? pagedProdList!.OrderBy(a => a.ProdImg) : pagedProdList!.OrderByDescending(a =>
-    a.ProdImg),
+  a.ProdImg),
     "ProdName" => sortAscending ? pagedProdList!.OrderBy(a => a.ProdName) : pagedProdList!.OrderByDescending(a =>
-    a.ProdName),
+  a.ProdName),
     "OrigPrice" => sortAscending ? pagedProdList!.OrderBy(a => a.OrigPrice) : pagedProdList!.OrderByDescending(a =>
-    a.OrigPrice),
+  a.OrigPrice),
     "DiscPrice" => sortAscending ? pagedProdList!.OrderBy(a => a.DiscPrice) : pagedProdList!.OrderByDescending(a =>
-    a.DiscPrice),
+  a.DiscPrice),
     "Stock" => sortAscending ? pagedProdList!.OrderBy(a => a.Stock) : pagedProdList!.OrderByDescending(a =>
-    a.Stock),
+  a.Stock),
     "PromoTags" => sortAscending ? pagedProdList!.OrderBy(a => a.PromoTags) : pagedProdList!.OrderByDescending(a =>
-    a.PromoTags),
+  a.PromoTags),
     _ => pagedProdList
   }; // TODO: render plaintext first, then image
 
@@ -321,7 +318,7 @@ else
     {
       NavigationManager.NavigateTo("notfound");
     }
-    StateHasChanged();
+    @* StateHasChanged(); *@
   }
 
   private async Task LoadImages()
@@ -337,19 +334,6 @@ else
       NavigationManager.NavigateTo("notfound");
     }
     StateHasChanged();
-  }
-
-  private string? DbDataToImg(byte[]? imgBytes)
-  {
-    if (imgBytes is null || imgBytes.Length == 0)
-    {
-      return null;
-    }
-    else
-    {
-      return $"data:image/png;base64,{Convert.ToBase64String(imgBytes)}";
-    }
-
   }
 
   private void NextPage()

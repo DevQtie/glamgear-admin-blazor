@@ -220,8 +220,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Orders/OrderL.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xPcmRlcnNcT3JkZXJMLnJhem9y
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Orders/MngOrders.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xPcmRlcnNcTW5nT3JkZXJzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Orders/RetCanOrd.razor]
@@ -230,10 +230,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Products/AddProd.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9kdWN0c1xBZGRQcm9kLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Products/MngProd.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9kdWN0c1xNbmdQcm9kLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/SQLite/CRUD/AdminPages/Create.razor]
@@ -324,9 +320,17 @@ build_metadata.AdditionalFiles.CssScope = b-9ofngwxw24
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEYXNoYm9hcmQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-8rnmp2u3zk
 
-[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Products/ProdList.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9kdWN0c1xQcm9kTGlzdC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = b-kujw1kii1s
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Products/ManagePromoTags.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9kdWN0c1xNYW5hZ2VQcm9tb1RhZ3MucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-23aqhvfj91
+
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Products/MngProd.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9kdWN0c1xNbmdQcm9kLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-mj2bctht34
+
+[C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/Products/ReviewProd.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9kdWN0c1xSZXZpZXdQcm9kLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-2lkjzqp3bm
 
 [C:/Users/alagu/Desktop/AlberthsFiles/ECommerceMain/GlamGearAdmin/GlamGearAdmin/Components/Pages/SQLite/CRUD/AdminPages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTUUxpdGVcQ1JVRFxBZG1pblBhZ2VzXEluZGV4LnJhem9y

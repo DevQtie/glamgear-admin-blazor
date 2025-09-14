@@ -306,7 +306,6 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\b
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\BlazorBootstrap.dll
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\scopedcss\Components\Charts\BarChartComp.razor.rz.scp.css
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\scopedcss\Components\Pages\Dashboard.razor.rz.scp.css
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\scopedcss\Components\Pages\Products\ProdList.razor.rz.scp.css
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\yxfdm33bor-63oqyoiiv4.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\refgsao5tb-5vmds449nb.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\d5o4a4wkq9-ct0ej5e0q0.gz
@@ -359,5 +358,11 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\o
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\rlt3ybm0md-7183nd47gn.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\qjw3s91sx2-fv6m00jlsj.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\eojifsclv0-7t9tbfaemk.gz
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\11h106u7cp-jm8jh4tvtp.gz
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\0vcpqh6vku-ff46qklaqx.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\bin\Release\net9.0\win-x64\Microsoft.AspNetCore.Components.DataAnnotations.Validation.dll
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\scopedcss\Components\Pages\Products\ManagePromoTags.razor.rz.scp.css
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\scopedcss\Components\Pages\Products\MngProd.razor.rz.scp.css
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\scopedcss\Components\Pages\Products\ReviewProd.razor.rz.scp.css
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\d2ml6mbi64-9a44iz1y4f.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\knlgsdz8uo-0nk0lmwghl.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\11h106u7cp-gbui7coze2.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\0vcpqh6vku-a413wi10xk.gz

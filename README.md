@@ -5,6 +5,16 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.13.0.0-alpha
+
+- Product description with What You See Is What You Get (WYSIWYG) editor.
+- Product images functionable with validation.
+- Promo tags searchable and functionable with validation.
+- Stock range validation.
+- Original and discounted price range validation.
+- Product validation and character input counter.
+- Review/Edit product first phase.
+
 ## 1.12.3.1-alpha
 
 - Added revision to avoid confusion.
