@@ -1,0 +1,102 @@
+@using System.Reflection
+@using GlamGearAdmin.Models.AppModels
+@using GlamGearAdmin.Models.SQLite
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject IDbContextFactory<GlamGearAdmin.Data.SQLite.BlazorWebAppAdminContext> DbFactory
+
+<BlazorBootstrap.Sidebar Href="/dashboard" Title="GlamGearAdmin" BadgeText="@GetVersion()"
+    DataProvider="SidebarDataProvider" />
+
+@code {
+    private Admin? admin;
+    IEnumerable<BlazorBootstrap.NavItem>? navItems;
+
+    private async Task<BlazorBootstrap.SidebarDataProviderResult>
+    SidebarDataProvider(BlazorBootstrap.SidebarDataProviderRequest request)
+    {
+        if (navItems is null)
+            navItems = GetNavItems();
+
+        return await Task.FromResult(request.ApplyTo(navItems));
+    }
+
+    private IEnumerable<BlazorBootstrap.NavItem> GetNavItems()
+    {
+        using var context = DbFactory.CreateDbContext();
+        navItems = new List<BlazorBootstrap.NavItem>
+{
+new BlazorBootstrap.NavItem { Id = "1", Href = "/dashboard", IconName =
+BlazorBootstrap.IconName.HouseDoor, Text =
+"Dashboard"},
+new BlazorBootstrap.NavItem { Id = "2", IconName = BlazorBootstrap.IconName.Boxes, Text
+= "Products"},
+new BlazorBootstrap.NavItem { Id = "3", Href = "products/manage-products", IconName =
+BlazorBootstrap.IconName.Boxes,
+Text = "Manage Products", ParentId="2"},
+new BlazorBootstrap.NavItem { Id = "4", Href = "products/add-products", IconName =
+BlazorBootstrap.IconName.Boxes, Text
+= "Add Products", ParentId="2"},
+new BlazorBootstrap.NavItem { Id = "5", IconName =
+BlazorBootstrap.IconName.CardChecklist, Text =
+"Orders"},
+new BlazorBootstrap.NavItem { Id = "6", Href = "orders/manage-orders", IconName =
+BlazorBootstrap.IconName.CardChecklist,
+Text =
+"Manage Orders", ParentId="5"},
+new BlazorBootstrap.NavItem { Id = "7", Href = "orders/return-cancel-orders", IconName =
+BlazorBootstrap.IconName.CardChecklist, Text
+= "Return & Cancellation Orders", ParentId="5"},
+
+new BlazorBootstrap.NavItem { Id = "8", IconName = BlazorBootstrap.IconName.People, Text
+= "Users" },
+new BlazorBootstrap.NavItem { Id = "9", Href = "users/user-list", IconName =
+BlazorBootstrap.IconName.People,
+Text = "User List", ParentId="8"},
+new BlazorBootstrap.NavItem { Id = "10", Href = "users/unverified-users", IconName =
+BlazorBootstrap.IconName.People,
+Text = "Unverified Users", ParentId="8"},
+new BlazorBootstrap.NavItem { Id = "11", Href = "users/verified-users", IconName =
+BlazorBootstrap.IconName.People,
+Text =
+"Verified Users", ParentId="8"},
+new BlazorBootstrap.NavItem { Id = "12", Href = "chat", IconName =
+BlazorBootstrap.IconName.ChatDots, Text =
+"Chats"},
+new BlazorBootstrap.NavItem { Id = "13", Href = "Account/Manage", IconName =
+BlazorBootstrap.IconName.Person, Text =
+admin?.Username},
+};
+
+        return navItems;
+    }
+
+    protected override async Task OnInitializedAsync() // need to optimize
+    {
+        using var context = DbFactory.CreateDbContext();
+        admin = await context.Admin.FirstOrDefaultAsync(m => m.RoleType == "Developer"); // for reference
+    }
+
+    private string? GetVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var appVersion = assembly.GetName().Version;
+        if (appVersion != null)
+        {
+            var version = appVersion.ToString();
+            return version;
+        }
+        return null;
+    }
+
+    private bool AdminExists(string? userid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Admin.Any(e => e.UserID == userid);
+    }
+
+}

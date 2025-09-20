@@ -31,17 +31,17 @@
             @if (status)
             {
                 <span>Status: </span>
-                <Tooltip Title="Verified" Placement="TooltipPlacement.Top">
-                    <Icon Name="IconName.PatchCheckFill" Color="IconColor.Success" />
-                </Tooltip>
+                <BlazorBootstrap.Tooltip Title="Verified" Placement="BlazorBootstrap.TooltipPlacement.Top">
+                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PatchCheckFill" Color="BlazorBootstrap.IconColor.Success" />
+                </BlazorBootstrap.Tooltip>
 
             }
             else
             {
                 <span>Status: </span>
-                <Tooltip Title="Not yet verified" Placement="TooltipPlacement.Top">
-                    <Icon Name="IconName.PatchExclamationFill" Color="IconColor.Danger" />
-                </Tooltip>
+                <BlazorBootstrap.Tooltip Title="Not yet verified" Placement="BlazorBootstrap.TooltipPlacement.Top">
+                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PatchExclamationFill" Color="BlazorBootstrap.IconColor.Danger" />
+                </BlazorBootstrap.Tooltip>
 
             }
 
@@ -73,18 +73,18 @@
                                     }
                                     else
                                     {
-                                        <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small">
-                                            <DropdownToggleButton>@(VerifyRemRoleUser.SelectedRole ?? "Please select a role")
-                                            </DropdownToggleButton>
-                                            <DropdownMenu>
+                                        <BlazorBootstrap.Dropdown Color="BlazorBootstrap.DropdownColor.Light" Size="BlazorBootstrap.DropdownSize.Small">
+                                            <BlazorBootstrap.DropdownToggleButton>@(VerifyRemRoleUser.SelectedRole ?? "Please select a role")
+                                            </BlazorBootstrap.DropdownToggleButton>
+                                            <BlazorBootstrap.DropdownMenu>
                                                 @foreach (var role in userRoles)
                                                 {
-                                                    <DropdownItem @onclick="() => OnRoleItemSelected(role)" Active="@role.IsActive"
+                                                    <BlazorBootstrap.DropdownItem @onclick="() => OnRoleItemSelected(role)" Active="@role.IsActive"
                                                         Disabled="@(role.RoleType == "Programmer")">@role.RoleType
-                                                    </DropdownItem>
+                                                    </BlazorBootstrap.DropdownItem>
                                                 }
-                                            </DropdownMenu>
-                                        </Dropdown>
+                                            </BlazorBootstrap.DropdownMenu>
+                                        </BlazorBootstrap.Dropdown>
                                         <ValidationMessage For="() => VerifyRemRoleUser.SelectedRole" class="text-danger" />
                                     }
 
@@ -299,17 +299,17 @@
                                     }
                                     else
                                     {
-                                        <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small" Class="w-100">
-                                            <DropdownToggleButton Class="text-truncate">@(VerifyRemRoleUser.SelectedRemark ??
-                                                                                    "Please select a remark")</DropdownToggleButton>
-                                            <DropdownMenu data-bs-display="static">
+                                        <BlazorBootstrap.Dropdown Color="BlazorBootstrap.DropdownColor.Light" Size="BlazorBootstrap.DropdownSize.Small" Class="w-100">
+                                            <BlazorBootstrap.DropdownToggleButton Class="text-truncate">@(VerifyRemRoleUser.SelectedRemark ??
+                                                                                    "Please select a remark")</BlazorBootstrap.DropdownToggleButton>
+                                            <BlazorBootstrap.DropdownMenu data-bs-display="static">
                                                 @foreach (var remark in userRemarks)
                                                 {
-                                                    <DropdownItem @onclick="() => OnRemarkItemSelected(remark)" Active="@remark.IsActive">@remark.Remarks
-                                                    </DropdownItem>
+                                                    <BlazorBootstrap.DropdownItem @onclick="() => OnRemarkItemSelected(remark)" Active="@remark.IsActive">@remark.Remarks
+                                                    </BlazorBootstrap.DropdownItem>
                                                 }
-                                            </DropdownMenu>
-                                        </Dropdown>
+                                            </BlazorBootstrap.DropdownMenu>
+                                        </BlazorBootstrap.Dropdown>
                                         <ValidationMessage For="() => VerifyRemRoleUser.SelectedRemark" class="text-danger" />
                                     }
                                 </dd>
@@ -389,7 +389,7 @@
                                         <dd class="col-sm-10 m-0">
                                             @if (frontID is not null)
                                             {
-                                                <a href="@frontID" target="_blank">
+                                                <a href="@frontID" target="_blank"> @* TODO: Fix the needing of refreshing the page to show the image in target="_blank" *@
                                                     <img src="@frontID" class="img-thumbnail my-3 p-0 w-50 h-auto" alt="Front ID" />
                                                 </a>
                                             }
@@ -409,7 +409,7 @@
                                         <dd class="col-sm-10 m-0">
                                             @if (backID is not null)
                                             {
-                                                <a href="@backID" target="_blank">
+                                                <a href="@backID" target="_blank"> @* TODO: Fix the needing of refreshing the page to show the image in target="_blank" *@
                                                     <img src="@backID" class="img-thumbnail my-3 p-0 w-50 h-auto" alt="Back ID" />
                                                 </a>
                                             }
@@ -429,7 +429,7 @@
                                         <dd class="col-sm-10 m-0">
                                             @if (selfie is not null)
                                             {
-                                                <a href="@selfie" target="_blank">
+                                                <a href="@selfie" target="_blank"> @* TODO: Fix the needing of refreshing the page to show the image in target="_blank" *@
                                                     <img src="@selfie" class="img-thumbnail my-3 p-0 w-50 h-auto" alt="Selfie" />
                                                 </a>
                                             }

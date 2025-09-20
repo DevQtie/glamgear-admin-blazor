@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <Version>1.13.0.0-alpha</Version> <!--Ensure that the README.md file is synchronized with this version specification. You can see that file in the root directory of this project. Documenting is important for DevQt.-->
+  <PropertyGroup> <!--TODO: Please make sure you've implemented a suitable cache busting strategy for all scripts and stylesheets as seen above. Otherwise your users will experience caching related issues when you update MudBlazor.-->
+    <Version>1.13.2.1-alpha</Version> <!--Ensure that the README.md file is synchronized with this version specification. You can see that file in the root directory of this project. Documenting is important for DevQt.-->
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -17,6 +17,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <PackageReference Include="Blazor.Bootstrap" Version="3.4.0" />
+    <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="9.0.6" />
@@ -30,6 +31,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <PackageReference Include="MudBlazor" Version="8.12.0" />
   </ItemGroup>
 
 </Project>

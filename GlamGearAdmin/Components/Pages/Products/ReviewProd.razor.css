@@ -137,3 +137,95 @@
     outline: none;
     box-shadow: none;
 }
+
+#toolbar-container .ql-font span[data-label="Roboto"]::before {
+    font-family: "Roboto";
+}
+
+#toolbar-container .ql-font span[data-label="Open Sans"]::before {
+    font-family: "Open Sans";
+}
+
+#toolbar-container .ql-font span[data-label="Lato"]::before {
+    font-family: "Lato";
+}
+
+#toolbar-container .ql-font span[data-label="Montserrat"]::before {
+    font-family: "Montserrat";
+}
+
+#toolbar-container .ql-font span[data-label="Roboto Condensed"]::before {
+    font-family: "Roboto Condensed";
+}
+
+#toolbar-container .ql-font span[data-label="Oswald"]::before {
+    font-family: "Oswald";
+}
+
+#toolbar-container .ql-font span[data-label="Poppins"]::before {
+    font-family: "Poppins";
+}
+
+#toolbar-container .ql-font span[data-label="Slabo 27px"]::before {
+    font-family: "Slabo 27px";
+}
+
+#toolbar-container .ql-font span[data-label="Noto Sans"]::before {
+    font-family: "Noto Sans";
+}
+
+#toolbar-container .ql-font span[data-label="Roboto Mono"]::before {
+    font-family: "Roboto Mono";
+}
+
+#toolbar-container .ql-font span[data-label="Merriweather"]::before {
+    font-family: "Merriweather";
+}
+
+.ql-font-roboto {
+    font-family: 'Roboto', sans-serif;
+}
+
+.ql-font-open-sans {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.ql-font-lato {
+    font-family: 'Lato', sans-serif;
+}
+
+.ql-font-montserrat {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.ql-font-roboto-condensed {
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.ql-font-oswald {
+    font-family: 'Oswald', sans-serif;
+}
+
+.ql-font-poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+.ql-font-slabo-27px {
+    font-family: 'Slabo 27px', serif;
+}
+
+.ql-font-noto-sans {
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.ql-font-roboto-mono {
+    font-family: 'Roboto Mono', monospace;
+}
+
+.ql-font-merriweather {
+    font-family: 'Merriweather', serif;
+}
+
+.cursor-not-allowed-cust {
+    cursor: not-allowed !important;
+}

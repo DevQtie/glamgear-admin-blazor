@@ -17,13 +17,15 @@
 else if (isOnline == true)
 {
     <div class="page">
-        <div class=@(toggle!.CollapseNavMenu ? "sidebar d-none" : "sidebar d-block")>
-            <NavMenu />
-        </div>
+        @* <div class=@(toggle!.CollapseNavMenu ? "sidebar d-none" : "sidebar d-block")> *@
+        <NavMenu2 />
+        @* </div> *@
 
         <main>
             <div class="border-bottom border-1 border-secondary-subtle top-row px-4">
-                <ThemeSwitcher @rendermode="RenderMode.InteractiveServer" Class="ms-0 p-0" />
+                <MudBlazor.MudIconButton type="submit" Icon="@MudBlazor.Icons.Material.Filled.Logout" title="Logout"
+                    class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutModal" />
+                <BlazorBootstrap.ThemeSwitcher @rendermode="RenderMode.InteractiveServer" Class="ms-0 p-0" />
                 <span><a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a></span>
             </div>
 

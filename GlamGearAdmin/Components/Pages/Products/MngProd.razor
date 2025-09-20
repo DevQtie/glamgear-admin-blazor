@@ -76,11 +76,11 @@ else
           <th @onclick='() => SortBy("OrigPrice")' class="cursor-pointer">Orig. Price @SortIcon("OrigPrice")</th>
           <th @onclick='() => SortBy("DiscPrice")' class="cursor-pointer">Disc. Price @SortIcon("DiscPrice")</th>
           <th @onclick='() => SortBy("Stock")' class="cursor-pointer">Stock
-            <Tooltip Class="ps-1"
+            <BlazorBootstrap.Tooltip Class="ps-1"
               Title="Main: NA (Has variants); Sub: NA (Has no variants); Sub: {int} (Total stock of all variants)"
-              Placement="TooltipPlacement.Top">
-              <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
-            </Tooltip>
+              Placement="BlazorBootstrap.TooltipPlacement.Top">
+              <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.InfoCircle" Color="BlazorBootstrap.IconColor.Info" />
+            </BlazorBootstrap.Tooltip>
             @SortIcon("Stock")
           </th>
           <th @onclick='() => SortBy("PromoTags")' class="cursor-pointer">Promo Tags @SortIcon("PromoTags")</th>
@@ -93,15 +93,17 @@ else
           <tr>
             <td class="align-middle">@a.Hash</td>
             <td class="align-middle">
-              <a href="@GlobalMethod.DbDataToImg(a.ProdImg)" target="_blank">
-                <img src="@GlobalMethod.DbDataToImg(a.ProdImg)" class="img-thumbnail rounded rounded-3 cus-img-thumbnail-sm p-0 my-1"
-                  alt="Product" />
+              <a href="@GlobalMethod.DbDataToImg(a.ProdImg)" target="_blank"> @* TODO: Fix the needing of refreshing the page to show the image in target="_blank" *@
+                page to show image.
+                <img src="@GlobalMethod.DbDataToImg(a.ProdImg)"
+                  class="img-thumbnail rounded rounded-3 cus-img-thumbnail-sm p-0 my-1" alt="Product" />
               </a>
             </td>
             <td class="align-middle fw-bold">@a.ProdName</td>
             <td class="align-middle">@($"₱{a.OrigPrice:N2}")</td>
-            <td class="align-middle">@($"₱{a.DiscPrice:N2}") <Tooltip Class="ps-1 fw-bold" Title="Discount in percent"
-                Placement="TooltipPlacement.Top">@($"({a.DiscPercent})")</Tooltip>
+            <td class="align-middle">@($"₱{a.DiscPrice:N2}") <BlazorBootstrap.Tooltip Class="ps-1 fw-bold"
+                Title="Discount in percent" Placement="BlazorBootstrap.TooltipPlacement.Top">@($"({a.DiscPercent})")
+              </BlazorBootstrap.Tooltip>
             </td>
             <td class="align-middle">@a.Stock
             </td>
@@ -110,10 +112,11 @@ else
               <div class="d-flex flex-column h-100 justify-content-center gap-2">
                 <!--Remove text-nowrap if there are more link button to show-->
 
-                <Tooltip Class="d-flex justify-content-center" Title="Review" Placement="TooltipPlacement.Top"><a
-                    class="btn btn-outline-primary btn-sm" href="@($"products/review/{a.ProdID}/product")">
-                    <Icon Name="IconName.PencilSquare" />
-                  </a></Tooltip>
+                <BlazorBootstrap.Tooltip Class="d-flex justify-content-center" Title="Review"
+                  Placement="BlazorBootstrap.TooltipPlacement.Top"><a class="btn btn-outline-primary btn-sm"
+                    href="@($"products/review/{a.ProdID}/product")">
+                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PencilSquare" />
+                  </a></BlazorBootstrap.Tooltip>
                 @* <Tooltip Class="d-flex justify-content-center" Title="Tooltip Left" Placement="TooltipPlacement.Top"><a
                     class="btn btn-outline-primary btn-sm"
                     href="@($"sql_server/crud/admin_pages/details?userid={a.UserID}")">
@@ -133,11 +136,11 @@ else
           <th @onclick='() => SortBy("OrigPrice")' class="cursor-pointer">Orig. Price @SortIcon("OrigPrice")</th>
           <th @onclick='() => SortBy("DiscPrice")' class="cursor-pointer">Disc. Price @SortIcon("DiscPrice")</th>
           <th @onclick='() => SortBy("Stock")' class="cursor-pointer">Stock
-            <Tooltip Class="ps-1"
+            <BlazorBootstrap.Tooltip Class="ps-1"
               Title="Main: NA (Has variants); Sub: NA (Has no variants); Sub: {int} (Total stock of all variants)"
-              Placement="TooltipPlacement.Top">
-              <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
-            </Tooltip>
+              Placement="BlazorBootstrap.TooltipPlacement.Top">
+              <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.InfoCircle" Color="BlazorBootstrap.IconColor.Info" />
+            </BlazorBootstrap.Tooltip>
             @SortIcon("Stock")
           </th>
           <th @onclick='() => SortBy("PromoTags")' class="cursor-pointer">Promo Tags @SortIcon("PromoTags")</th>

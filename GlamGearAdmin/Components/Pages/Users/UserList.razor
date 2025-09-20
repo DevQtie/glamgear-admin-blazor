@@ -97,33 +97,33 @@ else
                         @if (a.PendingVer)
                         {
                             <td class="align-middle">
-                                <Tooltip Title="Needs attention" Placement="TooltipPlacement.Top">
-                                    <Icon Name="IconName.PatchExclamationFill" Color="IconColor.Danger" />
-                                </Tooltip>
+                                <BlazorBootstrap.Tooltip Title="Needs attention" Placement="BlazorBootstrap.TooltipPlacement.Top">
+                                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PatchExclamationFill" Color="BlazorBootstrap.IconColor.Danger" />
+                                </BlazorBootstrap.Tooltip>
                             </td>
                         }
                         else
                         {
                             <td class="align-middle">
-                                <Tooltip Title="No action required" Placement="TooltipPlacement.Top">
-                                    <Icon Name="IconName.PatchCheckFill" Color="IconColor.Success" />
-                                </Tooltip>
+                                <BlazorBootstrap.Tooltip Title="No action required" Placement="BlazorBootstrap.TooltipPlacement.Top">
+                                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PatchCheckFill" Color="BlazorBootstrap.IconColor.Success" />
+                                </BlazorBootstrap.Tooltip>
                             </td>
                         }
                         @if (a.IsVerified)
                         {
                             <td class="align-middle">
-                                <Tooltip Title="No action required" Placement="TooltipPlacement.Top">
-                                    <Icon Name="IconName.PatchCheckFill" Color="IconColor.Success" />
-                                </Tooltip>
+                                <BlazorBootstrap.Tooltip Title="No action required" Placement="BlazorBootstrap.TooltipPlacement.Top">
+                                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PatchCheckFill" Color="BlazorBootstrap.IconColor.Success" />
+                                </BlazorBootstrap.Tooltip>
                             </td>
                         }
                         else
                         {
                             <td class="align-middle">
-                                <Tooltip Title="Needs attention" Placement="TooltipPlacement.Top">
-                                    <Icon Name="IconName.PatchExclamationFill" Color="IconColor.Danger" />
-                                </Tooltip>
+                                <BlazorBootstrap.Tooltip Title="Needs attention" Placement="BlazorBootstrap.TooltipPlacement.Top">
+                                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PatchExclamationFill" Color="BlazorBootstrap.IconColor.Danger" />
+                                </BlazorBootstrap.Tooltip>
                             </td>
                         }
                         <td class="align-middle fw-bold">@a.DispName</td>
@@ -133,12 +133,12 @@ else
                         <td class="align-middle text-nowrap">
                             <div class="d-flex flex-column h-100 justify-content-center gap-2">
                                 <!--Remove text-nowrap if there are more link button to show-->
-                                <Tooltip Class="d-flex justify-content-center" Title="Review" Placement="TooltipPlacement.Top">
+                                <BlazorBootstrap.Tooltip Class="d-flex justify-content-center" Title="Review" Placement="BlazorBootstrap.TooltipPlacement.Top">
                                     <a class="btn btn-outline-primary btn-sm"
                                         href="@($"users/review/{a.UserID}/user?status={IsVerified(a.PendingVer, a.IsVerified):bool}&row={a.Hash}")">
-                                        <Icon Name="IconName.PencilSquare" />
+                                        <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PencilSquare" />
                                     </a>
-                                </Tooltip>
+                                </BlazorBootstrap.Tooltip>
                                 @* <Tooltip Class="d-flex justify-content-center" Title="Tooltip Left" Placement="TooltipPlacement.Top"><a
                       class="btn btn-outline-primary btn-sm"
                       href="@($"sql_server/crud/admin_pages/details?userid={a.UserID}")">

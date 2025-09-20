@@ -1,12 +1,12 @@
-<PieChart @ref="pieChart" />
+<BlazorBootstrap.PieChart @ref="pieChart" />
 
 <div class="my-3">
-    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-        @onclick="async () => await RandomizeAsync()"> Randomize </Button>
-    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-        @onclick="async () => await AddDatasetAsync()"> Add Dataset </Button>
-    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-        @onclick="async () => await AddDataAsync()">Add Data</Button>
+    <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small"
+        @onclick="async () => await RandomizeAsync()"> Randomize </BlazorBootstrap.Button>
+    <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small"
+        @onclick="async () => await AddDatasetAsync()"> Add Dataset </BlazorBootstrap.Button>
+    <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small"
+        @onclick="async () => await AddDataAsync()">Add Data</BlazorBootstrap.Button>
 </div>
 
 <ul class="list-bullet my-3">
@@ -14,9 +14,9 @@
 </ul>
 
 @code {
-    private PieChart pieChart = default!;
-    private PieChartOptions pieChartOptions = default!;
-    private ChartData chartData = default!;
+    private BlazorBootstrap.PieChart pieChart = default!;
+    private BlazorBootstrap.PieChartOptions pieChartOptions = default!;
+    private BlazorBootstrap.ChartData chartData = default!;
     private string[]? backgroundColors;
 
     private int datasetsCount = 0;
@@ -26,8 +26,8 @@
 
     protected override void OnInitialized()
     {
-        backgroundColors = ColorUtility.CategoricalTwelveColors;
-        chartData = new ChartData { Labels = GetDefaultDataLabels(4), Datasets = GetDefaultDataSets(1) };
+        backgroundColors = BlazorBootstrap.ColorUtility.CategoricalTwelveColors;
+        chartData = new BlazorBootstrap.ChartData { Labels = GetDefaultDataLabels(4), Datasets = GetDefaultDataSets(1) };
 
         pieChartOptions = new();
         pieChartOptions.Responsive = true;
@@ -48,11 +48,11 @@
     {
         if (chartData is null || chartData.Datasets is null || !chartData.Datasets.Any()) return;
 
-        var newDatasets = new List<IChartDataset>();
+        var newDatasets = new List<BlazorBootstrap.IChartDataset>();
 
         foreach (var dataset in chartData.Datasets)
         {
-            if (dataset is PieChartDataset pieChartDataset
+            if (dataset is BlazorBootstrap.PieChartDataset pieChartDataset
             && pieChartDataset is not null
             && pieChartDataset.Data is not null)
             {
@@ -90,11 +90,11 @@
         if (chartData is null || chartData.Datasets is null)
             return;
 
-        var data = new List<IChartDatasetData>();
+        var data = new List<BlazorBootstrap.IChartDatasetData>();
         foreach (var dataset in chartData.Datasets)
         {
-            if (dataset is PieChartDataset pieChartDataset)
-                data.Add(new PieChartDatasetData(pieChartDataset.Label, random.Next(0, 100), backgroundColors![dataLabelsCount]));
+            if (dataset is BlazorBootstrap.PieChartDataset pieChartDataset)
+                data.Add(new BlazorBootstrap.PieChartDatasetData(pieChartDataset.Label, random.Next(0, 100), backgroundColors![dataLabelsCount]));
         }
 
         chartData = await pieChart.AddDataAsync(chartData, GetNextDataLabel(), data);
@@ -104,9 +104,9 @@
 
     #region Data Preparation
 
-    private List<IChartDataset> GetDefaultDataSets(int numberOfDatasets)
+    private List<BlazorBootstrap.IChartDataset> GetDefaultDataSets(int numberOfDatasets)
     {
-        var datasets = new List<IChartDataset>();
+        var datasets = new List<BlazorBootstrap.IChartDataset>();
 
         for (var index = 0; index < numberOfDatasets; index++)
         {
@@ -116,7 +116,7 @@
         return datasets;
     }
 
-    private PieChartDataset GetRandomPieChartDataset()
+    private BlazorBootstrap.PieChartDataset GetRandomPieChartDataset()
     {
         datasetsCount += 1;
         return new() { Label = $"Team {datasetsCount}", Data = GetRandomData(), BackgroundColor = GetRandomBackgroundColors() };

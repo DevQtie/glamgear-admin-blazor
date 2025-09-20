@@ -9,7 +9,7 @@
 @using GlamGearAdmin.Data.SQLServer
 @using System.Text.RegularExpressions
 @using System.Globalization
-@implements IAsyncDisposable
+@* @implements IAsyncDisposable *@
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -20,194 +20,210 @@
 
 <script src="lib/customjs/reviewprod.js"></script>
 
-@if (ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview is null)
+@if (!isReviewSummary)
 {
-    <div class="position-absolute top-50 start-50 translate-middle">
-        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
-            <span class="visually-hidden">Loading...</span>
+    @if (ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview is null)
+    {
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
-    </div>
-}
-else
-{
-  @* <a class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</a> *@
-    <div class="container-fluid overflow-x-auto mw-40">
-        <div class="row py-1 border rounded border-secondary-subtle text-center my-2">
-            <EditForm EditContext="editContext" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <div class="d-flex flex-column align-items-start mb-4">
-                    <h5 class="fw-bold py-1">Basic Information</h5>
-                    <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Name</label>
-                        <div class="d-flex flex-column align-items-end w-100">
-                            <InputText id="randomText" class="form-control form-control-sm" maxlength="255"
-                                @bind-Value="ReviewThenModifyProduct.ProdNameEntry" @oninput="OnInputProdName" @onblur="FormatOnBlurProdName" />
-                            <p class="text-muted small m-0 mt-1">
-                                @($"{ReviewThenModifyProduct.ProdNameLC} / 255 characters")
-                            </p>
+    }
+    else
+    {
+    @* <a class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</a> *@
+        <div class="container-fluid overflow-x-auto mw-40">
+            <div class="row py-1 border rounded border-secondary-subtle text-center my-2">
+                <EditForm EditContext="editContext" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
+                    <FluentValidationValidator />
+                    <DataAnnotationsValidator />
+                    <div class="d-flex flex-column align-items-start mb-4">
+                        <h5 class="fw-bold py-1">Basic Information</h5>
+                        <div class="mb-3 d-flex flex-column align-items-start w-100">
+                            <label for="prodName" class="form-label text-nowrap fw-bold">Product Name</label>
+                            <div class="d-flex flex-column align-items-end w-100">
+                                <InputText id="prodName" class="form-control form-control-sm" maxlength="255"
+                                    @bind-Value="ReviewThenModifyProduct.ProdNameEntry" @oninput="OnInputProdName" @onblur="FormatOnBlurProdName" />
+                                <p class="text-muted small m-0 mt-1">
+                                    @($"{ReviewThenModifyProduct.ProdNameLC} / 255 characters")
+                                </p>
+                            </div>
+                            <ValidationMessage
+                                For="() => ReviewThenModifyProduct.ProdNameEntry"
+                                class="text-danger" />
                         </div>
-                        <ValidationMessage
-                            For="() => ReviewThenModifyProduct.ProdNameEntry"
-                            class="text-danger" />
-                    </div>
-                    <div class="container m-0 p-0">
-                        <div class="row">
-                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                            <label for="randomText" class="form-label text-nowrap fw-bold">Product Category</label>
-                            <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small">
-                                <DropdownToggleButton>@(ReviewThenModifyProduct.SelectedCategory ?? "Select a category")
-                                </DropdownToggleButton>
-                                <DropdownMenu>
-                                    @foreach (var category in ReviewThenModifyProduct.CompileProductProperties.ProductCategory)
-                                    {
-                                        <DropdownItem @onclick="() => OnCategoryItemSelected(category)" Active="@category.State"
-                                            Disabled="@(category.ID == 2 || category.ID == 3)">
-                                            @category.Item
-                                        </DropdownItem>
-                                    }
-                                </DropdownMenu>
-                            </Dropdown>
-                            </div>
-                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Original Price</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">₱</span>
-                                    <InputText id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.FormattedOrigPrice"
-                                        class="form-control form-control-sm" @onblur="FormatOnBlurOrigPrice"/>
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.FormattedOrigPrice"
-                                        class="text-danger py-1" />
+                        <div class="container m-0 p-0">
+                            <div class="row">
+                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                  <label for="prodCat" class="form-label text-nowrap fw-bold">Product Category</label>
+                                  <BlazorBootstrap.Dropdown Id="prodCat" Color="BlazorBootstrap.DropdownColor.Light" Size="BlazorBootstrap.DropdownSize.Small">
+                                      <BlazorBootstrap.DropdownToggleButton>@(ReviewThenModifyProduct.SelectedCategory ?? "Select a category")
+                                      </BlazorBootstrap.DropdownToggleButton>
+                                      <BlazorBootstrap.DropdownMenu>
+                                          @foreach (var category in ReviewThenModifyProduct.CompileProductProperties.ProductCategory)
+                                          {
+                                              <BlazorBootstrap.DropdownItem @onclick="() => OnCategoryItemSelected(category)" Active="@category.State"
+                                                  Disabled="@(category.ID == 2 || category.ID == 3)">
+                                                  @category.Item
+                                              </BlazorBootstrap.DropdownItem>
+                                          }
+                                      </BlazorBootstrap.DropdownMenu>
+                                  </BlazorBootstrap.Dropdown>
                                 </div>
-                            </div>
-                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Discounted Price</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">₱</span>
-                                    <InputText id="randomText"
-                                        @bind-Value="ReviewThenModifyProduct.FormattedDiscPrice"
-                                        class="form-control form-control-sm" @onblur="FormatOnBlurDiscPrice" />
-                                    <ValidationMessage
-                                        For="() => ReviewThenModifyProduct.FormattedDiscPrice"
-                                        class="text-danger py-1" />
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Stock</label>
-                                <InputNumber id="randomText"
-                                    @bind-Value="ReviewThenModifyProduct.ProdStock"
-                                    class="form-control form-control-sm" @oninput="OnInputProdStock" @onblur="FormatOnBlurProdStock" />
-                                <ValidationMessage
-                                    For="() => ReviewThenModifyProduct.ProdStock"
-                                    class="text-danger" />
-                            </div>
-                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                <label for="randomText" class="form-label text-nowrap fw-bold">Availability</label>
-                                <Switch
-                                    @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Availability" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Promo Tags</label>                        
-                        <div class="suggestion-container d-flex flex-column align-items-start w-100">
-                            <div id="@($"{Id}_tagsinput")" class="tagsinput w-100">
-
-                                @if (ReviewThenModifyProduct.CompileProductProperties.Tags.Count == 0)
-                                {
-                                    <div class="position-absolute top-50 start-50 translate-middle">
-                                        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @foreach (var tag in ReviewThenModifyProduct.CompileProductProperties.Tags)
-                                    {
-                                        <span class="tag bg-primary border rounded d-flex flex-column align-items-center">
-                                            <span class="tag-text">@tag.TagValues</span>
-                                            <span class="tag-remove text-white bg-primary p-0 border rounded-end border-primary"
-                                                @onclick="() => DeleteTag(tag.TagValues)" />
-                                        </span>
-                                    }
-                                }
-
-                                <div id="@($"{Id}_addTag")">
-                                    <div class="@(IsContainSpecialCharacter ? "tag-tooltip" : string.Empty)">
-                                        @* <input id="@($"{Id}_tag")" class="tag-input" placeholder="Add tags"
-                                            autocomplete="off" @bind-value="Value" @bind-value:event="oninput"
-                                            @onkeyup="AddTags" /> *@
-                                        <AutoComplete @bind-Value="ReviewThenModifyProduct.TagRef"
-                                            id="@($"{Id}_tag")"
-                                            Class="tag-input border-0"
-                                            TItem="ProductTagsRefFRAutoComplete"
-                                            DataProvider="ProductTagRefDataProvider"
-                                            PropertyName="Tag"
-                                            Placeholder="Search a tag..."
-                                            Size="AutoCompleteSize.Small"
-                                            OnChanged="(ProductTagsRefFRAutoComplete tag) => OnAutoCompleteChanged(tag)" />
+                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                    <label for="origPrice" class="form-label text-nowrap fw-bold">Original Price</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">₱</span>
+                                        <InputText id="origPrice"
+                                            @bind-Value="ReviewThenModifyProduct.FormattedOrigPrice"
+                                            class="form-control form-control-sm" @onblur="FormatOnBlurOrigPrice"/>
+                                        <ValidationMessage
+                                            For="() => ReviewThenModifyProduct.FormattedOrigPrice"
+                                            class="text-danger py-1" />
                                     </div>
                                 </div>
+                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                    <label for="discPrice" class="form-label text-nowrap fw-bold">Discounted Price</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">₱</span>
+                                        <InputText id="discPrice"
+                                            @bind-Value="ReviewThenModifyProduct.FormattedDiscPrice"
+                                            class="form-control form-control-sm" @onblur="FormatOnBlurDiscPrice" />
+                                        <ValidationMessage
+                                            For="() => ReviewThenModifyProduct.FormattedDiscPrice"
+                                            class="text-danger py-1" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                    <label for="diffPrice" class="form-label text-nowrap fw-bold">Difference Price</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">₱</span>
+                                        <input id="diffPrice" type="text"
+                                        class="form-control form-control-sm"
+                                        value="@ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.DiffPrice"
+                                        readonly />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                    <label for="roundedDP" class="form-label text-nowrap fw-bold">Rounded Discount Percentage</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="roundedDP" type="text"
+                                        class="form-control form-control-sm"
+                                        value="@($"{ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.RoundedDiscPercentage}%")"
+                                        readonly />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                    <label for="stock" class="form-label text-nowrap fw-bold">Stock</label>
+                                    <InputNumber id="stock"
+                                        @bind-Value="ReviewThenModifyProduct.ProdStock"
+                                        class="form-control form-control-sm" @oninput="OnInputProdStock" @onblur="FormatOnBlurProdStock" />
+                                    <ValidationMessage
+                                        For="() => ReviewThenModifyProduct.ProdStock"
+                                        class="text-danger" />
+                                </div>
+                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                    <label for="avSwitch" class="form-label text-nowrap fw-bold">Availability</label>
+                                    <BlazorBootstrap.Switch id="avSwitch"
+                                        @bind-Value="ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview.Availability" />
+                                </div>
                             </div>
-                            <ValidationMessage For="@(() => ReviewThenModifyProduct.TagRef)" class="text-danger py-1" />
-                            <ValidationMessage For="@(() => ReviewThenModifyProduct.CompileProductProperties.Tags)" class="text-danger py-1" />
                         </div>
-                    </div>
 
-                    <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Images
-                            <Tooltip Class="ps-1"
-                                data-bs-html="true"
-                                Title="@ReviewThenModifyProduct.ImageNotes"
-                                Placement="TooltipPlacement.Right">
-                                <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
-                            </Tooltip>
-                            @* <a data-bs-toggle="tooltip" datab-bs-placement="right" data-bs-html="true" data-bs-title="@ReviewThenModifyProduct.ImageNotes">
-                                <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
-                            </a> has issues *@
-                        </label>
-                        <div class="container-fluid p-0">
-                        <div class="column">
-                            <div class="col-12 col-lg-12 mb-3">
-                                @if (ReviewThenModifyProduct.CompileProductProperties.ProductImages.Count == 0)
-                                {
-                                    @* <div class="position-absolute top-50 start-50 translate-middle">
-                                        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                    </div> *@
-                                    <InputFile @ref="filePicker" class="btn btn-outline-primary my-1 d-none" OnChange="HandleProductImageUpload" accept="image/*"
-                                        multiple />
-                                    <button class="btn btn-primary rounded-circle"
-                                            style="width: 40px; height: 40px;"
-                                            @onclick="TriggerFileUpload"
-                                            title="Upload Image">
-                                        @* <i class="bi bi-camera"></i> *@
-                                        <Icon Name="IconName.Images" Color="IconColor.White" />
-                                    </button>
-                                    <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductImages" class="text-danger" />
-                                }
-                                else
-                                {
-                                    int totalCount = ReviewThenModifyProduct.CompileProductProperties.ProductImages.Count;
-                                    int counter = 0;
-                                    @foreach (var img in ReviewThenModifyProduct.CompileProductProperties.ProductImages)
+                        <div class="mb-3 d-flex flex-column align-items-start w-100">
+                            <label for="promoTag" class="form-label text-nowrap fw-bold">Promo Tags</label>                        
+                            <div class="suggestion-container d-flex flex-column align-items-start w-100">
+                                <div id="@($"{Id}_tagsinput")" class="tagsinput w-100">
+
+                                    @if (ReviewThenModifyProduct.CompileProductProperties.Tags == null)
                                     {
-                                        counter++;
-                                        <div class="position-relative d-inline-block">
-                                            <a href="@GlobalMethod.DbDataToImg(img.ProdImg)" target="_blank">
-                                                <img src="@GlobalMethod.DbDataToImg(img.ProdImg)" class="img-thumbnail m-3" width="200px" alt="Product Image" />                                            
-                                            </a>
-                                            <button type="button"
-                                                class="btn btn-cust btn-sm fs-3 text-white rounded-circle position-absolute top-0 end-0 m-1 me-3 mt-2"
-                                                title="Remove image"
-                                                @onclick="() => DeleteImage(img.ProdID)">
-                                                &times;
-                                            </button>
+                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                            <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div> @*Replace this with shimmer instead*@
+                                    }
+                                    else if (ReviewThenModifyProduct.CompileProductProperties.Tags.Count == 0)
+                                    {
+                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                            <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div> @*Replace this with shimmer instead*@
+                                    }
+                                    else
+                                    {
+                                        @foreach (var tag in ReviewThenModifyProduct.CompileProductProperties.Tags)
+                                        {
+                                            <span class="tag bg-primary border rounded d-flex flex-column align-items-center">
+                                                <span class="tag-text">@tag.TagValues</span>
+                                                <span class="tag-remove text-white bg-primary p-0 border rounded-end border-primary"
+                                                    @onclick="() => DeleteTag(tag.TagValues)" />
+                                            </span>
+                                        }
+                                    }
+
+                                    <div id="@($"{Id}_addTag")">
+                                        <div class="@(IsContainSpecialCharacter ? "tag-tooltip" : string.Empty)">
+                                            @* <input id="@($"{Id}_tag")" class="tag-input" placeholder="Add tags"
+                                                autocomplete="off" @bind-value="Value" @bind-value:event="oninput"
+                                                @onkeyup="AddTags" /> *@
+                                            <BlazorBootstrap.AutoComplete @bind-Value="ReviewThenModifyProduct.TagRef"
+                                                id="promoTag"
+                                                Class="tag-input border-0"
+                                                TItem="ProductTagsRefFRAutoComplete"
+                                                DataProvider="ProductTagRefDataProvider"
+                                                PropertyName="Tag"
+                                                Placeholder="Search a tag..."
+                                                Size="BlazorBootstrap.AutoCompleteSize.Small"
+                                                OnChanged="(ProductTagsRefFRAutoComplete tag) => OnAutoCompleteChanged(tag)" />
                                         </div>
-                                        @if (counter == totalCount)
+                                    </div>
+                                </div>
+                                <ValidationMessage For="@(() => ReviewThenModifyProduct.TagRef)" class="text-danger py-1" /> @*Kindly review what's going on here*@
+                                <ValidationMessage For="@(() => ReviewThenModifyProduct.CompileProductProperties.Tags)" class="text-danger py-1" /> @*Kindly review what's going on here*@
+                            </div>
+                        </div>
+
+                        <div class="mb-3 d-flex flex-column align-items-start w-100">
+                            <label for="prodImg" class="form-label text-nowrap fw-bold">Product Images
+                                <BlazorBootstrap.Tooltip Class="ps-1"
+                                    data-bs-html="true"
+                                    Title="@ReviewThenModifyProduct.ImageNotes"
+                                    Placement="BlazorBootstrap.TooltipPlacement.Right">
+                                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.InfoCircle" Color="BlazorBootstrap.IconColor.Info" />
+                                </BlazorBootstrap.Tooltip>
+                                @* <a data-bs-toggle="tooltip" datab-bs-placement="right" data-bs-html="true" data-bs-title="@ReviewThenModifyProduct.ImageNotes">
+                                    <Icon Name="IconName.InfoCircle" Color="IconColor.Info" />
+                                </a> has issues *@
+                            </label>
+                            <div class="container-fluid p-0">
+                            <div class="column">
+                                <div class="col-12 col-lg-12 mb-3">
+                                    @if (ReviewThenModifyProduct.CompileProductProperties.ProductImages == null)
+                                    {                                        
+                                        @*<div class="position-absolute top-50 start-50 translate-middle">
+                                            <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div> Replace this with shimmer instead*@
+                                        <InputFile @ref="filePicker" class="btn btn-outline-primary my-1 d-none" OnChange="HandleProductImageUpload" accept="image/*"
+                                            multiple />
+                                        <button id="prodImg" class="btn btn-primary rounded-circle"
+                                                style="width: 40px; height: 40px;"
+                                                @onclick="TriggerFileUpload"
+                                                title="Upload Image">
+                                            @* <i class="bi bi-camera"></i> *@
+                                            <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.Images" Color="BlazorBootstrap.IconColor.White" />
+                                        </button>
+                                        @* <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductImages" class="text-danger" /> *@
+                                    }
+                                    else
+                                    {
+                                        int totalCount = ReviewThenModifyProduct.CompileProductProperties.ProductImages?.Count ?? 0;
+                                        int counter = 0;
+                                        if (totalCount == 0)
                                         {
                                             <InputFile @ref="filePicker" class="btn btn-outline-primary my-1 d-none" OnChange="HandleProductImageUpload" accept="image/*"
                                                 multiple />
@@ -216,88 +232,344 @@ else
                                                     @onclick="TriggerFileUpload"
                                                     title="Upload Image">
                                                 @* <i class="bi bi-camera"></i> *@
-                                                <Icon Name="IconName.Images" Color="IconColor.White" />
+                                                <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.Images" Color="BlazorBootstrap.IconColor.White" />
                                             </button>
                                             <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductImages" class="text-danger" />
-                                        }
-                                    }
-                                }
-                            </div>
-                        </div>
-                        </div>
-                    </div>
 
-                    <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Specifications</label>
-                        
-                        <div class="container m-0 p-0">
-                            <div class="row">
-                                @if (ReviewThenModifyProduct.CompileProductProperties.ProductSpecs.Count == 0)
-                                {
-                                    <div class="position-absolute top-50 start-50 translate-middle">
-                                        <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @foreach (var specs in ReviewThenModifyProduct.CompileProductProperties.ProductSpecs)
-                                    {
-                                        if (specs.KeyName!.Contains("Warranty Type", StringComparison.CurrentCultureIgnoreCase))
-                                        {
-                                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                                <label for="randomText" class="form-label text-nowrap fw-bold">@($"{specs.KeyName}")</label>
-                                                <Dropdown Color="DropdownColor.Light" Size="DropdownSize.Small" Class="w-100">
-                                                    <DropdownToggleButton>@(ReviewThenModifyProduct.SelectedWarrantyType ?? "Select a warranty type")
-                                                    </DropdownToggleButton>
-                                                    <DropdownMenu Class="w-100">
-                                                        @foreach (var warrantyType in ReviewThenModifyProduct.CompileProductProperties.ProductWarrantyType)
-                                                        {
-                                                            <DropdownItem @onclick="() => OnWarrantyTypeItemSelected(warrantyType)" Active="@warrantyType.State"
-                                                                Disabled="@(warrantyType.ID == 2)" Class="w-100">
-                                                                @warrantyType.Item
-                                                            </DropdownItem>
-                                                        }
-                                                    </DropdownMenu>
-                                                </Dropdown>
-                                            </div>
                                         }
                                         else
                                         {
-                                            <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                                <label for="randomText" class="form-label text-nowrap fw-bold">@($"{specs.KeyName}")</label>
-                                                <InputText id="@($"{specs.KeyNameID}")"
-                                                    @bind-Value="specs.Value"
-                                                    class="form-control form-control-sm" />
-                                                <ValidationMessage id="@($"{specs.KeyNameID}")"
-                                                    For="() => specs.Value"
-                                                    class="text-danger" />
-                                            </div>
+                                            @foreach (var img in ReviewThenModifyProduct.CompileProductProperties.ProductImages!)
+                                            {
+                                                counter++;
+                                                <div class="position-relative d-inline-block">
+                                                    <a href="@GlobalMethod.DbDataToImg(img.ProdImg)" target="_blank"> @* TODO: Fix the needing of refreshing the page to show the image in target="_blank" *@
+                                                        <img src="@GlobalMethod.DbDataToImg(img.ProdImg)" class="img-thumbnail m-3" width="200px" alt="Product Image" />                                            
+                                                    </a>
+                                                    <button type="button"
+                                                        class="btn btn-cust btn-sm fs-3 text-white rounded-circle position-absolute top-0 end-0 m-1 me-4 mt-2"
+                                                        title="Remove image"
+                                                        @onclick="() => DeleteImage(img.ProdID)">
+                                                        &times;
+                                                    </button>
+                                                </div>
+                                                if (totalCount == counter)
+                                                {
+                                                    <InputFile @ref="filePicker" class="btn btn-outline-primary my-1 d-none" OnChange="HandleProductImageUpload" accept="image/*"
+                                                        multiple />
+                                                    <button class="btn btn-primary rounded-circle"
+                                                            style="width: 40px; height: 40px;"
+                                                            @onclick="TriggerFileUpload"
+                                                            title="Upload Image">
+                                                        @* <i class="bi bi-camera"></i> *@
+                                                        <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.Images" Color="BlazorBootstrap.IconColor.White" />
+                                                    </button>
+                                                    <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductImages" class="text-danger" />
+                                                }
+                                            }
                                         }
                                     }
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 d-flex flex-column align-items-start w-100">
+                            <label for="@($"{ReviewThenModifyProduct.CompileProductProperties.ProductSpecs.First().KeyNameID}")" class="form-label text-nowrap fw-bold">Product Specifications</label>
+                            
+                            <div class="container m-0 p-0">
+                                <div class="row">
+                                    @if (ReviewThenModifyProduct.CompileProductProperties.ProductSpecs.Count == 0)
+                                    {
+                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                            <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var specs in ReviewThenModifyProduct.CompileProductProperties.ProductSpecs)
+                                        {
+                                            @if (specs.KeyName!.Contains("Warranty Type", StringComparison.CurrentCultureIgnoreCase))
+                                            {
+                                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                                    <label for="@($"{specs.KeyNameID}")" class="form-label text-nowrap fw-bold">@($"{specs.KeyName}")</label>
+                                                    <BlazorBootstrap.Dropdown Id="@($"{specs.KeyNameID}")" Color="BlazorBootstrap.DropdownColor.Light" Size="BlazorBootstrap.DropdownSize.Small" Class="w-100">
+                                                        <BlazorBootstrap.DropdownToggleButton>@(ReviewThenModifyProduct.SelectedWarrantyType ?? "Select a warranty type")
+                                                        </BlazorBootstrap.DropdownToggleButton>
+                                                        <BlazorBootstrap.DropdownMenu Class="w-100">
+                                                            @foreach (var warrantyType in ReviewThenModifyProduct.CompileProductProperties.ProductWarrantyType)
+                                                            {
+                                                                <BlazorBootstrap.DropdownItem @onclick="() => OnWarrantyTypeItemSelected(warrantyType)" Active="@warrantyType.State"
+                                                                    Disabled="@(warrantyType.ID == 2)" Class="w-100">
+                                                                    @warrantyType.Item
+                                                                </BlazorBootstrap.DropdownItem>
+                                                            }
+                                                        </BlazorBootstrap.DropdownMenu>
+                                                    </BlazorBootstrap.Dropdown>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                                    <label for="@($"{specs.KeyNameID}")" class="form-label text-nowrap fw-bold">@($"{specs.KeyName}")</label>
+                                                    <InputText id="@($"{specs.KeyNameID}")"
+                                                        @bind-Value="specs.Value"
+                                                        class="form-control form-control-sm" />
+                                                    <ValidationMessage id="@($"{specs.KeyNameID}")"
+                                                        For="() => specs.Value"
+                                                        class="text-danger" />
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                    <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
+                                        <label for="randomText" class="form-label text-nowrap fw-bold">Sort list</label>
+                                        @*This feature is to rank the product specifications based on their character length (ascending). TODO: add functionality and save to database*@
+                                        <BlazorBootstrap.SortableList TItem="ProductSpecsFRSort" Data="productSpecs" Context="item" OnUpdate="@OnProdSpecsListUpdate">
+                                            <ItemTemplate>
+                                                @item.Value
+                                            </ItemTemplate>
+                                        </BlazorBootstrap.SortableList>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                    
+
+                        <div class="mb-3 d-flex flex-column align-items-start w-100">
+                            <label for="editor" class="form-label text-nowrap fw-bold">Product Description</label>
+                            <div class="w-100">
+                                @*For reference: https://quilljs.com/docs/quickstart*@
+                                @*<div id="editor" class="w-100 rounded-bottom"></div> Could be replaced with https://demos.blazorbootstrap.com/markdown if the images were accessible through a link.*@
+                                <div id="toolbar-container">
+                                    <span class="ql-formats">
+                                        <select class="ql-font">
+                                            <option selected>Sans Serif</option>
+                                            <option value="roboto">Roboto</option>
+                                            <option value="open sans">Open Sans</option>
+                                            <option value="lato">Lato</option>
+                                            <option value="montserrat">Montserrat</option>
+                                            <option value="roboto condensed">Roboto Condensed</option>
+                                            <option value="oswald">Oswald</option>
+                                            <option value="poppins">Poppins</option>
+                                            <option value="slabo 27px">Slabo 27px</option>
+                                            <option value="noto sans">Noto Sans</option>
+                                            <option value="roboto mono">Roboto Mono</option>
+                                            <option value="merriweather">Merriweather</option>
+                                        </select>
+                                        <select class="ql-size"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <select class="ql-color"></select>
+                                        <select class="ql-background"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-script" value="sub"></button>
+                                        <button class="ql-script" value="super"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-header" value="1"></button>
+                                        <button class="ql-header" value="2"></button>
+                                        <button class="ql-blockquote"></button>
+                                        <button class="ql-code-block"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-list" value="ordered"></button>
+                                        <button class="ql-list" value="bullet"></button>
+                                        <button class="ql-indent" value="-1"></button>
+                                        <button class="ql-indent" value="+1"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-direction" value="rtl"></button>
+                                        <select class="ql-align"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-link"></button>
+                                        <button class="ql-image"></button>
+                                        <button class="ql-video"></button>
+                                        <button class="ql-formula"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <button class="ql-clean"></button>
+                                    </span>
+                                </div>
+                                <div id="editor">
+                                </div>
+                                @if (ReviewThenModifyProduct.CompileProductProperties.ProductDescription != null && ReviewThenModifyProduct.CompileProductProperties.ProductDescription.Description != null)
+                                {
+                                    <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductDescription.Description" class="text-danger" />
                                 }
-                                <div class="col-12 col-sm-6 col-lg-3 mb-3 d-flex flex-column align-items-start">
-                                    <label for="randomText" class="form-label text-nowrap fw-bold">Sort list</label>
-                                    <SortableList TItem="ProductSpecsFRSort" Data="productSpecs" Context="item" OnUpdate="@OnProdSpecsListUpdate">
-                                        <ItemTemplate>
-                                            @item.Value
-                                        </ItemTemplate>
-                                    </SortableList>
+                            </div>
+                        </div>
+
+                        <div class="row py-1 text-center m-0 w-100">
+                            <div class="col-6 d-flex flex-column justify-content-center align-items-center ps-0">
+                                <button type="button" class="btn btn-primary w-100 text-wrap" @onclick="ShowReviewSummary">Review Product Details Entry</button>
+                            </div>
+                            <div class="col-6 d-flex flex-column justify-content-center align-items-center pe-0">
+                                <button type="button"
+                                    class="btn btn-outline-danger w-100 text-wrap" @onclick="NavigateBack">Go Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
+}
+else
+{
+    @*Should not proceed if a field is left blank*@
+    <div class="container-fluid overflow-x-auto mw-40">
+        <div class="row py-1 border rounded border-secondary-subtle my-2">
+            <div class="d-flex flex-column align-items-start mb-4">
+                <h5 class="fw-bold py-1">Basic Information</h5>
+                <div class="d-flex flex-column justify-content-center py-1 w-100">                    
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-6 d-flex flex-column justify-content-start align-items-start ps-0">
+                                <div class="container m-0 p-0">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label class="form-label text-nowrap fw-bold">Product Name</label>
+                                            <p>@ReviewThenModifyProduct.ProdNameEntry</p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label class="form-label text-wrap fw-bold">Product Category</label>
+                                            <p>@ReviewThenModifyProduct.SelectedCategory</p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label class="form-label text-wrap fw-bold">Original Price</label>
+                                            <p>@ReviewThenModifyProduct.FormattedOrigPrice</p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label class="form-label text-wrap fw-bold">Discounted Price</label>
+                                            <p>@ReviewThenModifyProduct.FormattedDiscPrice</p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label class="form-label text-wrap fw-bold">Difference Price</label>
+                                            <p>@ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.DiffPrice</p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label class="form-label text-wrap fw-bold">Rounded Discount Percentage</label>
+                                            <p>@($"{ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.RoundedDiscPercentage}%")</p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label for="stock" class="form-label text-wrap fw-bold">Stock</label>
+                                            <p>@ReviewThenModifyProduct.ProdStock</p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label for="stock" class="form-label text-wrap fw-bold">Availability</label>
+                                            @if (ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.Availability == null)
+                                            {
+                                                <BlazorBootstrap.Tooltip Title="Availability cannot be null." Placement="BlazorBootstrap.TooltipPlacement.Bottom">
+                                                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.Bug" Color="BlazorBootstrap.IconColor.Danger" />
+                                                </BlazorBootstrap.Tooltip>
+                                            }
+                                            else
+                                            {
+                                                @if (ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.Availability == true)
+                                                {
+                                                    <BlazorBootstrap.Tooltip Title="The product is now available." Placement="BlazorBootstrap.TooltipPlacement.Bottom">
+                                                        <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PatchCheckFill" Color="BlazorBootstrap.IconColor.Success" />
+                                                    </BlazorBootstrap.Tooltip>
+                                                }
+                                                else
+                                                {
+                                                    <BlazorBootstrap.Tooltip Title="The product isn't available at the moment." Placement="BlazorBootstrap.TooltipPlacement.Bottom">
+                                                        <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.PatchExclamationFill" Color="BlazorBootstrap.IconColor.Danger" />
+                                                    </BlazorBootstrap.Tooltip>
+                                                }
+
+                                            }
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label for="stock" class="form-label text-wrap fw-bold">Promo Tags</label>
+                                            @if (ReviewThenModifyProduct.CompileProductProperties.Tags == null)
+                                            {
+                                                <BlazorBootstrap.Tooltip Title="Promo Tags cannot be null." Placement="BlazorBootstrap.TooltipPlacement.Bottom">
+                                                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.Bug" Color="BlazorBootstrap.IconColor.Danger" />
+                                                </BlazorBootstrap.Tooltip>
+                                            }
+                                            else if (ReviewThenModifyProduct.CompileProductProperties.Tags.Count == 0)
+                                            {
+                                                <BlazorBootstrap.Tooltip Title="Promo Tags cannot be empty." Placement="BlazorBootstrap.TooltipPlacement.Bottom">
+                                                    <BlazorBootstrap.Icon Name="BlazorBootstrap.IconName.Bug" Color="BlazorBootstrap.IconColor.Danger" />
+                                                </BlazorBootstrap.Tooltip>
+                                            }
+                                            else
+                                            {
+                                                <ul class="list-group">
+                                                    @foreach (var tag in ReviewThenModifyProduct.CompileProductProperties.Tags)
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <span>@tag.TagValues</span>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex flex-column align-items-start">
+                                            <label for="stock" class="form-label text-wrap fw-bold">Product Specifications</label>
+                                            
+                                            <ul class="list-group">
+                                                @foreach (var specs in productSpecs)
+                                                {
+                                                    <li class="list-group-item">
+                                                        <span>@specs.Value</span>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex flex-column justify-content-center align-items-start ps-0">
+                                <label for="stock" class="form-label text-wrap fw-bold">Product Images</label>
+                                <div class="container-fluid p-0">
+                                    <div class="column">
+                                        <div class="col-12 col-lg-12 mb-3">
+                                            @foreach (var img in ReviewThenModifyProduct.CompileProductProperties.ProductImages!)
+                                            {                                    
+                                                <a href="@GlobalMethod.DbDataToImg(img.ProdImg)" target="_blank"> @* TODO: Fix the needing of refreshing the page to show the image in target="_blank" *@
+                                                    <img src="@GlobalMethod.DbDataToImg(img.ProdImg)" class="img-thumbnail m-3" width="150px" alt="Product Image" />                                            
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-
-                    <div class="mb-3 d-flex flex-column align-items-start w-100">
-                        <label for="randomText" class="form-label text-nowrap fw-bold">Product Description</label>
-                        <div class="w-100">
-                            <div id="editor" class="w-100 rounded-bottom"></div> @*Could be replaced with https://demos.blazorbootstrap.com/markdown if the images were accessible through a link.*@
-                        </div>
+                    <div class="w-100 d-flex justify-content-center p-0">
+                        <div id="editorReview" class="w-100 m-0 p-0"></div> @*Could be replaced with https://demos.blazorbootstrap.com/markdown if the images were accessible through a link.*@
                     </div>
                 </div>
-            </EditForm>
+                <div class="row py-1 m-0 text-center w-100 d-flex justify-content-center">
+                    <div class="col-6 d-flex flex-column justify-content-center align-items-center p-0">                    
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12 col-lg-6">
+                                        <button type="button" class="btn btn-primary w-100 text-wrap" @onclick="ShowReviewSummary">Edit Product</button>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <button type="button" class="btn btn-outline-danger w-100 text-wrap" @onclick="NavigateBack">Go Back</button>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col-6 d-flex flex-column justify-content-center align-items-center">
+                            <button type="button" class="btn btn-outline-primary w-100 text-wrap">Save Product</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 }
@@ -328,10 +600,10 @@ else
     private EditContext? editContext;
     private ValidationMessageStore? messageStore;
     private ReviewThenModifyProduct ReviewThenModifyProduct = new ReviewThenModifyProduct();
-    private BlazorSQLServerContext context = default!;
     private Guid Id => Guid.NewGuid();
     protected string? Value { get; set; }
     protected bool IsContainSpecialCharacter { get; set; }
+    private bool _disposed = false;
     
     [Parameter]
     public string? prodId { get; set; }
@@ -341,6 +613,7 @@ else
     public List<ProductTagsRefFRAutoComplete> productTagRef = new();
     private string? errorMessage;
     InputFile filePicker = new();
+    private bool isReviewSummary = false;
     
     protected override async Task OnInitializedAsync()
     {
@@ -348,7 +621,6 @@ else
         messageStore = new ValidationMessageStore(editContext);
 
         editContext.OnValidationRequested += HandleValidationRequested;
-        context = DbFactory.CreateDbContext();
         ReviewThenModifyProduct.SelectedCategory = "Jewelry";
         SetActiveCategory(1);
         await RetrieveProductMainForReview();
@@ -387,6 +659,7 @@ else
 
     private async Task RetrieveProductMainForReview()
     {
+        using var context = DbFactory.CreateDbContext(); // recommended for heavy operations
         var sQLServerHelper = new SQLServerHelper(context);
         ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview = null;
         StateHasChanged();
@@ -397,17 +670,17 @@ else
         {
             NavigationManager.NavigateTo("notfound");
         }
-        ReviewThenModifyProduct.ProdNameEntry = ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.ProdName;
+        ReviewThenModifyProduct.ProdNameEntry = ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.ProdName ?? "";
         ReviewThenModifyProduct.ProdNameLC = ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.ProdName?.Length ?? 0;
         ReviewThenModifyProduct.ProdStock = ReviewThenModifyProduct.CompileProductProperties.ProductMainForReview?.Stock ?? 0;
-        StateHasChanged();
     }
 
     private async Task RetrievePromoTagForReview()
     {
+        using var context = DbFactory.CreateDbContext(); // recommended for heavy operations
         var sQLServerHelper = new SQLServerHelper(context);
         ReviewThenModifyProduct.CompileProductProperties.Tags = [];
-        StateHasChanged();
+        @* StateHasChanged(); I'm having struggle to show shimmer here*@
         var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
         "REVIEW_PRODUCT_PROMO_TAG");
         ReviewThenModifyProduct.CompileProductProperties.Tags = await
@@ -416,14 +689,15 @@ else
         {
             NavigationManager.NavigateTo("notfound");
         }
-        StateHasChanged();
+        @* StateHasChanged(); *@
     }
 
     private async Task RetrievePromoTagRefForReview()
     {
+        using var context = DbFactory.CreateDbContext(); // recommended for heavy operations
         var sQLServerHelper = new SQLServerHelper(context);
-        ReviewThenModifyProduct.CompileProductProperties.TagRefList = [];
-        StateHasChanged();
+        @* ReviewThenModifyProduct.CompileProductProperties.TagRefList = []; *@
+        @* StateHasChanged(); *@
         var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
         "RETRIEVE_PROMO_TAG_REF");
         ReviewThenModifyProduct.CompileProductProperties.TagRefList = await
@@ -432,7 +706,7 @@ else
         {
             NavigationManager.NavigateTo("notfound");
         }
-        ReviewThenModifyProduct.CompileProductProperties.TagRefList.Add(
+        @* ReviewThenModifyProduct.CompileProductProperties.TagRefList.Add(
             new ProductPromoTagRefFR
             {
                 Tag = "Simulate tag item 1"
@@ -443,11 +717,11 @@ else
             {
                 Tag = "Simulate tag item 2"
             }
-        );
-        StateHasChanged();
+        ); *@
+        @* StateHasChanged(); *@
     }
 
-    private async Task<AutoCompleteDataProviderResult<ProductTagsRefFRAutoComplete>> ProductTagRefDataProvider(AutoCompleteDataProviderRequest<ProductTagsRefFRAutoComplete> request)
+    private async Task<BlazorBootstrap.AutoCompleteDataProviderResult<ProductTagsRefFRAutoComplete>> ProductTagRefDataProvider(BlazorBootstrap.AutoCompleteDataProviderRequest<ProductTagsRefFRAutoComplete> request)
     {
         var query = ReviewThenModifyProduct.CompileProductProperties.TagRefList.AsQueryable();
 
@@ -462,7 +736,7 @@ else
             .Select(data => new ProductTagsRefFRAutoComplete(data.Tag))
             .ToList();
 
-        return await Task.FromResult(new AutoCompleteDataProviderResult<ProductTagsRefFRAutoComplete>
+        return await Task.FromResult(new BlazorBootstrap.AutoCompleteDataProviderResult<ProductTagsRefFRAutoComplete>
         {
             Data = productTagRef,
             TotalCount = productTagRef.Count
@@ -529,9 +803,10 @@ else
 
     private async Task RetrieveProductImagesForReview()
     {
+        using var context = DbFactory.CreateDbContext(); // recommended for heavy operations
         var sQLServerHelper = new SQLServerHelper(context);
-        ReviewThenModifyProduct.CompileProductProperties.ProductImages = [];
-        StateHasChanged();
+        @* ReviewThenModifyProduct.CompileProductProperties.ProductImages = []; *@
+        @* StateHasChanged(); *@
         var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
         "REVIEW_PRODUCT_IMAGES");
         ReviewThenModifyProduct.CompileProductProperties.ProductImages = await
@@ -540,14 +815,15 @@ else
         {
             NavigationManager.NavigateTo("notfound");
         }
-        StateHasChanged();
+        @* StateHasChanged(); *@
     }
 
     private async Task RetrieveProductSpecsForReview()
     {
+        using var context = DbFactory.CreateDbContext(); // recommended for heavy operations
         var sQLServerHelper = new SQLServerHelper(context);
-        ReviewThenModifyProduct.CompileProductProperties.ProductSpecs = [];
-        StateHasChanged();
+        @* ReviewThenModifyProduct.CompileProductProperties.ProductSpecs = []; *@
+        @* StateHasChanged(); *@
         var spParam = SQLServerInnerHelper.ManageAdminProductsWOutputPageParams(prodID: prodId, functionKey:
         "REVIEW_PRODUCT_SPECS");
         ReviewThenModifyProduct.CompileProductProperties.ProductSpecs = await
@@ -563,11 +839,12 @@ else
         ReviewThenModifyProduct.SelectedWarrantyType = ReviewThenModifyProduct.CompileProductProperties.ProductSpecs?.FirstOrDefault(d => d.KeyName!.Contains("Warranty Type", StringComparison.OrdinalIgnoreCase))?.Value;
         ReviewThenModifyProduct.SelectedWarrantyTypeID = (int)ReviewThenModifyProduct.CompileProductProperties.ProductWarrantyType?.FirstOrDefault(d => d.Item!.Contains(ReviewThenModifyProduct.SelectedWarrantyType!, StringComparison.OrdinalIgnoreCase))?.ID!;
         SetActiveWarrantyType((int)ReviewThenModifyProduct.SelectedWarrantyTypeID);
-        StateHasChanged();
+        @* StateHasChanged(); *@
     }
 
     private async Task RetrieveProducDescriptionForReview()
     {
+        using var context = DbFactory.CreateDbContext(); // recommended for heavy operations
         var sQLServerHelper = new SQLServerHelper(context);
         ReviewThenModifyProduct.CompileProductProperties.ProductDescription = null;
         StateHasChanged();
@@ -579,7 +856,18 @@ else
         {
             NavigationManager.NavigateTo("notfound");
         }
-        await JS.InvokeVoidAsync("setContent", ReviewThenModifyProduct.CompileProductProperties.ProductDescription?.Description);
+        if (!_disposed)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("previewContent");
+                await JS.InvokeVoidAsync("setContent", ReviewThenModifyProduct.CompileProductProperties.ProductDescription?.Description);
+            }
+            catch (JSDisconnectedException)
+            {
+                // Optional: log or ignore
+            }
+        }
         StateHasChanged();
     }
 
@@ -645,13 +933,13 @@ else
         if (decimal.TryParse(sanitize, out var val))
         {
             // Check if value is in range
-            if (val >= 1000m && val <= 1000000m)
+            if (val >= 500m && val <= 1000000m)
             {
                 messageStore?.Clear(field);
             }
             else
             {
-                messageStore!.Add(() => ReviewThenModifyProduct!.FormattedDiscPrice, "Price must be between ₱1,000.00 and ₱1,000,000.00.");
+                messageStore!.Add(() => ReviewThenModifyProduct!.FormattedDiscPrice, "Price must be between ₱500.00 and ₱1,000,000.00.");
             }
         }
     }
@@ -684,10 +972,10 @@ else
 
     private void FormatOnBlurSpecs(FocusEventArgs e) // For reference, this has been discontinued for use in specs.
     {
-        editContext!.NotifyValidationStateChanged();
-        @* foreach (var spec in ReviewThenModifyProduct.CompileProductProperties.ProductSpecsEntryHolderFR)
+        @* editContext!.NotifyValidationStateChanged(); *@
+        @* foreach (var spec in ReviewThenModifyProduct.CompileProductProperties.ProductSpecs)
         {
-            var fieldIdentifier = new FieldIdentifier(spec, nameof(spec.Value));
+            var fieldIdentifier = editContext.Field(nameof(spec.Value));
             if (string.IsNullOrWhiteSpace(spec.Value))
             {
                 messageStore!.Add(fieldIdentifier, $"{spec.KeyName} is required.");
@@ -697,7 +985,7 @@ else
             editContext!.NotifyValidationStateChanged();
         } *@
         
-        @* foreach (var specs in ReviewThenModifyProduct.CompileProductProperties.ProductSpecsEntryHolderFR)
+        @* foreach (var specs in ReviewThenModifyProduct.CompileProductProperties.ProductSpecs) // for testing
         {
             if (string.IsNullOrWhiteSpace(specs.Value))
             {
@@ -797,50 +1085,50 @@ else
         const int maxFileCount = 8;
         try
         {
-        int getItemPostCount = ReviewThenModifyProduct.CompileProductProperties.ProductImages.Count;
-        int getItemPreCount = e.GetMultipleFiles(maxFileCount).Count() + getItemPostCount;
-        if (getItemPostCount != 0 && maxFileCount < getItemPreCount)
-        {
-            errorMessage = "The max allowed count of items was exceeded.";
-            await JS.InvokeVoidAsync("showLiveToastError");
-        }
-        else
-        {
-            foreach (var file in e.GetMultipleFiles(maxFileCount))
-            {
-                using var readStream = file.OpenReadStream(maxAllowedSize);
-                using var memoryStream = new MemoryStream();
+          int getItemPostCount = ReviewThenModifyProduct.CompileProductProperties.ProductImages.Count;
+          int getItemPreCount = e.GetMultipleFiles(maxFileCount).Count() + getItemPostCount;
+          if (getItemPostCount != 0 && maxFileCount < getItemPreCount)
+          {
+              errorMessage = "The max allowed count of items was exceeded.";
+              await JS.InvokeVoidAsync("showLiveToastError");
+          }
+          else
+          {
+              foreach (var file in e.GetMultipleFiles(maxFileCount))
+              {
+                  using var readStream = file.OpenReadStream(maxAllowedSize);
+                  using var memoryStream = new MemoryStream();
 
-                await readStream.CopyToAsync(memoryStream);
-                @* var base64 = Convert.ToBase64String(memoryStream.ToArray()); *@
-                
-                string pImgID = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
-                int getLength = pImgID.Count();
-                string reprocessedStringID = "";
-                string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
-                for (int i = 0; i <= getLength; i++)
-                {
-                    if (i < 13)
-                    {
-                        reprocessedStringID = pImgID.Substring(0, i);
-                        if (i == 12)
-                        {
-                            break;
-                        }
-                    }
-                }
-                string concatString = String.Concat("PROD_PT-", dateNow, "-", reprocessedStringID);
-                ReviewThenModifyProduct.CompileProductProperties.ProductImages.Add(
-                    new ProductImgFR
-                    {
-                        ProdID = concatString,
-                        ProdImg = memoryStream.ToArray(),
-                        Size = file.Size
-                    }
-                );
-            }
-            @* ReviewThenModifyProduct.CompileProductProperties.ProductImages.Reverse(); *@
-        }
+                  await readStream.CopyToAsync(memoryStream);
+                  @* var base64 = Convert.ToBase64String(memoryStream.ToArray()); *@
+                  
+                  string pImgID = Guid.NewGuid().ToString().Replace("-", "").ToUpper();
+                  int getLength = pImgID.Count();
+                  string reprocessedStringID = "";
+                  string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+                  for (int i = 0; i <= getLength; i++)
+                  {
+                      if (i < 13)
+                      {
+                          reprocessedStringID = pImgID.Substring(0, i);
+                          if (i == 12)
+                          {
+                              break;
+                          }
+                      }
+                  }
+                  string concatString = String.Concat("PROD_PT-", dateNow, "-", reprocessedStringID);
+                  ReviewThenModifyProduct.CompileProductProperties.ProductImages.Add(
+                      new ProductImgFR
+                      {
+                          ProdID = concatString,
+                          ProdImg = memoryStream.ToArray(),
+                          Size = file.Size
+                      }
+                  );
+              }
+              @* ReviewThenModifyProduct.CompileProductProperties.ProductImages.Reverse(); *@
+          }
         }
         catch (IOException ex)
         {
@@ -866,7 +1154,7 @@ else
         ReviewThenModifyProduct.CompileProductProperties.ProductImages.Remove(prodImg);
     }
 
-    private void OnProdSpecsListUpdate(SortableListEventArgs args)
+    private void OnProdSpecsListUpdate(BlazorBootstrap.SortableListEventArgs args)
     {
         var itemToMove = productSpecs[args.OldIndex];
 
@@ -878,9 +1166,49 @@ else
             productSpecs.Add(itemToMove);
     }
 
-    public async ValueTask DisposeAsync() // this is important
+    private async Task NavigateBack()
     {
-        await context.DisposeAsync();
+        await JS.InvokeVoidAsync("goBack");
     }
 
+    private async Task ShowReviewSummary()
+    {
+        isReviewSummary = !isReviewSummary;
+        if (!_disposed && isReviewSummary)
+        {
+            try
+            {
+                string? modifiedContent = await JS.InvokeAsync<string>("getContentsQuill");
+                await JS.InvokeVoidAsync("previewContentReview");
+                await JS.InvokeVoidAsync("setContentReview", modifiedContent);
+            }
+            catch (JSDisconnectedException)
+            {
+                // Optional: log or ignore
+            }
+        }
+        else
+        {
+            try
+            {
+                string? modifiedContent = await JS.InvokeAsync<string>("getContentsQuill");
+                await JS.InvokeVoidAsync("previewContent");
+                await JS.InvokeVoidAsync("setContent", modifiedContent);
+            }
+            catch (JSDisconnectedException)
+            {
+                // Optional: log or ignore
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+    }
+
+    @* public async ValueTask DisposeAsync() // this is not important for this case
+    {
+        await context.DisposeAsync();
+    } *@
 }

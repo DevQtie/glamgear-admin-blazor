@@ -1,3 +1,42 @@
+// function onBeforeUnload(e) {
+//     if (thereAreUnsavedChanges()) {
+//         e.preventDefault();
+//         e.returnValue = '';
+//         return;
+//     }
+
+//     delete e['returnValue'];
+// }
+
+// window.addEventListener('beforeunload', onBeforeUnload);
+
+// window.onbeforeunload = function (e) {
+//     e = e || window.event;
+
+//     // For IE and Firefox prior to version 4
+//     if (e) {
+//         e.returnValue = 'Sure?';
+//     }
+
+//     // For Safari
+//     return 'Sure?';
+// };
+
+// window.addEventListener('beforeunload', function (e) {
+//     if (thereAreUnsavedChanges()) {
+//         e.preventDefault();           // Required for Chrome and modern browsers
+//         e.returnValue = '';           // Triggers the confirmation dialog
+//     }
+// });
+
+window.onbeforeunload = function (e) { // I'm inspired by the Stack Overflow behavior where it asks for confirmation only if there are unsaved changes when you're composing a question or answer.
+    return 'Dialog text here.'; // need for improvement to avoid (if necessary) the entries of unsaved changes.
+};
+
+window.goBack = function () {
+    history.back();
+};
+
 window.showLiveToastError = () => {
     const toastEl = document.getElementById('liveToastError');
     if (toastEl) {
@@ -8,41 +47,64 @@ window.showLiveToastError = () => {
 
 window.triggerClick = (element) => element.click();
 
-setTimeout(function () {
+const Font = Quill.import('attributors/style/font');
+Font.whitelist = [
+    'roboto', 'open sans', 'lato', 'montserrat', 'roboto condensed',
+    'oswald', 'poppins', 'slabo 27px', 'noto sans', 'roboto mono', 'merriweather'
+];
+Quill.register(Font, true);
+
+window.previewContent = function () {
     const quill = new Quill('#editor', {
         modules: {
-            toolbar: [
-                // [{ header: [1, 2, false] }],
-                // ['bold', 'italic', 'underline'],
-                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                ['blockquote', 'code-block', 'link', 'image'],
-
-                [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
-                [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-                [{ 'direction': 'rtl' }],                         // text direction
-
-                [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                [{ 'font': [] }],
-                [{ 'align': [] }],
-
-                ['clean']
-            ],
+            toolbar: '#toolbar-container'
         },
         placeholder: 'Compose a product description here...',
         theme: 'snow'
     });
     window.quillEditor = quill;
-    console.log("✅ Quill initialized");
-}, 1000); // Delay in milliseconds (1000ms = 1 second)
+    console.log("Quill initialized");
+};
 
 window.setContent = function (deltaJson) {
     const Delta = Quill.import('delta');
     const delta = typeof deltaJson === 'string' ? JSON.parse(deltaJson) : deltaJson;
     if (window.quillEditor) {
         const deltaObj = new Delta(delta);
-        window.quillEditor.setContents(deltaObj, 'api')
+        window.quillEditor.setContents(deltaObj, 'api');
+    } else {
+        console.warn("Quill editor not initialized.");
+    }
+};
+
+window.getContentsQuill = function () {
+    if (window.quillEditor) {
+        const delta = window.quillEditor.getContents();
+        return JSON.stringify(delta);
+    } else {
+        console.warn("Quill editor not initialized.");
+        return null;
+    }
+};
+
+window.previewContentReview = function () {
+    const quill = new Quill('#editorReview', {
+        readOnly: true,
+        modules: {
+            toolbar: false,
+        },
+        theme: 'bubble' // change to snow to see border, otherwise use bubble
+    });
+    window.quillEditorReview = quill;
+    console.log("Quill initialized");
+};
+
+window.setContentReview = function (deltaJson) {
+    const Delta = Quill.import('delta');
+    const delta = typeof deltaJson === 'string' ? JSON.parse(deltaJson) : deltaJson;
+    if (window.quillEditorReview) {
+        const deltaObj = new Delta(delta);
+        window.quillEditorReview.setContents(deltaObj, 'api');
     } else {
         console.warn("Quill editor not initialized.");
     }

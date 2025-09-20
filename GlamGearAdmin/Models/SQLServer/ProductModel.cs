@@ -96,6 +96,12 @@ public class ProductMainForReview
     }
   }
 
+  [NotMapped]
+  public decimal DiffPrice => OrigPrice - DiscPrice;
+
+  [NotMapped]
+  public decimal RoundedDiscPercentage => Math.Round((OrigPrice - DiscPrice) / OrigPrice * 100, 0, MidpointRounding.AwayFromZero);
+
   [Column("dis_perc")]
   public string? DiscPercent { get; set; }
 
@@ -132,7 +138,7 @@ public class ProductSpecsFR // for review (FR)
   [Column("key_name")]
   public string? KeyName { get; set; }
 
-  [Required(ErrorMessage = "This field is required.")]
+  // [Required(ErrorMessage = "This field is required.")]
   [Column("value")]
   public string? Value { get; set; }
 

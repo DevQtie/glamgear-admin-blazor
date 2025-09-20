@@ -1,18 +1,20 @@
+@using BlazorBootstrap
+
 <div class="container-fluid overflow-x-auto">
-  <LineChart @ref="lineChart" />
+  <BlazorBootstrap.LineChart @ref="lineChart" />
 </div>
 
 <div class="my-3">
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" Class="my-1 mr-1"
-    @onclick="async () => await RandomizeAsync()"> Randomize </Button>
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" Class="my-1 mr-1"
-    @onclick="async () => await AddDatasetAsync()"> Add Dataset </Button>
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" Class="my-1 mr-1"
-    @onclick="async () => await AddDataAsync()"> Add Data </Button>
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" Class="my-1 mr-1"
-    @onclick="async () => await ShowHorizontalLineChartAsync()"> Horizontal Line Chart </Button>
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" Class="my-1 mr-1"
-    @onclick="async () => await ShowVerticalLineChartAsync()"> Vertical Line Chart </Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small" Class="my-1 mr-1"
+    @onclick="async () => await RandomizeAsync()"> Randomize </BlazorBootstrap.Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small" Class="my-1 mr-1"
+    @onclick="async () => await AddDatasetAsync()"> Add Dataset </BlazorBootstrap.Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small" Class="my-1 mr-1"
+    @onclick="async () => await AddDataAsync()"> Add Data </BlazorBootstrap.Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small" Class="my-1 mr-1"
+    @onclick="async () => await ShowHorizontalLineChartAsync()"> Horizontal Line Chart </BlazorBootstrap.Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small" Class="my-1 mr-1"
+    @onclick="async () => await ShowVerticalLineChartAsync()"> Vertical Line Chart </BlazorBootstrap.Button>
 </div>
 
 <ul class="list-bullet my-3">
@@ -20,9 +22,9 @@
 </ul>
 
 @code {
-  private LineChart lineChart = default!;
-  private LineChartOptions lineChartOptions = default!;
-  private ChartData chartData = default!;
+  private BlazorBootstrap.LineChart lineChart = default!;
+  private BlazorBootstrap.LineChartOptions lineChartOptions = default!;
+  private BlazorBootstrap.ChartData chartData = default!;
 
   private int datasetsCount;
   private int labelsCount;
@@ -31,11 +33,11 @@
 
   protected override void OnInitialized()
   {
-    chartData = new ChartData { Labels = GetDefaultDataLabels(6), Datasets = GetDefaultDataSets(3) };
+    chartData = new BlazorBootstrap.ChartData { Labels = GetDefaultDataLabels(6), Datasets = GetDefaultDataSets(3) };
     lineChartOptions = new()
     {
       IndexAxis = "x",
-      Interaction = new Interaction { Mode = InteractionMode.Index, Intersect = false },
+      Interaction = new BlazorBootstrap.Interaction { Mode = BlazorBootstrap.InteractionMode.Index, Intersect = false },
       Responsive = true,
     };
   }
@@ -53,11 +55,11 @@
   {
     if (chartData is null || chartData.Datasets is null || !chartData.Datasets.Any()) return;
 
-    var newDatasets = new List<IChartDataset>();
+    var newDatasets = new List<BlazorBootstrap.IChartDataset>();
 
     foreach (var dataset in chartData.Datasets)
     {
-      if (dataset is LineChartDataset lineChartDataset
+      if (dataset is BlazorBootstrap.LineChartDataset lineChartDataset
       && lineChartDataset is not null
       && lineChartDataset.Data is not null)
       {
@@ -92,11 +94,11 @@
     if (chartData is null || chartData.Datasets is null)
       return;
 
-    var data = new List<IChartDatasetData>();
+    var data = new List<BlazorBootstrap.IChartDatasetData>();
     foreach (var dataset in chartData.Datasets)
     {
-      if (dataset is LineChartDataset lineChartDataset)
-        data.Add(new LineChartDatasetData(lineChartDataset.Label, random.Next(200)));
+      if (dataset is BlazorBootstrap.LineChartDataset lineChartDataset)
+        data.Add(new BlazorBootstrap.LineChartDatasetData(lineChartDataset.Label, random.Next(200)));
     }
 
     chartData = await lineChart.AddDataAsync(chartData, GetNextDataLabel(), data);
@@ -116,9 +118,9 @@
 
   #region Data Preparation
 
-  private List<IChartDataset> GetDefaultDataSets(int numberOfDatasets)
+  private List<BlazorBootstrap.IChartDataset> GetDefaultDataSets(int numberOfDatasets)
   {
-    var datasets = new List<IChartDataset>();
+    var datasets = new List<BlazorBootstrap.IChartDataset>();
 
     for (var index = 0; index < numberOfDatasets; index++)
     {
@@ -128,13 +130,13 @@
     return datasets;
   }
 
-  private LineChartDataset GetRandomLineChartDataset()
+  private BlazorBootstrap.LineChartDataset GetRandomLineChartDataset()
   {
-    var c = ColorUtility.CategoricalTwelveColors[datasetsCount].ToColor();
+    var c = BlazorBootstrap.ColorUtility.CategoricalTwelveColors[datasetsCount].ToColor(); // lint issue, it's not actually an error
 
     datasetsCount += 1;
 
-    return new LineChartDataset
+    return new BlazorBootstrap.LineChartDataset
     {
       Label = $"Team {datasetsCount}",
       Data = GetRandomData(),

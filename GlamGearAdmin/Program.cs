@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using GlamGearAdmin.Data.SQLiteAuth;
 using GlamGearAdmin.Models.AppModels;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
@@ -21,6 +22,8 @@ builder.Services.AddDbContextFactory<BlazorSQLServerContext>(options =>
         sqlServerOptions => sqlServerOptions.CommandTimeout(60))); // Timeout is in seconds. However, if you have any doubts, please read: https://stackoverflow.com/a/7023772/14041392
 
 builder.Services.AddBlazorBootstrap();
+
+builder.Services.AddMudServices();
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
@@ -60,6 +63,12 @@ builder.Services.AddIdentityCore<IdentityUser>(options => options.SignIn.Require
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<IdentityUser>, IdentityNoOpEmailSender>();
+
+// Configure SignalR
+builder.Services.AddSignalR(options =>
+{
+    options.MaximumReceiveMessageSize = 20L * 1024L * 1024L; // 20MB, adjust as needed
+});
 
 var app = builder.Build();
 

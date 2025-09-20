@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -159,6 +160,30 @@ public class ProductWarrantyType
   public int ID { get; set; }
   public string? Item { get; set; }
   public bool State { get; set; }
+}
+
+public class SpecsValidator : AbstractValidator<ProductSpecsFR>
+{
+  public SpecsValidator()
+  {
+    this.RuleFor(x => x.Value)
+        .Custom(
+            (value, context) =>
+            {
+              if (string.IsNullOrWhiteSpace(value)) // Not limited to emptiness of the field
+              {
+                context.AddFailure($"{context.InstanceToValidate.Value} This field is required."); // Refactor this based on the type of validation check
+              }
+            });
+  }
+}
+
+public class SpecsContainerValidator : AbstractValidator<ReviewThenModifyProduct>
+{
+  public SpecsContainerValidator()
+  {
+    this.RuleForEach(x => x.CompileProductProperties.ProductSpecs).SetValidator(new SpecsValidator());
+  }
 }
 
 #endregion ValidateComplexType

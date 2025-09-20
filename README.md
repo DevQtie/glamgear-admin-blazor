@@ -5,6 +5,23 @@ GlamGear admin web application using ASP.NET Core (.NET 9) with Blazor
 
 ## Important note: Always utilize the Bootstrap v5.3.3 as it is already embedded to the project structure, and it should be used properly.
 
+## 1.13.2.1-alpha
+
+- Review layout product polishing
+
+## 1.13.2.0-alpha
+
+- Review Quill rich text editor changes.
+- Font-family selections Quill rich text editor bug fixes.
+
+## 1.13.1.1-alpha
+
+- Add product image added.
+
+## 1.13.1.0-alpha
+
+- Edit and review product information
+
 ## 1.13.0.0-alpha
 
 - Product description with What You See Is What You Get (WYSIWYG) editor.

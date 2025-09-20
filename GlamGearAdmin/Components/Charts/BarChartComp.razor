@@ -1,15 +1,17 @@
-<BarChart @ref="barChart" />
+@using BlazorBootstrap
+
+<BlazorBootstrap.BarChart @ref="barChart" />
 <div class="my-3">
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-    @onclick="async () => await RandomizeAsync()"> Randomize </Button>
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-    @onclick="async () => await AddDatasetAsync()"> Add Dataset </Button>
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-    @onclick="async () => await AddDataAsync()">Add Data</Button>
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-    @onclick="async () => await ShowHorizontalBarChartAsync()">Horizontal Bar Chart</Button>
-  <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-    @onclick="async () => await ShowVerticalBarChartAsync()">Vertical Bar Chart</Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small"
+    @onclick="async () => await RandomizeAsync()"> Randomize </BlazorBootstrap.Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small"
+    @onclick="async () => await AddDatasetAsync()"> Add Dataset </BlazorBootstrap.Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small"
+    @onclick="async () => await AddDataAsync()">Add Data</BlazorBootstrap.Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small"
+    @onclick="async () => await ShowHorizontalBarChartAsync()">Horizontal Bar Chart</BlazorBootstrap.Button>
+  <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary" Size="BlazorBootstrap.ButtonSize.Small"
+    @onclick="async () => await ShowVerticalBarChartAsync()">Vertical Bar Chart</BlazorBootstrap.Button>
 </div>
 
 <ul class="list-bullet my-3">
@@ -17,9 +19,9 @@
 </ul>
 
 @code {
-  private BarChart barChart = default!;
-  private BarChartOptions barChartOptions = default!;
-  private ChartData chartData = default!;
+  private BlazorBootstrap.BarChart barChart = default!;
+  private BlazorBootstrap.BarChartOptions barChartOptions = default!;
+  private BlazorBootstrap.ChartData chartData = default!;
 
   private int datasetsCount = 0;
   private int labelsCount = 0;
@@ -29,14 +31,14 @@
 
   protected override void OnInitialized()
   {
-    chartData = new ChartData { Labels = GetDefaultDataLabels(6), Datasets = GetDefaultDataSets(3) };
-    barChartOptions = new BarChartOptions
+    chartData = new BlazorBootstrap.ChartData { Labels = GetDefaultDataLabels(6), Datasets = GetDefaultDataSets(3) };
+    barChartOptions = new BlazorBootstrap.BarChartOptions
     {
       Responsive = true,
       MaintainAspectRatio = true, // This preserves the aspect ratio
-      Interaction = new Interaction
+      Interaction = new BlazorBootstrap.Interaction
       {
-        Mode = InteractionMode.Index
+        Mode = BlazorBootstrap.InteractionMode.Index
       }
     };
   }
@@ -54,11 +56,11 @@
   {
     if (chartData is null || chartData.Datasets is null || !chartData.Datasets.Any()) return;
 
-    var newDatasets = new List<IChartDataset>();
+    var newDatasets = new List<BlazorBootstrap.IChartDataset>();
 
     foreach (var dataset in chartData.Datasets)
     {
-      if (dataset is BarChartDataset barChartDataset
+      if (dataset is BlazorBootstrap.BarChartDataset barChartDataset
       && barChartDataset is not null
       && barChartDataset.Data is not null)
       {
@@ -99,11 +101,11 @@
     if (labelsCount >= 12)
       return;
 
-    var data = new List<IChartDatasetData>();
+    var data = new List<BlazorBootstrap.IChartDatasetData>();
     foreach (var dataset in chartData.Datasets)
     {
-      if (dataset is BarChartDataset barChartDataset)
-        data.Add(new BarChartDatasetData(barChartDataset.Label, random.Next(200)));
+      if (dataset is BlazorBootstrap.BarChartDataset barChartDataset)
+        data.Add(new BlazorBootstrap.BarChartDatasetData(barChartDataset.Label, random.Next(200)));
     }
 
     chartData = await barChart.AddDataAsync(chartData, GetNextDataLabel(), data);
@@ -123,9 +125,9 @@
 
   #region Data Preparation
 
-  private List<IChartDataset> GetDefaultDataSets(int numberOfDatasets)
+  private List<BlazorBootstrap.IChartDataset> GetDefaultDataSets(int numberOfDatasets)
   {
-    var datasets = new List<IChartDataset>();
+    var datasets = new List<BlazorBootstrap.IChartDataset>();
 
     for (var index = 0; index < numberOfDatasets; index++)
     {
@@ -135,13 +137,13 @@
     return datasets;
   }
 
-  private BarChartDataset GetRandomBarChartDataset()
+  private BlazorBootstrap.BarChartDataset GetRandomBarChartDataset()
   {
-    var c = ColorUtility.CategoricalTwelveColors[datasetsCount].ToColor();
+    var c = BlazorBootstrap.ColorUtility.CategoricalTwelveColors[datasetsCount].ToColor();
 
     datasetsCount += 1;
 
-    return new BarChartDataset()
+    return new BlazorBootstrap.BarChartDataset()
     {
       Label = $"Product {datasetsCount}",
       Data = GetRandomData(),

@@ -1,16 +1,23 @@
-<ScatterChart @ref="scatterChart" />
+@using BlazorBootstrap
+
+<BlazorBootstrap.ScatterChart @ref="scatterChart" />
 
 <div class="my-3">
-    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-        @onclick="async () => await RandomizeAsync()"> Randomize </Button>
-    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-        @onclick="async () => await AddDatasetAsync()"> Add Dataset </Button>
-    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-        @onclick="async () => await AddDataAsync()"> Add Data </Button>
-    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-        @onclick="async () => await ShowHorizontalLineChartAsync()"> Horizontal Line Chart </Button>
-    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small"
-        @onclick="async () => await ShowVerticalLineChartAsync()"> Vertical Line Chart </Button>
+    <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary"
+        Size="BlazorBootstrap.ButtonSize.Small" @onclick="async () => await RandomizeAsync()"> Randomize
+    </BlazorBootstrap.Button>
+    <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary"
+        Size="BlazorBootstrap.ButtonSize.Small" @onclick="async () => await AddDatasetAsync()"> Add Dataset
+    </BlazorBootstrap.Button>
+    <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary"
+        Size="BlazorBootstrap.ButtonSize.Small" @onclick="async () => await AddDataAsync()"> Add Data
+    </BlazorBootstrap.Button>
+    <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary"
+        Size="BlazorBootstrap.ButtonSize.Small" @onclick="async () => await ShowHorizontalLineChartAsync()"> Horizontal
+        Line Chart </BlazorBootstrap.Button>
+    <BlazorBootstrap.Button Type="BlazorBootstrap.ButtonType.Button" Color="BlazorBootstrap.ButtonColor.Primary"
+        Size="BlazorBootstrap.ButtonSize.Small" @onclick="async () => await ShowVerticalLineChartAsync()"> Vertical Line
+        Chart </BlazorBootstrap.Button>
 </div>
 
 <ul class="list-bullet my-3">
@@ -18,9 +25,9 @@
 </ul>
 
 @code {
-    private ScatterChart scatterChart = default!;
-    private ScatterChartOptions scatterChartOptions = default!;
-    private ChartData chartData = default!;
+    private BlazorBootstrap.ScatterChart scatterChart = default!;
+    private BlazorBootstrap.ScatterChartOptions scatterChartOptions = default!;
+    private BlazorBootstrap.ChartData chartData = default!;
 
     private int datasetsCount;
     private int dataLabelsCount;
@@ -29,11 +36,11 @@
 
     protected override void OnInitialized()
     {
-        chartData = new ChartData { Labels = GetDefaultDataLabels(6), Datasets = GetDefaultDataSets(3) };
+        chartData = new BlazorBootstrap.ChartData { Labels = GetDefaultDataLabels(6), Datasets = GetDefaultDataSets(3) };
         scatterChartOptions = new()
         {
             Responsive = true,
-            Interaction = new Interaction { Mode = InteractionMode.Index },
+            Interaction = new BlazorBootstrap.Interaction { Mode = BlazorBootstrap.InteractionMode.Index },
         };
     }
 
@@ -50,17 +57,17 @@
     {
         if (chartData is null || chartData.Datasets is null || !chartData.Datasets.Any()) return;
 
-        var newDatasets = new List<IChartDataset>();
+        var newDatasets = new List<BlazorBootstrap.IChartDataset>();
 
         foreach (var dataset in chartData.Datasets)
         {
-            if (dataset is ScatterChartDataset scatterChartDataset
+            if (dataset is BlazorBootstrap.ScatterChartDataset scatterChartDataset
             && scatterChartDataset is not null
             && scatterChartDataset.Data is not null)
             {
                 var count = scatterChartDataset.Data.Count;
 
-                var newData = new List<ScatterChartDataPoint>();
+                var newData = new List<BlazorBootstrap.ScatterChartDataPoint>();
                 for (var i = 0; i < count; i++)
                 {
                     newData.Add(new(random.Next(200), random.Next(200)));
@@ -92,11 +99,12 @@
         if (chartData is null || chartData.Datasets is null)
             return;
 
-        var data = new List<IChartDatasetData>();
+        var data = new List<BlazorBootstrap.IChartDatasetData>();
         foreach (var dataset in chartData.Datasets)
         {
-            if (dataset is ScatterChartDataset scatterChartDataset)
-                data.Add(new ScatterChartDatasetData(scatterChartDataset.Label, new ScatterChartDataPoint(random.Next(200),
+            if (dataset is BlazorBootstrap.ScatterChartDataset scatterChartDataset)
+                data.Add(new BlazorBootstrap.ScatterChartDatasetData(scatterChartDataset.Label, new
+                BlazorBootstrap.ScatterChartDataPoint(random.Next(200),
                 random.Next(200))));
         }
 
@@ -117,9 +125,9 @@
 
     #region Data Preparation
 
-    private List<IChartDataset> GetDefaultDataSets(int numberOfDatasets)
+    private List<BlazorBootstrap.IChartDataset> GetDefaultDataSets(int numberOfDatasets)
     {
-        var datasets = new List<IChartDataset>();
+        var datasets = new List<BlazorBootstrap.IChartDataset>();
 
         for (var index = 0; index < numberOfDatasets; index++)
         {
@@ -129,13 +137,13 @@
         return datasets;
     }
 
-    private ScatterChartDataset GetRandomScatterChartDataset()
+    private BlazorBootstrap.ScatterChartDataset GetRandomScatterChartDataset()
     {
-        var c = ColorUtility.CategoricalTwelveColors[datasetsCount].ToColor();
+        var c = BlazorBootstrap.ColorUtility.CategoricalTwelveColors[datasetsCount].ToColor();
 
         datasetsCount += 1;
 
-        return new ScatterChartDataset
+        return new BlazorBootstrap.ScatterChartDataset
         {
             Label = $"Team {datasetsCount}",
             Data = GetRandomData(),
@@ -148,12 +156,12 @@
         };
     }
 
-    private List<ScatterChartDataPoint> GetRandomData()
+    private List<BlazorBootstrap.ScatterChartDataPoint> GetRandomData()
     {
-        var data = new List<ScatterChartDataPoint>();
+        var data = new List<BlazorBootstrap.ScatterChartDataPoint>();
         for (var index = 0; index < dataLabelsCount; index++)
         {
-            data.Add(new ScatterChartDataPoint(random.Next(200), random.Next(200)));
+            data.Add(new BlazorBootstrap.ScatterChartDataPoint(random.Next(200), random.Next(200)));
         }
 
         return data;
