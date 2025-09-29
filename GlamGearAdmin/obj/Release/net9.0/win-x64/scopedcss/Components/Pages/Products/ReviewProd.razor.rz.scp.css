@@ -138,47 +138,47 @@
     box-shadow: none;
 }
 
-#toolbar-container .ql-font-roboto span[data-label="Roboto"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Roboto"][b-2lkjzqp3bm]::before {
     font-family: "Roboto";
 }
 
-#toolbar-container .ql-font-open-sans span[data-label="Open Sans"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Open Sans"][b-2lkjzqp3bm]::before {
     font-family: "Open Sans";
 }
 
-#toolbar-container .ql-font-lato span[data-label="Lato"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Lato"][b-2lkjzqp3bm]::before {
     font-family: "Lato";
 }
 
-#toolbar-container .ql-font-montserrat span[data-label="Montserrat"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Montserrat"][b-2lkjzqp3bm]::before {
     font-family: "Montserrat";
 }
 
-#toolbar-container .ql-font-roboto-condensed span[data-label="Roboto Condensed"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Roboto Condensed"][b-2lkjzqp3bm]::before {
     font-family: "Roboto Condensed";
 }
 
-#toolbar-container .ql-font-oswald span[data-label="Oswald"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Oswald"][b-2lkjzqp3bm]::before {
     font-family: "Oswald";
 }
 
-#toolbar-container .ql-font-poppins span[data-label="Poppins"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Poppins"][b-2lkjzqp3bm]::before {
     font-family: "Poppins";
 }
 
-#toolbar-container .ql-font-slabo-27px span[data-label="Slabo 27px"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Slabo 27px"][b-2lkjzqp3bm]::before {
     font-family: "Slabo 27px";
 }
 
-#toolbar-container .ql-font-noto-sans span[data-label="Noto Sans"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Noto Sans"][b-2lkjzqp3bm]::before {
     font-family: "Noto Sans";
 }
 
-#toolbar-container .ql-font-roboto-mono span[data-label="Roboto Mono"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Roboto Mono"][b-2lkjzqp3bm]::before {
     font-family: "Roboto Mono";
 }
 
-#toolbar-container .ql-font-merriweather span[data-label="Merriweather"][b-2lkjzqp3bm]::before {
+#toolbar-container .ql-font span[data-label="Merriweather"][b-2lkjzqp3bm]::before {
     font-family: "Merriweather";
 }
 

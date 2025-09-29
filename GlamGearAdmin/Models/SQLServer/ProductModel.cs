@@ -100,7 +100,7 @@ public class ProductMainForReview
   public decimal DiffPrice => OrigPrice - DiscPrice;
 
   [NotMapped]
-  public decimal RoundedDiscPercentage => Math.Round((OrigPrice - DiscPrice) / OrigPrice * 100, 0, MidpointRounding.AwayFromZero);
+  public decimal RoundedDiscPercentage => OrigPrice == 0 ? 0 : Math.Round((OrigPrice - DiscPrice) / OrigPrice * 100, 0, MidpointRounding.AwayFromZero);
 
   [Column("dis_perc")]
   public string? DiscPercent { get; set; }

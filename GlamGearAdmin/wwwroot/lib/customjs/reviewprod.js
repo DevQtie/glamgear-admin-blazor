@@ -77,10 +77,54 @@ window.setContent = function (deltaJson) {
     }
 };
 
+window.getQuillFocusState = function (dotNetObjRef) {
+    if (window.quillEditor) {
+        // const state = window.quillEditor.hasFocus();
+        // if (state)
+        // {
+        //     dotNetObjRef.invokeMethodAsync('OnQuillFocusChanged', true);
+        // }
+        // else
+        // {            
+        //     dotNetObjRef.invokeMethodAsync('OnQuillFocusChanged', false);
+        // }
+        // window.quillEditor.root.addEventListener('focus', () => {
+        //     dotNetObjRef.invokeMethodAsync('OnQuillFocusChanged', true);
+        // });
+
+        // window.quillEditor.root.addEventListener('blur', () => {
+        //     dotNetObjRef.invokeMethodAsync('OnQuillFocusChanged', false);
+        // });
+        window.quillEditor.on('selection-change', (range, oldRange, source) => {
+            if (range) {
+                if (range.length == 0) {
+                    console.log('User cursor is on', range.index); // to test
+                } else {
+                    const text = quill.getText(range.index, range.length);
+                    console.log('User has highlighted', text); // to test
+                }
+                dotNetObjRef.invokeMethodAsync('OnQuillFocusChanged', true); // actual integration
+            } else {
+                console.log('Cursor not in the editor');
+                dotNetObjRef.invokeMethodAsync('OnQuillFocusChanged', false); // actual integration
+            }
+        });
+    }
+}
+
+window.getQuillLength = function () {
+    if (window.quillEditor) {
+        return window.quillEditor.getText();
+    } else {
+        console.warn("Quill editor not initialized.");
+        return null;
+    }
+}
+
 window.getContentsQuill = function () {
     if (window.quillEditor) {
         const delta = window.quillEditor.getContents();
-        return JSON.stringify(delta);
+        return JSON.stringify(delta, null, 2);
     } else {
         console.warn("Quill editor not initialized.");
         return null;
@@ -110,6 +154,19 @@ window.setContentReview = function (deltaJson) {
     }
 };
 
+window.addCSSClass = function () {
+    const editor = document.getElementById('editor');
+    if (editor) {
+        editor.classList.add('border', 'border-danger'); // not working
+    }
+}
+
+window.removeCSSClass = function () {
+    const editor = document.getElementById('editor');
+    if (editor) {
+        editor.classList.remove('border', 'border-danger'); // not working
+    }
+}
 
 // Quill.on(Quill.events.TEXT_CHANGE, update);
 // const playground = document.querySelector('#playground');

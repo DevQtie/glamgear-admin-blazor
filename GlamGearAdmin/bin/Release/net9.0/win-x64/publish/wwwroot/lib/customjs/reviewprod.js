@@ -29,7 +29,7 @@
 //     }
 // });
 
-window.onbeforeunload = function (e) {
+window.onbeforeunload = function (e) { // I'm inspired by the Stack Overflow behavior where it asks for confirmation only if there are unsaved changes when you're composing a question or answer.
     return 'Dialog text here.'; // need for improvement to avoid (if necessary) the entries of unsaved changes.
 };
 
@@ -55,75 +55,59 @@ Font.whitelist = [
 Quill.register(Font, true);
 
 window.previewContent = function () {
-    setTimeout(function () {
-        const quill = new Quill('#editor', {
-            modules: {
-                toolbar: [ // I have no idea how to specify this id: #toolbar-container
-                    // [{ header: [1, 2, false] }],
-                    // ['bold', 'italic', 'underline'],
-                    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                    ['blockquote', 'code-block', 'link', 'image'],
-
-                    [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
-                    [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-                    [{ 'direction': 'rtl' }],                         // text direction
-
-                    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                    [{ 'font': Font.whitelist }],
-                    [{ 'align': [] }],
-
-                    ['clean']
-                ],
-            },
-            placeholder: 'Compose a product description here...',
-            theme: 'snow'
-        });
-        window.quillEditor = quill;
-        console.log("Quill initialized");
-    }, 1000);
+    const quill = new Quill('#editor', {
+        modules: {
+            toolbar: '#toolbar-container'
+        },
+        placeholder: 'Compose a product description here...',
+        theme: 'snow'
+    });
+    window.quillEditor = quill;
+    console.log("Quill initialized");
 };
 
 window.setContent = function (deltaJson) {
-    setTimeout(function () {
-        const Delta = Quill.import('delta');
-        const delta = typeof deltaJson === 'string' ? JSON.parse(deltaJson) : deltaJson;
-        if (window.quillEditor) {
-            const deltaObj = new Delta(delta);
-            window.quillEditor.setContents(deltaObj, 'api');
-        } else {
-            console.warn("Quill editor not initialized.");
-        }
-    }, 1000); // Delay in milliseconds (1000ms = 1 second)
+    const Delta = Quill.import('delta');
+    const delta = typeof deltaJson === 'string' ? JSON.parse(deltaJson) : deltaJson;
+    if (window.quillEditor) {
+        const deltaObj = new Delta(delta);
+        window.quillEditor.setContents(deltaObj, 'api');
+    } else {
+        console.warn("Quill editor not initialized.");
+    }
+};
+
+window.getContentsQuill = function () {
+    if (window.quillEditor) {
+        const delta = window.quillEditor.getContents();
+        return JSON.stringify(delta);
+    } else {
+        console.warn("Quill editor not initialized.");
+        return null;
+    }
 };
 
 window.previewContentReview = function () {
-    setTimeout(function () {
-        const quill = new Quill('#editorReview', {
-            readOnly: true,
-            modules: {
-                toolbar: false,
-            },
-            placeholder: 'Compose a product description here...',
-            theme: 'snow'
-        });
-        window.quillEditorReview = quill;
-        console.log("Quill initialized");
-    }, 1000);
+    const quill = new Quill('#editorReview', {
+        readOnly: true,
+        modules: {
+            toolbar: false,
+        },
+        theme: 'bubble' // change to snow to see border, otherwise use bubble
+    });
+    window.quillEditorReview = quill;
+    console.log("Quill initialized");
 };
 
 window.setContentReview = function (deltaJson) {
-    setTimeout(function () {
-        const Delta = Quill.import('delta');
-        const delta = typeof deltaJson === 'string' ? JSON.parse(deltaJson) : deltaJson;
-        if (window.quillEditorReview) {
-            const deltaObj = new Delta(delta);
-            window.quillEditorReview.setContents(deltaObj, 'api');
-        } else {
-            console.warn("Quill editor not initialized.");
-        }
-    }, 1000); // Delay in milliseconds (1000ms = 1 second)
+    const Delta = Quill.import('delta');
+    const delta = typeof deltaJson === 'string' ? JSON.parse(deltaJson) : deltaJson;
+    if (window.quillEditorReview) {
+        const deltaObj = new Delta(delta);
+        window.quillEditorReview.setContents(deltaObj, 'api');
+    } else {
+        console.warn("Quill editor not initialized.");
+    }
 };
 
 

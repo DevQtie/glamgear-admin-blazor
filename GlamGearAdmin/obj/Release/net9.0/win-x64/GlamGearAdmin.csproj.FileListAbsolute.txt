@@ -370,6 +370,6 @@ C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\b
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\scopedcss\Components\Layout\NavMenu2.razor.rz.scp.css
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\tzxjg6is5z-0n6lrtb02s.gz
 C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\0wz98yz2xy-lftp6ydp6b.gz
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\knlgsdz8uo-2778g4obb3.gz
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\11h106u7cp-lfvmqeqgms.gz
-C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\0vcpqh6vku-av8h6t8kr4.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\knlgsdz8uo-6mdwow5avr.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\11h106u7cp-6ktagj05s3.gz
+C:\Users\alagu\Desktop\AlberthsFiles\ECommerceMain\GlamGearAdmin\GlamGearAdmin\obj\Release\net9.0\win-x64\compressed\0vcpqh6vku-cjbhxof1et.gz

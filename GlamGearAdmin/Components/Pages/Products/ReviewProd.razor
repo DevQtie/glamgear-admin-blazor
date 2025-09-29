@@ -9,6 +9,7 @@
 @using GlamGearAdmin.Data.SQLServer
 @using System.Text.RegularExpressions
 @using System.Globalization
+@using MudBlazor
 @* @implements IAsyncDisposable *@
 @inject IDbContextFactory<GlamGearAdmin.Data.SQLServer.BlazorSQLServerContext> DbFactory
 @inject NavigationManager NavigationManager
@@ -35,9 +36,9 @@
     @* <a class="btn btn-primary my-3" @onclick="ButtonClicked">Image Simulation</a> *@
         <div class="container-fluid overflow-x-auto mw-40">
             <div class="row py-1 border rounded border-secondary-subtle text-center my-2">
-                <EditForm EditContext="editContext" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
+                <EditForm method="post" EditContext="editContext" OnValidSubmit="ReviewProduct" FormName="edit" Enhance>
                     <FluentValidationValidator />
-                    <DataAnnotationsValidator />
+                    @* <DataAnnotationsValidator /> *@
                     <div class="d-flex flex-column align-items-start mb-4">
                         <h5 class="fw-bold py-1">Basic Information</h5>
                         <div class="mb-3 d-flex flex-column align-items-start w-100">
@@ -138,19 +139,19 @@
 
                                     @if (ReviewThenModifyProduct.CompileProductProperties.Tags == null)
                                     {
-                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                        @*<div class="position-absolute top-50 start-50 translate-middle">
                                             <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
                                                 <span class="visually-hidden">Loading...</span>
                                             </div>
-                                        </div> @*Replace this with shimmer instead*@
+                                        </div> Replace this with shimmer instead; need improvements*@
                                     }
                                     else if (ReviewThenModifyProduct.CompileProductProperties.Tags.Count == 0)
                                     {
-                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                        @*<div class="position-absolute top-50 start-50 translate-middle">
                                             <div class="spinner-grow text-danger spinner-grow-xxl" role="status">
                                                 <span class="visually-hidden">Loading...</span>
                                             </div>
-                                        </div> @*Replace this with shimmer instead*@
+                                        </div> Replace this with shimmer instead; need improvements*@
                                     }
                                     else
                                     {
@@ -169,6 +170,7 @@
                                             @* <input id="@($"{Id}_tag")" class="tag-input" placeholder="Add tags"
                                                 autocomplete="off" @bind-value="Value" @bind-value:event="oninput"
                                                 @onkeyup="AddTags" /> *@
+                                            @*Note: The behavior of having cleared input upon focus removal is by design*@
                                             <BlazorBootstrap.AutoComplete @bind-Value="ReviewThenModifyProduct.TagRef"
                                                 id="promoTag"
                                                 Class="tag-input border-0"
@@ -223,6 +225,7 @@
                                     {
                                         int totalCount = ReviewThenModifyProduct.CompileProductProperties.ProductImages?.Count ?? 0;
                                         int counter = 0;
+                                        @*The code can be optimized*@
                                         if (totalCount == 0)
                                         {
                                             <InputFile @ref="filePicker" class="btn btn-outline-primary my-1 d-none" OnChange="HandleProductImageUpload" accept="image/*"
@@ -316,6 +319,7 @@
                                                     <label for="@($"{specs.KeyNameID}")" class="form-label text-nowrap fw-bold">@($"{specs.KeyName}")</label>
                                                     <InputText id="@($"{specs.KeyNameID}")"
                                                         @bind-Value="specs.Value"
+                                                        @onblur="FormatOnBlurSpecs"
                                                         class="form-control form-control-sm" />
                                                     <ValidationMessage id="@($"{specs.KeyNameID}")"
                                                         For="() => specs.Value"
@@ -400,18 +404,20 @@
                                         <button class="ql-clean"></button>
                                     </span>
                                 </div>
-                                <div id="editor">
+                                <div id="editor" @onblur="FormatOnBlurQuill">
                                 </div>
-                                @if (ReviewThenModifyProduct.CompileProductProperties.ProductDescription != null && ReviewThenModifyProduct.CompileProductProperties.ProductDescription.Description != null)
-                                {
-                                    <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductDescription.Description" class="text-danger" />
-                                }
+                                <div class="w-100 d-flex align-items-start">
+                                    @if (ReviewThenModifyProduct.CompileProductProperties.ProductDescription != null)
+                                    {
+                                        <ValidationMessage For="() => ReviewThenModifyProduct.CompileProductProperties.ProductDescription.Description" class="text-danger" />
+                                    }
+                                </div>
                             </div>
                         </div>
 
                         <div class="row py-1 text-center m-0 w-100">
                             <div class="col-6 d-flex flex-column justify-content-center align-items-center ps-0">
-                                <button type="button" class="btn btn-primary w-100 text-wrap" @onclick="ShowReviewSummary">Review Product Details Entry</button>
+                                <button type="submit" class="btn btn-primary w-100 text-wrap">Review Product Details Entry</button>
                             </div>
                             <div class="col-6 d-flex flex-column justify-content-center align-items-center pe-0">
                                 <button type="button"
@@ -610,17 +616,24 @@ else
     public record ProductSpecsFRSort(string? KeyNameID, string? KeyName, string? Value, int Rank);
     public record ProductTagsRefFRAutoComplete(string Tag);
     public List<ProductSpecsFRSort> productSpecs = new();
+    public List<ProductSpecsFRSort> modifiedRepo = new();
     public List<ProductTagsRefFRAutoComplete> productTagRef = new();
     private string? errorMessage;
     InputFile filePicker = new();
     private bool isReviewSummary = false;
+    private bool quillFocusState;    
+    private int exOnce = 0;
     
     protected override async Task OnInitializedAsync()
     {
         editContext = new EditContext(ReviewThenModifyProduct);
         messageStore = new ValidationMessageStore(editContext);
 
-        editContext.OnValidationRequested += HandleValidationRequested;
+        @* editContext.OnValidationRequested += HandleValidationRequested; *@
+        editContext.OnValidationRequested += (sender, e) =>
+        {
+            _ = HandleValidationRequested(sender, e);
+        };
         ReviewThenModifyProduct.SelectedCategory = "Jewelry";
         SetActiveCategory(1);
         await RetrieveProductMainForReview();
@@ -631,30 +644,27 @@ else
         await RetrieveProducDescriptionForReview();
     }
 
-    private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs e)
+    private async Task HandleValidationRequested(object? sender, ValidationRequestedEventArgs e)
     {
-        messageStore!.Clear();
-
-        @* if (isModifyUser)
+        var fieldQuill = editContext!.Field(nameof(ReviewThenModifyProduct.CompileProductProperties.ProductDescription.Description));
+        string? modifiedContentString = await JS.InvokeAsync<string?>("getQuillLength");
+        if (string.IsNullOrWhiteSpace(modifiedContentString))
         {
-            if (string.IsNullOrWhiteSpace(VerifyRemRoleUser.SelectedRole))
+            exOnce++;
+            if (exOnce == 1)
             {
-                messageStore.Add(() => VerifyRemRoleUser.SelectedRole!, "Required field.");
-            }
-        }
-        else if (isReevaluateUser)
-        {
-            // Only validate VerifyRemRoleUser.SelectedRemark if VerifyRemRoleUser.SelectedRole is valid
-            if (string.IsNullOrWhiteSpace(VerifyRemRoleUser.SelectedRemark))
-            {
-                messageStore.Add(() => VerifyRemRoleUser.SelectedRemark!, "Required field.");
+                await JS.InvokeVoidAsync("addCSSClass");
+                messageStore!.Add(() => ReviewThenModifyProduct.CompileProductProperties.ProductDescription!.Description!, "Required.");
+                editContext!.NotifyValidationStateChanged();
             }
         }
         else
         {
-            messageStore.Add(() => VerifyRemRoleUser.SelectedRole!, "Required field.");
-            messageStore.Add(() => VerifyRemRoleUser.SelectedRemark!, "Required field.");
-        } *@
+            await JS.InvokeVoidAsync("removeCSSClass");
+            messageStore?.Clear(() => ReviewThenModifyProduct.CompileProductProperties.ProductDescription!.Description!);
+            editContext!.NotifyValidationStateChanged();
+            exOnce = 0;
+        }
     }
 
     private async Task RetrieveProductMainForReview()
@@ -782,7 +792,8 @@ else
                         }
                     );
                     ReviewThenModifyProduct.TagRef = string.Empty;
-                    messageStore?.Clear(fieldTag);
+                    @* messageStore?.Clear(fieldTag); has bug *@
+                    messageStore?.Clear(() => ReviewThenModifyProduct.CompileProductProperties.Tags);
                 }
                 else
                 {
@@ -797,7 +808,7 @@ else
         }
         else
         {
-            messageStore!.Add(() => ReviewThenModifyProduct.TagRef!, "Cannot be empty text.");
+            @* messageStore!.Add(() => ReviewThenModifyProduct.TagRef!, "Cannot be empty text."); Do nothing in the meantime*@
         }
     }
 
@@ -868,7 +879,17 @@ else
                 // Optional: log or ignore
             }
         }
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("getQuillFocusState", dotNetObjRef);
         StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnQuillFocusChanged(bool focused)
+    {
+        quillFocusState = focused;
+        Console.WriteLine($"Quill focus state changed: {quillFocusState}");
+        StateHasChanged(); // Optional: update UI
     }
 
     @* private void OnInput(ChangeEventArgs e) // for reference only
@@ -972,35 +993,43 @@ else
 
     private void FormatOnBlurSpecs(FocusEventArgs e) // For reference, this has been discontinued for use in specs.
     {
-        @* editContext!.NotifyValidationStateChanged(); *@
-        @* foreach (var spec in ReviewThenModifyProduct.CompileProductProperties.ProductSpecs)
+        modifiedRepo = ReviewThenModifyProduct.CompileProductProperties.ProductSpecs
+            .Where(ps => 
+				   {
+					   var original = productSpecs.FirstOrDefault(psro => psro.KeyNameID == ps.KeyNameID);
+					   return original != null && original.Value != ps.Value;
+				   })
+			.Select(ps => new ProductSpecsFRSort(ps.KeyNameID, ps.KeyName, ps.Value, ps.Rank))
+			.ToList();
+
+        @* foreach (var changes in modifiedRepo)
         {
-            var fieldIdentifier = editContext.Field(nameof(spec.Value));
-            if (string.IsNullOrWhiteSpace(spec.Value))
-            {
-                messageStore!.Add(fieldIdentifier, $"{spec.KeyName} is required.");
-                editContext!.NotifyValidationStateChanged();
-            }
-            messageStore?.Clear(fieldIdentifier);
-            editContext!.NotifyValidationStateChanged();
+            Console.WriteLine($"ID: {changes.KeyNameID} | KeyName: {changes.KeyName} | Value: {changes.Value} | Rank: {changes.Rank}"); // for testing
         } *@
-        
-        @* foreach (var specs in ReviewThenModifyProduct.CompileProductProperties.ProductSpecs) // for testing
+        modifiedRepo.ForEach(mr =>
         {
-            if (string.IsNullOrWhiteSpace(specs.Value))
+            var hbChanged = productSpecs.FindIndex(ps => ps.KeyNameID == mr.KeyNameID);
+            if (hbChanged != -1)
             {
-                Console.WriteLine($"Spec {specs.KeyName} (ID={specs.KeyNameID}) is empty!");
+                productSpecs[hbChanged] = mr;
             }
-            else
-            {
-                Console.WriteLine($"Spec {specs.Value} (ID={specs.KeyNameID})");
-            }
-        } *@
+        });
     }
 
-    private async Task UpdateProduct()
+    private void FormatOnBlurQuill(FocusEventArgs e) // For reference, this has been discontinued for use in specs.
     {
-        await Task.Delay(1000); // simulate a delay
+        Console.WriteLine("Test focus blur");
+    }
+
+    private async Task ReviewProduct()
+    {
+        string? modifiedContentString = await JS.InvokeAsync<string?>("getQuillLength");
+        if (string.IsNullOrWhiteSpace(modifiedContentString))
+        {
+            return;
+        }
+        await Task.Delay(1500); // simulate a delay
+        Console.WriteLine("No existing error");
     }
 
     private void OnCategoryItemSelected(ProductCategory item)
@@ -1152,6 +1181,10 @@ else
         if (prodImg == null) return;
 
         ReviewThenModifyProduct.CompileProductProperties.ProductImages.Remove(prodImg);
+        if (ReviewThenModifyProduct.CompileProductProperties.ProductImages.Count == 0)
+        {
+            messageStore!.Add(() => ReviewThenModifyProduct.CompileProductProperties.ProductDescription!.Description!, "Required.");
+        }
     }
 
     private void OnProdSpecsListUpdate(BlazorBootstrap.SortableListEventArgs args)
@@ -1178,7 +1211,19 @@ else
         {
             try
             {
-                string? modifiedContent = await JS.InvokeAsync<string>("getContentsQuill");
+                string? modifiedContentString = await JS.InvokeAsync<string?>("getQuillLength");
+                string? modifiedContent = await JS.InvokeAsync<string?>("getContentsQuill");
+                var fieldQuill = editContext!.Field(nameof(ReviewThenModifyProduct.CompileProductProperties.ProductDescription.Description));
+                if (string.IsNullOrWhiteSpace(modifiedContentString))
+                {
+                    await JS.InvokeVoidAsync("addCSSClass");
+                    messageStore!.Add(() => ReviewThenModifyProduct.CompileProductProperties.ProductDescription!.Description!, "Required.");
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("removeCSSClass");
+                    messageStore?.Clear(fieldQuill);
+                }
                 await JS.InvokeVoidAsync("previewContentReview");
                 await JS.InvokeVoidAsync("setContentReview", modifiedContent);
             }

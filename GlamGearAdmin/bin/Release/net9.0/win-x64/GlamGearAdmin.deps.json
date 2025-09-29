@@ -7,7 +7,7 @@
   "targets": {
     ".NETCoreApp,Version=v9.0": {},
     ".NETCoreApp,Version=v9.0/win-x64": {
-      "GlamGearAdmin/1.13.1.1-alpha": {
+      "GlamGearAdmin/1.13.2.1-alpha": {
         "dependencies": {
           "Blazor.Bootstrap": "3.4.0",
           "Blazored.FluentValidation": "2.2.0",
@@ -2363,7 +2363,7 @@
     }
   },
   "libraries": {
-    "GlamGearAdmin/1.13.1.1-alpha": {
+    "GlamGearAdmin/1.13.2.1-alpha": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

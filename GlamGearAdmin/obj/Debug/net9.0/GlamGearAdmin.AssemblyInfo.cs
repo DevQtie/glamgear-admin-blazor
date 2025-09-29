@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GlamGearAdmin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.13.2.1")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.13.2.1-alpha+e8fda4f0b6f52afb15d6881237aa2ae32c85d48c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.13.2.1-alpha+2e02f9d38af4391ce74fc9f3d268761c6903e889")]
 [assembly: System.Reflection.AssemblyProductAttribute("GlamGearAdmin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GlamGearAdmin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.13.2.1")]
